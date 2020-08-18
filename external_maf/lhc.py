@@ -56,7 +56,7 @@ def load_data(root_path):
     # data = data[:, np.array([i for i in range(data.shape[1]) if i not in features_to_remove])]
     # np.save("~/data/miniboone/data.npy", data)
 
-    data = np.load(root_path)
+    data = np.nan_to_num(np.load(root_path))
     N_test = int(0.1*data.shape[0])
     data_test = data[-N_test:]
     data = data[0:-N_test]
