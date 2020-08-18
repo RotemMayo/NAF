@@ -37,6 +37,12 @@ To check if it worked perform:
         
 torchkit should appear amongst the installed packages.
 
+
+To download the dataset go to the project directory (NAF):
+
+        cd external_maf/datasets/data/lhc
+        sh lhc_download.sh
+
 ## Congratulations
 
 Thats it you're done! When running the files make sure to activate the env before hand by doing:
