@@ -10,29 +10,31 @@ This repo depends on another library for pytorch modules: https://github.com/CW-
 To download datasets, please modify L21-24 of `download_datasets.py`. 
 
 
-## Installation
+## Installation 
 In terminal run:
 
-conda env create -f NAF_conda_env.yml
+    conda env create -f NAF_conda_env.yml
 
-conda activate NAF
+    conda activate NAF
 
 
-Sanity check:
+ Sanity check:
 
-which pip
+    which pip
 
-Should return a path that includes anaconda3/envs/NAF
+ Should return a path that includes anaconda3/envs/NAF
 
 
 Continue to install torchkit from source to this venv using pip or python.
 
+
 Thats it you're done! When running the files make sure to activate the env before hand by doing:
 
-conda activate NAF
+    conda activate NAF
 
 
 If you wish to have a different name for the venv simply change the name in the first line of the file.
+
 
 
 ## Troubleshooting:
