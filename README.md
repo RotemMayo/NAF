@@ -22,11 +22,22 @@ In terminal run:
 
     which pip
 
- Should return a path that includes anaconda3/envs/NAF
+ Should return a path that includes envs/NAF
 
 
-Continue to install torchkit from source to this venv using pip or python.
+In a separate directory (or in a subdirectory of this project):
 
+        git clone https://github.com/CW-Huang/torchkit.git
+        cd torchkit
+        pip install -e .
+        
+To check if it worked perform:
+
+        conda list
+        
+torchkit should appear amongst the installed packages.
+
+## Congratulations
 
 Thats it you're done! When running the files make sure to activate the env before hand by doing:
 
