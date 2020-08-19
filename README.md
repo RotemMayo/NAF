@@ -15,14 +15,13 @@ To download datasets, please modify L21-24 of `download_datasets.py`.
 
 In terminal run:
 
-    conda env create -f NAF_conda_env.yml
-
-    conda activate NAF
+        conda env create -f NAF_conda_env.yml
+        conda activate NAF
 
 
  Sanity check:
 
-    which pip
+        which pip
 
  Should return a path that includes envs/NAF
 
@@ -49,9 +48,9 @@ To download the dataset go to the project directory (NAF):
 
 Thats it you're done! When running the files make sure to activate the env and updating the repository:
 
-    cd <project_directory>
-    git pull
-    conda activate NAF
+        cd <project_directory>
+        git pull
+        conda activate NAF
 
 If you wish to have a different name for the venv simply change the name in the first line of the file.
 
