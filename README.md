@@ -1,8 +1,9 @@
-# NAF
-This is not the original NAF Repo! All credit goes to https://github.com/CW-Huang.
+# NAF ML4Jets HUJI
+This is not the original NAF Repo! All credit for the orignal architecture goes to https://github.com/CW-Huang.
 
 
-## Original docs:
+## Original docs
+
 Experiments for the Neural Autoregressive Flows paper
 
 This repo depends on another library for pytorch modules: https://github.com/CW-Huang/torchkit
@@ -10,7 +11,8 @@ This repo depends on another library for pytorch modules: https://github.com/CW-
 To download datasets, please modify L21-24 of `download_datasets.py`. 
 
 
-## Installation 
+## Installation
+
 In terminal run:
 
     conda env create -f NAF_conda_env.yml
@@ -45,14 +47,33 @@ To download the dataset go to the project directory (NAF):
 
 ## Congratulations
 
-Thats it you're done! When running the files make sure to activate the env before hand by doing:
+Thats it you're done! When running the files make sure to activate the env and updating the repository:
 
+    cd <project_directory>
+    git pull
     conda activate NAF
-
 
 If you wish to have a different name for the venv simply change the name in the first line of the file.
 
+## Running on cluster
 
+Connect to landau cluster using (if not on a HUJI netowrk use SambaVPN: https://ca.huji.ac.il/samba):
 
-## Troubleshooting:
+       ssh <username>@landau.fh.huji.ac.il
+
+Simply run the commands:
+
+        cd <project_directory>
+        sbatch --export=dataset='lhc' cluster_runner.sh
+
+cluster_runner.sh might need to adjusted to your own user. Simply switch the line:
+
+        #SBATCH -A rotemov-account
+        
+To:
+
+        #SBATCH -A <user-name>-account
+
+## Troubleshooting
+
 The datasets might contain nan values causing losses not to work. In order to solve this use np.nan_to_num on the data when loading.
