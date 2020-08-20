@@ -1,10 +1,11 @@
 # NAF ML4Jets HUJI
+
 This is not the original NAF Repo! All credit for the orignal architecture goes to https://github.com/CW-Huang.
 
 
 ## Original docs
 
-Experiments for the Neural Autoregressive Flows paper
+Experiments for the Neural Autoregressive Flows paper: https://arxiv.org/abs/1804.00779
 
 This repo depends on another library for pytorch modules: https://github.com/CW-Huang/torchkit
 
