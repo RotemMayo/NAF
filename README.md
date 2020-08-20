@@ -2,7 +2,6 @@
 
 This is not the original NAF Repo! All credit for the orignal architecture goes to https://github.com/CW-Huang.
 
-
 ## Original docs
 
 Experiments for the Neural Autoregressive Flows paper: https://arxiv.org/abs/1804.00779
@@ -11,6 +10,11 @@ This repo depends on another library for pytorch modules: https://github.com/CW-
 
 To download datasets, please modify L21-24 of `download_datasets.py`. 
 
+## Compatability
+
+This was checked on several Linux OS (Ubuntu, gentoo, Debians), MAC compatibility check to come.
+
+For downloading the datasets you will need bash.
 
 ## Installation
 
@@ -44,14 +48,17 @@ To download the dataset go to the project directory (NAF):
 
         cd external_maf/datasets/data/lhc
         sh lhc_download.sh
+        
+Thats it you're done!
 
-## Congratulations
+## Running
 
-Thats it you're done! When running the files make sure to activate the env and updating the repository:
+When running the files make sure to activate the env and updating the repository:
 
         cd <project_directory>
         git pull
         conda activate NAF
+        python maf_experiments
 
 If you wish to have a different name for the venv simply change the name in the first line of the file.
 
