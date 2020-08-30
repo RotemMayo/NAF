@@ -18,10 +18,6 @@ from torchkit.transforms import from_numpy, binarize
 from torchvision.transforms import transforms
 from ops import load_maf_data
 from ops import DatasetWrapper
-
-
-
-
 import time
 import json
 import argparse, os
@@ -135,7 +131,7 @@ class model(object):
             D = load_maf_data('bsds300')
         elif args.dataset == 'lhc':
             p = 7 # size of row
-            D = load_maf_data('lhc')
+            D = load_maf_data('lhc', args.signal_percent)
 
         tr, va, te = D.trn.x, D.val.x, D.tst.x
 
@@ -207,6 +203,7 @@ class model(object):
                 (self.checkpoint['e']+1, epoch, LOSSES/float(counter),
                  loss_val,
                  loss_tst)
+
                 if loss_val < self.checkpoint['best_val']:
                     print(' [^] Best validation loss [^] ... [saving]')
                     self.save(self.save_dir+'/'+self.filename+'_best')
@@ -306,7 +303,7 @@ def parse_args():
     parser.add_argument('--beta2', type=float, default=0.999)
     parser.add_argument('--amsgrad', type=int, default=0)
     parser.add_argument('--polyak', type=float, default=0.0)
-    parser.add_argument('--cuda', type=bool, default=False)
+    parser.add_argument('--cuda', type=bool, default=True)
 
 
     parser.add_argument('--dimh', type=int, default=100)
@@ -317,6 +314,7 @@ def parse_args():
     parser.add_argument('--num_ds_layers', type=int, default=1)
     parser.add_argument('--fixed_order', type=bool, default=True,
                         help='Fix the made ordering to be the given order')
+    parser.add_argument('--signal_percent', type=float, default=0)
 
 
     return check_args(parser.parse_args())
@@ -354,6 +352,7 @@ def args2fn(args):
 
     prefix_key_pairs = [
         ('', 'dataset'),
+        ('sp', 'signal_percent'),
         ('e', 'epoch'),
         ('s', 'seed'),
         ('p', 'polyak'),

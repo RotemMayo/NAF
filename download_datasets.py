@@ -9,7 +9,7 @@ https://github.com/fyu/lsun
 """
 
 import urllib
-import cPickle as pickle
+import pickle
 import os
 import struct
 import numpy as np
