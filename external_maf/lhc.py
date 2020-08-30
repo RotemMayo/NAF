@@ -41,7 +41,7 @@ def load_data(bg_path, sig_path, signal_percent):
     bg = np.nan_to_num(np.load(bg_path))
     bg_rows, _ = bg.shape
     sig_rows, _ = sig.shape
-    idx = np.random.randint(int(sig_rows, size=int(signal_percent*bg_rows)))
+    idx = np.random.randint(sig_rows, size=int(signal_percent*bg_rows))
     data = np.concatenate((bg, sig[idx, :]), axis=0)
     np.random.shuffle(data)
 
