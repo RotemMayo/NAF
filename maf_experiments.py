@@ -303,7 +303,7 @@ def parse_args():
     parser.add_argument('--beta2', type=float, default=0.999)
     parser.add_argument('--amsgrad', type=int, default=0)
     parser.add_argument('--polyak', type=float, default=0.0)
-    parser.add_argument('--cuda', type=bool, default=True)
+    parser.add_argument('--cuda', type=bool, default=False)
 
 
     parser.add_argument('--dimh', type=int, default=100)
