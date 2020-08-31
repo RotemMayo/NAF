@@ -64,10 +64,9 @@ def get_probs(mdl, dataset):
         z, logdet, _ = mdl.maf.flow((x, lgd, context))
         det = torch.exp(logdet)
         probs_tens = torch.matmul(det, z)
-        print(z.type, logdet.type)
-        print(z.shape, logdet.shape)
-        print(z, logdet)
-        print(probs_tens)
+        print("z", z)
+        print("det", det)
+        print("probs", probs_tens)
 
 
 def main():
