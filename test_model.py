@@ -5,6 +5,7 @@ import json
 import external_maf.datasets as datasets
 import numpy as np
 import torch.utils.data as data
+import external_maf.lhc as lhc
 
 
 def load_model(fn, save_dir="models"):
@@ -49,11 +50,11 @@ def load_for_test(signal_percent):
 
 
 def get_probs(mdl, dataset):
-    loader = data.DataLoader(dataset, batch_size=mdl.args.batch_size, shuffle=False)
+    loader = data.DataLoader(lhc.LHC.Data(dataset), batch_size=mdl.args.batch_size, shuffle=False)
     probs = []
     for x in loader:
-        loss = mdl.maf.loss(x)
-        probs += np.exp(loss)
+        losses = mdl.maf.loss(x)
+        probs += np.exp(losses)
     print(probs.type)
     print(probs.shape)
     print(probs[1:3])
