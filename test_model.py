@@ -47,12 +47,19 @@ def load_for_test(signal_percent):
     return bg, sig
 
 
+def get_probs(mdl, dataset):
+    probs = np.exp(mdl.maf.density(dataset))
+    print(probs.shape)
+    print(probs[1:3])
+
+
 def main():
     file_name = "lhc_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best"
     mdl = load_model(file_name)
     print(mdl.args, mdl.checkpoint)
     bg, sig = load_for_test(mdl.args.signal_percent)
     print(bg.shape, sig.shape, bg[1:3, :], sig[1:3, :])
+    get_probs(mdl, sig[0:10, :])
 
 
 if __name__ == "__main__":

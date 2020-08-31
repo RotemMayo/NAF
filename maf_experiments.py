@@ -92,8 +92,7 @@ class MAF(object):
         self.flow.load_state_dict(states)
 
     def clip_grad_norm(self):
-        nn.utils.clip_grad_norm(self.flow.parameters(),
-                                self.clip)
+        nn.utils.clip_grad_norm(self.flow.parameters(), self.clip)
 
 
 class model(object):
@@ -186,9 +185,7 @@ class model(object):
                 loss_tst = self.evaluate(self.test_loader)
                 print('Epoch: [%4d/%4d] train <= %.2f ' \
                       'valid: %.3f test: %.3f' % \
-                      (self.checkpoint['e'] + 1, epoch, LOSSES / float(counter),
-                       loss_val,
-                       loss_tst))
+                      (self.checkpoint['e'] + 1, epoch, LOSSES / float(counter), loss_val, loss_tst))
 
                 if loss_val < self.checkpoint['best_val']:
                     print(' [^] Best validation loss [^] ... [saving]')
@@ -291,7 +288,7 @@ def parse_args():
     parser.add_argument('--cuda', type=bool, default=False)
 
     parser.add_argument('--dimh', type=int, default=100)
-    parser.add_argument('--flowtype', type=str, default='affine')
+    parser.add_argument('--flowtype', type=str, default='ddsf')
     parser.add_argument('--num_flow_layers', type=int, default=5)
     parser.add_argument('--num_hid_layers', type=int, default=1)
     parser.add_argument('--num_ds_dim', type=int, default=16)
