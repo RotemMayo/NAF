@@ -52,7 +52,7 @@ def main():
     mdl = load_model(file_name)
     print(mdl.args, mdl.checkpoint)
     bg, sig = load_for_test(mdl.args.signal_percent)
-    print(bg.shape, sig.shape, bg[1, :], sig[1, :])
+    print(bg.shape, sig.shape, bg[1:3, :], sig[1:3, :])
 
 
 if __name__ == "__main__":
