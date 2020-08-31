@@ -51,7 +51,7 @@ def load_for_test(signal_percent):
 
 
 def get_probs(mdl, dataset):
-    loader = data.DataLoader(lhc.LHC.Data(dataset), batch_size=mdl.args.batch_size, shuffle=False)
+    loader = data.DataLoader(lhc.LHC.Data(dataset).x, batch_size=mdl.args.batch_size, shuffle=False)
     probs = []
     for x in loader:
         x = Variable(x)
