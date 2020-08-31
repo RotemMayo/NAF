@@ -7,6 +7,7 @@ import numpy as np
 import torch.utils.data as data
 import external_maf.lhc as lhc
 from torch.autograd import Variable
+import torch
 
 
 def load_model(fn, save_dir="models"):
@@ -52,13 +53,18 @@ def load_for_test(signal_percent):
 
 def get_probs(mdl, dataset):
     loader = data.DataLoader(lhc.LHC.Data(dataset).x, batch_size=mdl.args.batch_size, shuffle=False)
+    p = len(dataset[0, :])
     probs = []
     for x in loader:
         x = Variable(x)
-        losses = mdl.maf.loss(x)
-        print(losses.type)
-        print(losses.shape)
-        print(losses)
+        n = x.size(0)
+        context = Variable(torch.FloatTensor(n, 1).zero_())
+        lgd = Variable(torch.FloatTensor(n).zero_())
+        zeros = Variable(torch.FloatTensor(n, p).zero_())
+        z, logdet, _ = mdl.maf.flow((x, lgd, context))
+        print(z.type, logdet.type)
+        print(z.shape, logdet.shape)
+        print(z, logdet)
 
 
 def main():
