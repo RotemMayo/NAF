@@ -62,12 +62,15 @@ def get_scores(mdl, dataset):
     return scores
 
 
+
 def main():
     file_name = "lhc_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best"
     mdl = load_model(file_name)
     bg, sig = load_for_test(mdl.args.signal_percent)
     bg_scores = get_scores(mdl, bg)
     sig_score = get_scores(mdl, sig)
+    bg37_score = get_scores(mdl, bg[37, :])
+    print(bg_scores[37], bg37_score)
 
 
 if __name__ == "__main__":
