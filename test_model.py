@@ -67,7 +67,7 @@ def main():
     print(mdl.args, mdl.checkpoint)
     bg, sig = load_for_test(mdl.args.signal_percent)
     print(bg.shape, sig.shape, bg[1:3, :], sig[1:3, :])
-    get_probs(mdl, sig[0:10, :])
+    get_probs(mdl, bg[0:10, :])
 
 
 if __name__ == "__main__":
