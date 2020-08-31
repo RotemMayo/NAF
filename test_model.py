@@ -57,7 +57,7 @@ def get_probs(mdl, dataset):
     losses = np.array([])
     for x in loader:
         x = Variable(x)
-        losses = np.append(losses, mdl.maf.loss(x).data.cpu().numpy())
+        losses = mdl.maf.loss(x).data.cpu().numpy()
     print(losses.shape)
     print(losses.type)
     print(losses[1:10])
