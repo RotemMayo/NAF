@@ -80,8 +80,8 @@ def main():
 
     sorted = data[(-data[:, 0]).argsort()]
 
-    for i in range(data.shape[0]-1):
-        if data[i, 0] < data[i + 1, 0]:
+    for i in range(sorted.shape[0]-1):
+        if sorted[i, 0] < sorted[i + 1, 0]:
             print("Not sorted")
 
 
