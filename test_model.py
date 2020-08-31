@@ -70,7 +70,7 @@ def main():
     bg_scores = get_scores(mdl, bg)
     sig_score = get_scores(mdl, sig)
     bg37_score = get_scores(mdl, bg[37:40, :])
-    print(bg_scores[37:40], bg37_score)
+    print(bg_scores[37:40]*len(bg_scores), bg37_score*len(bg37_score))
 
 
 if __name__ == "__main__":
