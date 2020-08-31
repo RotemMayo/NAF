@@ -56,10 +56,9 @@ def get_probs(mdl, dataset):
     for x in loader:
         x = Variable(x)
         losses = mdl.maf.loss(x)
-        probs += np.exp(losses)
-    print(probs.type)
-    print(probs.shape)
-    print(probs[1:3])
+        print(losses.type)
+        print(losses.shape)
+        print(losses)
 
 
 def main():
