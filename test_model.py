@@ -54,7 +54,7 @@ def load_for_test(signal_percent):
 def get_probs(mdl, dataset):
     size = dataset.shape[0]
     loader = data.DataLoader(lhc.LHC.Data(dataset).x, batch_size=size, shuffle=False)
-    losses = np.array()
+    losses = np.array([])
     for x in loader:
         x = Variable(x)
         losses.append(mdl.maf.loss(x).data.cpu().numpy())
