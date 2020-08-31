@@ -1,10 +1,11 @@
 from maf_experiments import model
+from maf_experiments import parse_args
 import os
 import json
 
 
 def load_model(fn, save_dir="models"):
-    args = {}
+    args = parse_args()
     old_args = save_dir + '/' + fn + '_args.txt'
     old_path = save_dir + '/' + fn
     if os.path.isfile(old_args):
