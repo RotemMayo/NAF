@@ -69,8 +69,8 @@ def main():
     bg, sig = load_for_test(mdl.args.signal_percent)
     bg_scores = get_scores(mdl, bg)
     sig_score = get_scores(mdl, sig)
-    bg37_score = get_scores(mdl, bg[37, :])
-    print(bg_scores[37], bg37_score)
+    bg37_score = get_scores(mdl, bg[37:40, :])
+    print(bg_scores[37:40], bg37_score)
 
 
 if __name__ == "__main__":
