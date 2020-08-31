@@ -77,8 +77,9 @@ def main():
     sig = np.append(sig, np.ones((n_sig, 1)), axis=1)
 
     data = np.append(sig, bg, axis=0)
-    sorted = data[(-data[:, 0]).argsort()]
+    sorted = data[(data[:, 0]).argsort()]
 
+    print("Going by smallest loss")
     for i in range(6):
         n = 10**i
         print("Number of signal in top events: [" + str(int(np.sum(sorted[:n, -1]))) + "/" + str(n) + "]")
