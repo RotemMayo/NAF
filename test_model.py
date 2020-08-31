@@ -51,17 +51,19 @@ def load_for_test(signal_percent):
     return bg, sig
 
 
-def get_probs(mdl, dataset):
+def get_scores(mdl, dataset):
     size = dataset.shape[0]
     loader = data.DataLoader(lhc.LHC.Data(dataset).x, batch_size=size, shuffle=False)
     losses = np.array([])
     for x in loader:
         x = Variable(x)
         losses = mdl.maf.loss(x).data.cpu().numpy()
-    probs = np.exp(losses / size)
+    scores = np.exp(losses / size)
     print(losses.shape)
     print(losses[1:10])
-    print(probs[1:10])
+    print(scores[1:10])
+    return scores
+
 
 def main():
     file_name = "lhc_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best"
@@ -69,7 +71,8 @@ def main():
     print(mdl.args, mdl.checkpoint)
     bg, sig = load_for_test(mdl.args.signal_percent)
     print(bg.shape, sig.shape, bg[1:3, :], sig[1:3, :])
-    get_probs(mdl, bg[0:100, :])
+    bg_scores = get_scores(mdl, bg)
+    sig_score = get_scores(mdl, sig)
 
 
 if __name__ == "__main__":
