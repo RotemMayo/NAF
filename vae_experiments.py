@@ -386,8 +386,8 @@ def main():
     torch.manual_seed(args.seed+10000)
 
     fn = str(time.time()).replace('.','')
-    print args
-    print fn
+    print(args)
+    print(fn)
 
     print(" [*] Building model!")    
     old_fn = args.save_dir+'/'+args.fn+'_args.txt'
@@ -398,7 +398,7 @@ def main():
                          ['to_train','epoch','anneal'])
         args.__dict__.update(d)
         print(" New args:" )
-        print args
+        print(args)
         mdl = model(args, fn)
         print(" [*] Loading model!")
         mdl.load(args.save_dir+'/'+args.fn)
@@ -411,8 +411,8 @@ def main():
         mdl.train(args.epoch, args.anneal)
         print(" [*] Training finished!")
 
-    print " [**] Valid: %.4f" % mdl.evaluate(mdl.valid_loader, 2000)
-    print " [**] Test: %.4f" % mdl.evaluate(mdl.test_loader, 2000)
+    print (" [**] Valid: %.4f" % mdl.evaluate(mdl.valid_loader, 2000))
+    print (" [**] Test: %.4f" % mdl.evaluate(mdl.test_loader, 2000))
 
     print(" [*] Testing finished!")
 

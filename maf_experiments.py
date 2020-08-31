@@ -10,7 +10,7 @@ import numpy as np
 import torch
 import torch.utils.data as data
 import torch.nn as nn
-#import torch.optim as optim
+# import torch.optim as optim
 from torchkit import optim
 from torch.autograd import Variable
 from torchkit import nn as nn_, flows, utils
@@ -44,36 +44,29 @@ class MAF(object):
         if flowtype == 'affine':
             flow = flows.IAF
         elif flowtype == 'dsf':
-            flow = lambda **kwargs:flows.IAF_DSF(num_ds_dim=num_ds_dim,
-                                                 num_ds_layers=num_ds_layers,
-                                                 **kwargs)
-        elif flowtype == 'ddsf':
-            flow = lambda **kwargs:flows.IAF_DDSF(num_ds_dim=num_ds_dim,
+            flow = lambda **kwargs: flows.IAF_DSF(num_ds_dim=num_ds_dim,
                                                   num_ds_layers=num_ds_layers,
                                                   **kwargs)
-
+        elif flowtype == 'ddsf':
+            flow = lambda **kwargs: flows.IAF_DDSF(num_ds_dim=num_ds_dim,
+                                                   num_ds_layers=num_ds_layers,
+                                                   **kwargs)
 
         sequels = [nn_.SequentialFlow(
             flow(dim=dim,
                  hid_dim=dimh,
                  context_dim=dimc,
-                 num_layers=args.num_hid_layers+1,
+                 num_layers=args.num_hid_layers + 1,
                  activation=act,
                  fixed_order=fixed_order),
             flows.FlipFlow(1)) for i in range(num_flow_layers)] + \
-                  [flows.LinearFlow(dim, dimc),]
-
+                  [flows.LinearFlow(dim, dimc), ]
 
         self.flow = nn.Sequential(
-                *sequels)
-
-
+            *sequels)
 
         if self.cuda:
             self.flow = self.flow.cuda()
-
-
-
 
     def density(self, spl):
         n = spl.size(0)
@@ -86,7 +79,7 @@ class MAF(object):
             zeros = zeros.cuda()
 
         z, logdet, _ = self.flow((spl, lgd, context))
-        losses = - utils.log_normal(z, zeros, zeros+1.0).sum(1) - logdet
+        losses = - utils.log_normal(z, zeros, zeros + 1.0).sum(1) - logdet
         return - losses
 
     def loss(self, x):
@@ -103,9 +96,7 @@ class MAF(object):
                                 self.clip)
 
 
-
 class model(object):
-
     patience = 30
 
     def __init__(self, args, filename):
@@ -130,11 +121,10 @@ class model(object):
             p = 63
             D = load_maf_data('bsds300')
         elif args.dataset == 'lhc':
-            p = 7 # size of row
+            p = 7  # size of row
             D = load_maf_data('lhc', args.signal_percent)
 
         tr, va, te = D.trn.x, D.val.x, D.tst.x
-
 
         self.train_loader = data.DataLoader(tr,
                                             batch_size=args.batch_size,
@@ -157,13 +147,11 @@ class model(object):
                                 amsgrad=amsgrad,
                                 polyak=polyak)
 
-
         # initialize checkpoint
         self.checkpoint = dict()
         self.checkpoint['best_val'] = float('inf')
         self.checkpoint['best_val_epoch'] = 0
         self.checkpoint['e'] = 0
-
 
     def train(self, epoch):
         optim = self.optim
@@ -172,7 +160,7 @@ class model(object):
         LOSSES = 0
         counter = 0
 
-        #for e in range(epoch):
+        # for e in range(epoch):
         while self.checkpoint['e'] < epoch:
             for x in self.train_loader:
                 optim.zero_grad()
@@ -192,44 +180,41 @@ class model(object):
                 optim.step()
                 t += 1
 
-
-
-            if self.checkpoint['e']%1 == 0:
+            if self.checkpoint['e'] % 1 == 0:
                 optim.swap()
                 loss_val = self.evaluate(self.valid_loader)
                 loss_tst = self.evaluate(self.test_loader)
-                print 'Epoch: [%4d/%4d] train <= %.2f ' \
+                print('Epoch: [%4d/%4d] train <= %.2f ' \
                       'valid: %.3f test: %.3f' % \
-                (self.checkpoint['e']+1, epoch, LOSSES/float(counter),
-                 loss_val,
-                 loss_tst)
+                      (self.checkpoint['e'] + 1, epoch, LOSSES / float(counter),
+                       loss_val,
+                       loss_tst))
 
                 if loss_val < self.checkpoint['best_val']:
                     print(' [^] Best validation loss [^] ... [saving]')
-                    self.save(self.save_dir+'/'+self.filename+'_best')
+                    self.save(self.save_dir + '/' + self.filename + '_best')
                     self.checkpoint['best_val'] = loss_val
-                    self.checkpoint['best_val_epoch'] = self.checkpoint['e']+1
+                    self.checkpoint['best_val_epoch'] = self.checkpoint['e'] + 1
 
                 LOSSES = 0
                 counter = 0
                 optim.swap()
 
             self.checkpoint['e'] += 1
-            if (self.checkpoint['e'])%5 == 0:
-                self.save(self.save_dir+'/'+self.filename+'_last')
+            if (self.checkpoint['e']) % 5 == 0:
+                self.save(self.save_dir + '/' + self.filename + '_last')
 
             if self.impatient():
-                print 'Terminating due to impatience ... \n'
+                print('Terminating due to impatience ... \n')
                 break
 
         # loading best valid model (early stopping)
-        self.load(self.save_dir+'/'+self.filename+'_best')
+        self.load(self.save_dir + '/' + self.filename + '_best')
 
     def impatient(self):
         current_epoch = self.checkpoint['e']
         bestv_epoch = self.checkpoint['best_val_epoch']
         return current_epoch - bestv_epoch > self.patience
-
 
     def evaluate(self, dataloader):
         LOSSES = 0
@@ -244,24 +229,22 @@ class model(object):
             c += losses.shape[0]
         return LOSSES / float(c)
 
-
     def save(self, fn):
-        torch.save(self.maf.state_dict(), fn+'_model.pt')
-        torch.save(self.optim.state_dict(), fn+'_optim.pt')
-        with open(fn+'_args.txt','w') as out:
-            out.write(json.dumps(self.args.__dict__,indent=4))
-        with open(fn+'_checkpoint.txt','w') as out:
-            out.write(json.dumps(self.checkpoint,indent=4))
+        torch.save(self.maf.state_dict(), fn + '_model.pt')
+        torch.save(self.optim.state_dict(), fn + '_optim.pt')
+        with open(fn + '_args.txt', 'w') as out:
+            out.write(json.dumps(self.args.__dict__, indent=4))
+        with open(fn + '_checkpoint.txt', 'w') as out:
+            out.write(json.dumps(self.checkpoint, indent=4))
 
     def load(self, fn):
-        self.maf.load_state_dict(torch.load(fn+'_model.pt'))
-        self.optim.load_state_dict(torch.load(fn+'_optim.pt'))
-
+        self.maf.load_state_dict(torch.load(fn + '_model.pt'))
+        self.optim.load_state_dict(torch.load(fn + '_optim.pt'))
 
     def resume(self, fn):
         self.load(fn)
         self.checkpoint.update(
-            json.loads(open(fn+'_checkpoint.txt','r').read()))
+            json.loads(open(fn + '_checkpoint.txt', 'r').read()))
 
 
 # =============================================================================
@@ -270,6 +253,8 @@ class model(object):
 
 
 """parsing and configuration"""
+
+
 def parse_args():
     desc = "MAF"
     parser = argparse.ArgumentParser(description=desc)
@@ -305,7 +290,6 @@ def parse_args():
     parser.add_argument('--polyak', type=float, default=0.0)
     parser.add_argument('--cuda', type=bool, default=False)
 
-
     parser.add_argument('--dimh', type=int, default=100)
     parser.add_argument('--flowtype', type=str, default='affine')
     parser.add_argument('--num_flow_layers', type=int, default=5)
@@ -316,10 +300,12 @@ def parse_args():
                         help='Fix the made ordering to be the given order')
     parser.add_argument('--signal_percent', type=float, default=0)
 
-
     return check_args(parser.parse_args())
 
+
 """checking arguments"""
+
+
 def check_args(args):
     # --save_dir
     if not os.path.exists(args.save_dir):
@@ -349,7 +335,6 @@ def check_args(args):
 
 
 def args2fn(args):
-
     prefix_key_pairs = [
         ('', 'dataset'),
         ('sp', 'signal_percent'),
@@ -360,15 +345,16 @@ def args2fn(args):
         ('f', 'flowtype'),
         ('fl', 'num_flow_layers'),
         ('l', 'num_hid_layers'),
-        ('dsdim','num_ds_dim'),
+        ('dsdim', 'num_ds_dim'),
         ('dsl', 'num_ds_layers'),
     ]
 
-    return '_'.join([p+str(args.__dict__[k]) for p, k in prefix_key_pairs])
-
+    return '_'.join([p + str(args.__dict__[k]) for p, k in prefix_key_pairs])
 
 
 """main"""
+
+
 def main():
     # parse arguments
     args = parse_args()
@@ -376,12 +362,12 @@ def main():
         exit()
 
     np.random.seed(args.seed)
-    torch.manual_seed(args.seed+10000)
+    torch.manual_seed(args.seed + 10000)
 
-    #fn = str(time.time()).replace('.','')
+    # fn = str(time.time()).replace('.','')
     fn = args2fn(args)
-    print args
-    print '\nfilename: ', fn
+    print(args)
+    print('\nfilename: ', fn)
 
     print(" [*] Building model!")
     if args.fn != '0':
@@ -389,27 +375,28 @@ def main():
         # args.fn ends with ``_last'' or ``_best''
         old_fn = args.fn
         overwrite_args = True
-        print 'MANUALLY RESUMING'
+        print('MANUALLY RESUMING')
     else:
         # automatic resuming the last model
         # (of the same args) if it exists
         old_fn = fn + '_last'
         overwrite_args = False
-        print 'AUTOMATICALLY RESUMING'
+        print('AUTOMATICALLY RESUMING')
 
-    old_args = args.save_dir+'/'+old_fn+'_args.txt'
-    old_path = args.save_dir+'/'+old_fn
+    old_args = args.save_dir + '/' + old_fn + '_args.txt'
+    old_path = args.save_dir + '/' + old_fn
     if os.path.isfile(old_args):
         def without_keys(d, keys):
             return {x: d[x] for x in d if x not in keys}
-        d = without_keys(json.loads(open(old_args,'r').read()),
-                         ['to_train','epoch'])
+
+        d = without_keys(json.loads(open(old_args, 'r').read()),
+                         ['to_train', 'epoch'])
         args.__dict__.update(d)
         if overwrite_args:
             fn = args2fn(args)
-        print(" New args:" )
-        print args
-        print '\nfilename: ', fn
+        print(" New args:")
+        print(args)
+        print('\nfilename: ', fn)
         mdl = model(args, fn)
         print(" [*] Loading model!")
         mdl.resume(old_path)
@@ -422,14 +409,11 @@ def main():
         mdl.train(args.epoch)
         print(" [*] Training finished!")
 
-    print " [**] Valid: %.4f" % mdl.evaluate(mdl.valid_loader)
-    print " [**] Test: %.4f" % mdl.evaluate(mdl.test_loader)
+    print(" [**] Valid: %.4f" % mdl.evaluate(mdl.valid_loader))
+    print(" [**] Test: %.4f" % mdl.evaluate(mdl.test_loader))
 
     print(" [*] Testing finished!")
 
 
 if __name__ == '__main__':
     main()
-
-
-
