@@ -81,7 +81,7 @@ def main():
     print(sig_scores[0], sig[0, :], data[0, :])
     print(bg_scores[-1], bg[-1, :], data[-1, :])
 
-    sorted = data[data[:, 0].argsort()]
+    sorted = data[(-data[:, 0]).argsort()]
     print(sorted[0:5, :])
 
 
