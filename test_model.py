@@ -52,22 +52,15 @@ def load_for_test(signal_percent):
 
 
 def get_probs(mdl, dataset):
-    loader = data.DataLoader(lhc.LHC.Data(dataset).x, batch_size=mdl.args.batch_size, shuffle=False)
-    p = len(dataset[0, :])
-    probs = []
+    size, p = dataset.shape()
+    loader = data.DataLoader(lhc.LHC.Data(dataset).x, batch_size=size, shuffle=False)
+    losses = np.array()
     for x in loader:
         x = Variable(x)
-        n = x.size(0)
-        context = Variable(torch.FloatTensor(n, 1).zero_())
-        lgd = Variable(torch.FloatTensor(n).zero_())
-        zeros = Variable(torch.FloatTensor(n, p).zero_())
-        z, logdet, _ = mdl.maf.flow((x, lgd, context))
-        det = torch.exp(logdet)
-        probs_tens = torch.matmul(det, z)
-        print("z", z)
-        print("det", det)
-        print("probs", probs_tens)
-
+        losses.append(mdl.maf.loss(x).data.cpu().numpy())
+    print(losses.shape)
+    print(losses.type)
+    print(losses[1:10])
 
 def main():
     file_name = "lhc_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best"
