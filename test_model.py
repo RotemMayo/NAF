@@ -62,15 +62,27 @@ def get_scores(mdl, dataset):
     return scores
 
 
-
 def main():
     file_name = "lhc_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best"
     mdl = load_model(file_name)
     bg, sig = load_for_test(mdl.args.signal_percent)
+
+    n_bg = bg.shape[0]
     bg_scores = get_scores(mdl, bg)
-    sig_score = get_scores(mdl, sig)
-    bg37_score = get_scores(mdl, bg[37:40, :])
-    print(bg_scores[37:40]*len(bg_scores), bg37_score*len(bg37_score))
+    bg = np.append(bg, bg_scores, axis=1)
+    bg = np.append(bg, np.zeros((n_bg, 1)), axis=1)
+    print(bg[100:105, :])
+    print(bg_scores[100:105])
+
+    n_sig = sig.shape[0]
+    sig_scores = get_scores(mdl, sig)
+    sig = np.append(sig, sig_scores, axis=1)
+    sig = np.append(sig, np.ones((n_sig, 1)), axis=1)
+    print(sig[100:105, :])
+    print(sig_scores[100:105])
+
+
+
 
 
 if __name__ == "__main__":
