@@ -69,6 +69,8 @@ def main():
 
     n_bg = bg.shape[0]
     bg_scores = get_scores(mdl, bg)
+    print(bg_scores.shape)
+    print(bg.shape)
     bg = np.append(bg, bg_scores, axis=1)
     bg = np.append(bg, np.zeros((n_bg, 1)), axis=1)
     print(bg[100:105, :])
