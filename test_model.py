@@ -58,6 +58,7 @@ def get_scores(mdl, dataset):
     for x in loader:
         x = Variable(x)
         losses = mdl.maf.loss(x).data.cpu().numpy()
+    losses = losses.reshape(size, 1)
     scores = losses / size
     return scores
 
