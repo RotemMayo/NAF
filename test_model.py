@@ -62,7 +62,7 @@ def get_scores(mdl, dataset):
 
 
 def test_model(file_name, sp, flow_type):
-    print("Signal percent: " + str(int(sp*100)))
+    print("Signal percent: " + str(sp*100))
     print("Flow type: " + flow_type)
     print("File name: " + file_name)
     mdl = load_model(file_name)
@@ -91,7 +91,7 @@ def test_model(file_name, sp, flow_type):
     for i in range(7):
         n = 10 ** i
         print("Number of signal in bottom events: [" + str(int(np.sum(sorted[-n:, -1]))) + "/" + str(n) + "]")
-    print("=======================================\n\n")
+    print("=========================================================================\n\n")
 
 
 def main():
@@ -102,11 +102,6 @@ def main():
     test_model("lhc_sp0.05_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.05, "affine")
     test_model("lhc_sp0.075_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.075, "affine")
     test_model("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "affine")
-
-
-
-
-
 
 
 if __name__ == "__main__":
