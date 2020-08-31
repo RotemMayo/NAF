@@ -63,7 +63,7 @@ def get_probs(mdl, dataset):
         zeros = Variable(torch.FloatTensor(n, p).zero_())
         z, logdet, _ = mdl.maf.flow((x, lgd, context))
         det = torch.exp(logdet)
-        probs_tens = torch.dot(det, z)
+        probs_tens = torch.matmul(det, z)
         print(z.type, logdet.type)
         print(z.shape, logdet.shape)
         print(z, logdet)
