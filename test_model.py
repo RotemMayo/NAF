@@ -32,7 +32,7 @@ def load_model(fn, save_dir="models"):
 def main():
     file_name = "lhc_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best"
     mdl = load_model(file_name)
-    print(mdl)
+    print(mdl.args, mdl.checkpoint)
 
 
 if __name__ == "__main__":
