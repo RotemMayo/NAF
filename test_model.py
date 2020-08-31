@@ -85,7 +85,7 @@ def main():
         print("Number of signal in top events: [" + str(int(np.sum(sorted[:n, -1]))) + "/" + str(n) + "]")
 
     for i in range(sorted.shape[0]-1):
-        if sorted[i, 0] < sorted[i + 1, 0]:
+        if sorted[i, 0] > sorted[i + 1, 0]:
             print("Not sorted")
 
 
