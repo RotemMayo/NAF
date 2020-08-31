@@ -79,11 +79,17 @@ def main():
     data = np.append(sig, bg, axis=0)
     sorted = data[(-data[:, 0]).argsort()]
 
-    print("Going by largest loss: ")
     print("Total signal: " + str(int(np.sum(sorted[:, -1]))))
+    print("Going by largest loss: ")
     for i in range(7):
         n = 10**i
         print("Number of signal in top events: [" + str(int(np.sum(sorted[:n, -1]))) + "/" + str(n) + "]")
+
+    print("Going by smallest loss: ")
+    for i in range(7):
+        n = 10 ** i
+        print("Number of signal in bottom events: [" + str(int(np.sum(sorted[-n:, -1]))) + "/" + str(n) + "]")
+
 
 
 if __name__ == "__main__":
