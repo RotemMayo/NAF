@@ -4,6 +4,7 @@ import os
 import json
 import external_maf.datasets as datasets
 import numpy as np
+import torch.utils.data as data
 
 
 def load_model(fn, save_dir="models"):
@@ -48,7 +49,11 @@ def load_for_test(signal_percent):
 
 
 def get_probs(mdl, dataset):
-    probs = np.exp(mdl.maf.density(dataset))
+    loader = data.DataLoader(dataset, batch_size=mdl.args.batch_size, shuffle=False)
+    probs = []
+    for x in loader:
+        probs += np.exp(mdl.maf.density(dataset))
+    print(probs.type)
     print(probs.shape)
     print(probs[1:3])
 
