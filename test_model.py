@@ -6,6 +6,7 @@ import external_maf.datasets as datasets
 import numpy as np
 import torch.utils.data as data
 import external_maf.lhc as lhc
+from torch.autograd import Variable
 
 
 def load_model(fn, save_dir="models"):
@@ -53,6 +54,7 @@ def get_probs(mdl, dataset):
     loader = data.DataLoader(lhc.LHC.Data(dataset), batch_size=mdl.args.batch_size, shuffle=False)
     probs = []
     for x in loader:
+        x = Variable(x)
         losses = mdl.maf.loss(x)
         probs += np.exp(losses)
     print(probs.type)
