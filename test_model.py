@@ -79,7 +79,7 @@ def main():
     data = np.append(sig, bg, axis=0)
     sorted = data[(-data[:, 0]).argsort()]
 
-    print("Going by largest loss: ", sorted[0:5, :])
+    print("Going by largest loss: ")
     print("Total signal: " + str(int(np.sum(sorted[:, -1]))))
     for i in range(7):
         n = 10**i
