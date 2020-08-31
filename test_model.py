@@ -59,7 +59,6 @@ def get_probs(mdl, dataset):
         x = Variable(x)
         losses = mdl.maf.loss(x).data.cpu().numpy()
     print(losses.shape)
-    print(losses.type)
     print(losses[1:10])
 
 def main():
