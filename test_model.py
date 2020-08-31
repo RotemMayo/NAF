@@ -77,12 +77,13 @@ def main():
     sig = np.append(sig, np.ones((n_sig, 1)), axis=1)
 
     data = np.append(sig, bg, axis=0)
-    print(sig.shape, bg.shape, data.shape)
-    print(sig_scores[0], sig[0, :], data[0, :])
-    print(bg_scores[-1], bg[-1, :], data[-1, :])
 
     sorted = data[(-data[:, 0]).argsort()]
-    print(sorted[0:5, :])
+
+    for i in range(data.shape[0]-1):
+        if data[i, 0] < data[i + 1, 0]:
+            print("Not sorted")
+
 
 
 
