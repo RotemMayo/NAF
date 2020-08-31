@@ -2,6 +2,8 @@ from maf_experiments import model
 from maf_experiments import parse_args
 import os
 import json
+import external_maf.datasets as datasets
+import numpy as np
 
 
 def load_model(fn, save_dir="models"):
@@ -29,10 +31,28 @@ def load_model(fn, save_dir="models"):
         return mdl
 
 
+def load_for_test(signal_percent):
+    bg_path = datasets.root + 'lhc/bg.npy'
+    sig_path = datasets.root + 'lhc/sig.npy'
+    sig = np.nan_to_num(np.load(sig_path))
+    bg = np.nan_to_num(np.load(bg_path))
+    bg_rows, _ = bg.shape
+    sig_rows, _ = sig.shape
+    idx = np.random.randint(sig_rows, size=int(signal_percent * bg_rows))
+    data = np.concatenate((bg, sig[idx, :]), axis=0)
+    mu = data.mean(axis=0)
+    s = data.std(axis=0)
+    bg = (bg - mu) / s
+    sig = (sig - mu) / s
+    return bg, sig
+
+
 def main():
     file_name = "lhc_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best"
     mdl = load_model(file_name)
-    print(mdl.args, mdl.checkpoint, mdl.maf.__dict__, mdl.optim.__dict__)
+    print(mdl.args, mdl.checkpoint)
+    bg, sig = load_for_test(mdl.args.signal_percent)
+    print(bg.shape, sig.shape, bg[1, :], sig[1, :])
 
 
 if __name__ == "__main__":
