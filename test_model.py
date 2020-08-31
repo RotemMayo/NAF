@@ -52,7 +52,8 @@ def get_probs(mdl, dataset):
     loader = data.DataLoader(dataset, batch_size=mdl.args.batch_size, shuffle=False)
     probs = []
     for x in loader:
-        probs += np.exp(mdl.maf.density(dataset))
+        loss = mdl.loss(x)
+        probs += np.exp(loss)
     print(probs.type)
     print(probs.shape)
     print(probs[1:3])
