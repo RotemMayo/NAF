@@ -58,19 +58,14 @@ def get_scores(mdl, dataset):
     for x in loader:
         x = Variable(x)
         losses = mdl.maf.loss(x).data.cpu().numpy()
-    scores = np.exp(losses / size)
-    print(losses.shape)
-    print(losses[1:10])
-    print(scores[1:10])
+    scores = losses / size
     return scores
 
 
 def main():
     file_name = "lhc_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best"
     mdl = load_model(file_name)
-    print(mdl.args, mdl.checkpoint)
     bg, sig = load_for_test(mdl.args.signal_percent)
-    print(bg.shape, sig.shape, bg[1:3, :], sig[1:3, :])
     bg_scores = get_scores(mdl, bg)
     sig_score = get_scores(mdl, sig)
 
