@@ -58,8 +58,10 @@ def get_probs(mdl, dataset):
     for x in loader:
         x = Variable(x)
         losses = mdl.maf.loss(x).data.cpu().numpy()
+    probs = np.exp(losses / size)
     print(losses.shape)
     print(losses[1:10])
+    print(probs[1:10])
 
 def main():
     file_name = "lhc_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best"
