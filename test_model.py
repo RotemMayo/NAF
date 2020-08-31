@@ -58,9 +58,7 @@ def get_scores(mdl, dataset):
     for x in loader:
         x = Variable(x)
         losses = mdl.maf.loss(x).data.cpu().numpy()
-    losses = losses.reshape(size, 1)
-    scores = losses / size
-    return scores
+    return losses.reshape(size, 1)
 
 
 def main():
@@ -70,19 +68,21 @@ def main():
 
     n_bg = bg.shape[0]
     bg_scores = get_scores(mdl, bg)
-    print(bg_scores.shape)
-    print(bg.shape)
-    bg = np.append(bg, bg_scores, axis=1)
+    bg = np.append(bg_scores, bg, axis=1)
     bg = np.append(bg, np.zeros((n_bg, 1)), axis=1)
-    print(bg[100:105, :])
-    print(bg_scores[100:105])
 
     n_sig = sig.shape[0]
     sig_scores = get_scores(mdl, sig)
-    sig = np.append(sig, sig_scores, axis=1)
+    sig = np.append(sig_scores, sig, axis=1)
     sig = np.append(sig, np.ones((n_sig, 1)), axis=1)
-    print(sig[100:105, :])
-    print(sig_scores[100:105])
+
+    data = np.append(sig, bg, axis=0)
+    print(sig.shape, bg.shape, data.shape)
+    print(sig_scores[0], sig[0, :], data[0, :])
+    print(bg_scores[-1], bg[-1, :], data[-1, :])
+
+    data = data.argsort(data[:, 0])
+
 
 
 
