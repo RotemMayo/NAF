@@ -61,8 +61,10 @@ def get_scores(mdl, dataset):
     return losses.reshape(size, 1)
 
 
-def main():
-    file_name = "lhc_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best"
+def test_model(file_name, sp, flow_type):
+    print("Signal percent: " + str(int(sp*100)))
+    print("Flow type: " + flow_type)
+    print("File name: " + file_name)
     mdl = load_model(file_name)
     bg, sig = load_for_test(mdl.args.signal_percent)
 
@@ -89,6 +91,21 @@ def main():
     for i in range(7):
         n = 10 ** i
         print("Number of signal in bottom events: [" + str(int(np.sum(sorted[-n:, -1]))) + "/" + str(n) + "]")
+    print("=======================================\n\n")
+
+
+def main():
+    test_model("lhc_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0, "affine")
+    test_model("lhc_sp0.001_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.001, "affine")
+    test_model("lhc_sp0.01_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.01, "affine")
+    test_model("lhc_sp0.025_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.025, "affine")
+    test_model("lhc_sp0.05_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.05, "affine")
+    test_model("lhc_sp0.075_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.075, "affine")
+    test_model("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "affine")
+
+
+
+
 
 
 
