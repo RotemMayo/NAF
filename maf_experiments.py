@@ -344,6 +344,7 @@ def args2fn(args):
         ('l', 'num_hid_layers'),
         ('dsdim', 'num_ds_dim'),
         ('dsl', 'num_ds_layers'),
+        ('cuda', 'cuda')
     ]
 
     return '_'.join([p + str(args.__dict__[k]) for p, k in prefix_key_pairs])
