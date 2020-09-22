@@ -31,7 +31,7 @@ def load_model(fn, save_dir="models"):
         print(args)
         """
 
-        print_to_file('\nfilename: ', fn)
+        print_to_file('\nfilename: ' + fn)
         mdl = model(args, fn)
         print_to_file(" [*] Loading model!")
         mdl.load(old_path)
