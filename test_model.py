@@ -9,6 +9,7 @@ import external_maf.lhc as lhc
 from torch.autograd import Variable
 import torch
 
+OUTPUT_FILE = "test_output.txt"
 
 def load_model(fn, save_dir="models"):
     args = parse_args()
@@ -28,9 +29,9 @@ def load_model(fn, save_dir="models"):
         print(args)
         """
 
-        print('\nfilename: ', fn)
+        print_to_file('\nfilename: ', fn)
         mdl = model(args, fn)
-        print(" [*] Loading model!")
+        print_to_file(" [*] Loading model!")
         mdl.load(old_path)
         return mdl
 
@@ -61,12 +62,17 @@ def get_scores(mdl, dataset):
     return losses.reshape(size, 1)
 
 
+def print_to_file(msg):
+    print(msg, file=open(OUTPUT_FILE, "a"))
+
+
+
 def test_model(file_name, sp, flow_type):
-    print("Signal percent: " + str(sp*100))
-    print("Num signals: " + str(sp*10**5))
-    print("Num bg: " + str(10**6))
-    print("Flow type: " + flow_type)
-    print("File name: " + file_name)
+    print_to_file("Signal percent: " + str(sp*100))
+    print_to_file("Num signals: " + str(sp*10**5))
+    print_to_file("Num bg: " + str(10**6))
+    print_to_file("Flow type: " + flow_type)
+    print_to_file("File name: " + file_name)
     mdl = load_model(file_name)
     bg, sig = load_for_test(mdl.args.signal_percent)
 
@@ -83,17 +89,17 @@ def test_model(file_name, sp, flow_type):
     data = np.append(sig, bg, axis=0)
     sorted = data[(-data[:, 0]).argsort()]
 
-    print("Total signal: " + str(int(np.sum(sorted[:, -1]))))
-    print("Going by largest loss: ")
+    print_to_file("Total signal: " + str(int(np.sum(sorted[:, -1]))))
+    print_to_file("Going by largest loss: ")
     for i in range(7):
         n = 10**i
-        print("Number of signal in top events: [" + str(int(np.sum(sorted[:n, -1]))) + "/" + str(n) + "]")
+        print_to_file("Number of signal in top events: [" + str(int(np.sum(sorted[:n, -1]))) + "/" + str(n) + "]")
 
-    print("Going by smallest loss: ")
+    print_to_file("Going by smallest loss: ")
     for i in range(7):
         n = 10 ** i
-        print("Number of signal in bottom events: [" + str(int(np.sum(sorted[-n:, -1]))) + "/" + str(n) + "]")
-    print("=========================================================================\n\n")
+        print_to_file("Number of signal in bottom events: [" + str(int(np.sum(sorted[-n:, -1]))) + "/" + str(n) + "]")
+    print_to_file("=========================================================================\n\n")
 
 
 def main():
