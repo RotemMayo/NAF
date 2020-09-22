@@ -9,9 +9,26 @@ import torch.utils.data as data
 import external_maf.lhc as lhc
 from torch.autograd import Variable
 import torch
+from matplotlib import pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 
-# OUTPUT_FILE = open("test_output.txt", "a")
-FILES_TO_TEST = []
+PDF_NAME_FORMAT = "results/{}_loss_plots.pdf"
+OBS_LABELS = ["Loss", "M_{jj}", "N_{j}", "m_{1}", "m_{2}", "First jet {\Tau}_{21}", "Second jet {\Tau}_{21}", "Classifier"]
+FILES_TO_TEST = [
+    ("lhc_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0, "affine"),
+    ("lhc_sp0.001_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.001, "affine"),
+    ("lhc_sp0.01_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.01, "affine"),
+    ("lhc_sp0.025_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.025, "affine"),
+    ("lhc_sp0.05_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.05, "affine"),
+    ("lhc_sp0.075_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.075, "affine"),
+    ("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "affine"),
+    ("lhc_sp0.001_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.001, "ddsf"),
+    ("lhc_sp0.01_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.01, "ddsf"),
+    ("lhc_sp0.025_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.025, "ddsf"),
+    ("lhc_sp0.05_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.05, "ddsf"),
+    ("lhc_sp0.075_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.075, "ddsf"),
+    ("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "ddsf"),
+]
 
 
 def load_model(fn, save_dir="models"):
@@ -21,17 +38,8 @@ def load_model(fn, save_dir="models"):
     if os.path.isfile(old_args):
         def without_keys(d, keys):
             return {x: d[x] for x in d if x not in keys}
-
         d = without_keys(json.loads(open(old_args, 'r').read()), ['to_train', 'epoch'])
         args.__dict__.update(d)
-
-        """
-        if overwrite_args:
-            fn = args2fn(args)
-        print(" New args:")
-        print(args)
-        """
-
         print_to_file('\nfilename: ' + fn)
         mdl = model(args, fn)
         print_to_file(" [*] Loading model!")
@@ -66,7 +74,37 @@ def get_scores(mdl, dataset):
 
 
 def print_to_file(msg):
+    # print(msg)
     subprocess.call(["echo ", msg], shell=True)
+
+
+def all_plots(sig, bg, name):
+    with PdfPages(name) as pdf:
+        sig_loss = sig[:, 0]
+        bg_loss = bg[:, 0]
+
+        # Plotting histograms
+        plt.figure()
+        plt.hist(sig_loss, color="r", label="sig")
+        plt.hist(bg_loss, color="b", label="bg")
+        plt.legend()
+        plt.xlabel(OBS_LABELS[0])
+        plt.ylabel("Num events")
+        pdf.savefig()
+        plt.close()
+
+        # Plotting observables vs loss
+        for i in range(1, sig.shape[1] - 2):
+            sig_obs = sig[:, i]
+            bg_obs = bg[:, i]
+            plt.figure()
+            plt.plot(sig_obs, sig_loss, color="r", label="sig", marker='.')
+            plt.plot(bg_obs, bg_loss, color="b", label="bg", marker='.')
+            plt.legend()
+            plt.xlabel(OBS_LABELS[i])
+            plt.ylabel(OBS_LABELS[0])
+            pdf.savefig()
+            plt.close()
 
 
 def test_model(file_name, sp, flow_type):
@@ -102,18 +140,13 @@ def test_model(file_name, sp, flow_type):
         n = 10 ** i
         print_to_file("Number of signal in bottom events: [" + str(int(np.sum(sorted[-n:, -1]))) + "/" + str(n) + "]")
     print_to_file("=========================================================================\n\n")
+    all_plots(sig, bg, PDF_NAME_FORMAT.format(file_name))
 
 
 def main():
-    test_model("lhc_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0, "affine")
-    test_model("lhc_sp0.001_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.001, "affine")
-    test_model("lhc_sp0.01_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.01, "affine")
-    test_model("lhc_sp0.025_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.025, "affine")
-    test_model("lhc_sp0.05_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.05, "affine")
-    test_model("lhc_sp0.075_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.075, "affine")
-    test_model("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "affine")
+    for file_data in FILES_TO_TEST:
+        test_model(**file_data)
 
 
 if __name__ == "__main__":
     main()
-    OUTPUT_FILE.close()
