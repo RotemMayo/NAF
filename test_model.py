@@ -66,7 +66,7 @@ def get_scores(mdl, dataset):
 
 
 def print_to_file(msg):
-    subprocess.check_call("echo " + msg)
+    subprocess.call(["echo ", msg])
 
 
 def test_model(file_name, sp, flow_type):
