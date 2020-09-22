@@ -63,6 +63,8 @@ def get_scores(mdl, dataset):
 
 def test_model(file_name, sp, flow_type):
     print("Signal percent: " + str(sp*100))
+    print("Num signals: " + str(sp*10**5))
+    print("Num bg: " + str(10**6))
     print("Flow type: " + flow_type)
     print("File name: " + file_name)
     mdl = load_model(file_name)
