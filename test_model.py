@@ -65,7 +65,7 @@ def get_scores(mdl, dataset):
 
 
 def print_to_file(msg):
-    print(msg, file=OUTPUT_FILE)
+    OUTPUT_FILE.write(msg)
 
 
 def test_model(file_name, sp, flow_type):
@@ -115,3 +115,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    OUTPUT_FILE.close()
