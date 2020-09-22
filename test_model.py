@@ -9,7 +9,9 @@ import external_maf.lhc as lhc
 from torch.autograd import Variable
 import torch
 
-OUTPUT_FILE = "test_output.txt"
+OUTPUT_FILE = open("test_output.txt", "a")
+FILES_TO_TEST = []
+
 
 def load_model(fn, save_dir="models"):
     args = parse_args()
@@ -63,8 +65,7 @@ def get_scores(mdl, dataset):
 
 
 def print_to_file(msg):
-    print(msg, file=open(OUTPUT_FILE, "a"))
-
+    print(msg, file=OUTPUT_FILE)
 
 
 def test_model(file_name, sp, flow_type):
