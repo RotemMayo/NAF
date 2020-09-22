@@ -1,6 +1,7 @@
 from maf_experiments import model
 from maf_experiments import parse_args
 import os
+import subprocess
 import json
 import external_maf.datasets as datasets
 import numpy as np
@@ -9,7 +10,7 @@ import external_maf.lhc as lhc
 from torch.autograd import Variable
 import torch
 
-OUTPUT_FILE = open("test_output.txt", "a")
+# OUTPUT_FILE = open("test_output.txt", "a")
 FILES_TO_TEST = []
 
 
@@ -65,7 +66,7 @@ def get_scores(mdl, dataset):
 
 
 def print_to_file(msg):
-    OUTPUT_FILE.write(msg + "\n")
+    subprocess.check_call("echo " + msg)
 
 
 def test_model(file_name, sp, flow_type):
