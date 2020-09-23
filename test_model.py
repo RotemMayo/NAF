@@ -129,6 +129,8 @@ def all_plots(sig, bg, name):
         save_plot(pdf, png_path)
         plt.close()
 
+        sig_loss = np.log(sig_loss)
+        bg_loss = np.log(bg_loss)
 
         # Plotting observables vs loss
         for i in tqdm(range(1, sig.shape[1] - 2)):
