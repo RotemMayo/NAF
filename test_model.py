@@ -19,7 +19,7 @@ mpl.rcParams['agg.path.chunksize'] = 10000
 PLOT_FLAG = True
 PDF_FLAG = False
 PNG_FLAG = True
-OBS_LABELS = ["Loss", "Mjj", "Nj", "m1", "m2", "First_jet_tau21",
+OBS_LABELS = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "First_jet_tau21",
               "Second_jet_tau_21", "Classifier"]
 FILES_TO_TEST = [
     ("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "ddsf"),
@@ -37,9 +37,13 @@ FILES_TO_TEST = [
 
 ]
 NUMBERS_TO_CHECK = [10**j for j in range(7)] + [j*10**4 for j in range(1, 10)] + [j*10**5 for j in range(1, 10)]
+MIN_LOSS = -5
+MAX_LOSS = 100
+NBINS = 300
 TIME_STAMP = datetime.now().strftime("%d%m%Y_%H%M%S")
-OUTPUT_FILE = "results/all_results_" + TIME_STAMP + ".txt"
-OUTPUT_DIR_FORMAT = "results/{}_" + TIME_STAMP + "/"
+RUN_OUTPUT_DIR = "results/run_{}/".format(TIME_STAMP)
+OUTPUT_FILE = "{}all_results.txt".format(RUN_OUTPUT_DIR)
+MODEL_OUTPUT_DIR_FORMAT = RUN_OUTPUT_DIR + "{}/"
 PDF_NAME_FORMAT = "{}plots.pdf"
 PNG_NAME_FORMAT = "{}{}.png"
 
@@ -101,9 +105,9 @@ def save_plot(pdf, png_path):
 
 
 def all_plots(sig, bg, name):
-    output_dir = OUTPUT_DIR_FORMAT.format(name)
+    output_dir = MODEL_OUTPUT_DIR_FORMAT.format(name)
     if not os.path.isdir(output_dir):
-        os.mkdir(OUTPUT_DIR_FORMAT.format(name))
+        os.mkdir(MODEL_OUTPUT_DIR_FORMAT.format(name))
     pdf_path = PDF_NAME_FORMAT.format(output_dir)
 
     with PdfPages(pdf_path) as pdf:
@@ -112,22 +116,27 @@ def all_plots(sig, bg, name):
 
         # Plotting histograms
         plt.figure()
-        plt.hist(sig_loss, color="r", label="sig", log=True)
-        plt.hist(bg_loss, color="b", label="bg", log=True)
+        bins = np.histogram(np.hstack((sig_loss, bg_loss)), bins=NBINS)[1]
+        plt.hist(bg_loss, color="b", label="bg", log=True, bins=bins)
+        plt.hist(sig_loss, color="r", label="sig", log=True, bins=bins)
         plt.legend()
         plt.xlabel(OBS_LABELS[0])
         plt.ylabel("Num events")
         png_path = PNG_NAME_FORMAT.format(output_dir, "histogram")
         save_plot(pdf, png_path)
+        plt.xlim(MIN_LOSS, MAX_LOSS)
+        png_path = PNG_NAME_FORMAT.format(output_dir, "histogram_no_outliers")
+        save_plot(pdf, png_path)
         plt.close()
+
 
         # Plotting observables vs loss
         for i in tqdm(range(1, sig.shape[1] - 2)):
             sig_obs = sig[:, i]
             bg_obs = bg[:, i]
             plt.figure()
-            plt.scatter(sig_obs, sig_loss, color="r", label="sig", marker='.')
             plt.scatter(bg_obs, bg_loss, color="b", label="bg", marker='.')
+            plt.scatter(sig_obs, sig_loss, color="r", label="sig", marker='.')
             plt.legend()
             plt.xlabel(OBS_LABELS[i])
             plt.ylabel(OBS_LABELS[0])
@@ -172,6 +181,8 @@ def test_model(file_name, sp, flow_type):
 
 
 def main():
+    if not os.path.isdir(RUN_OUTPUT_DIR):
+        os.mkdir(RUN_OUTPUT_DIR)
     for i in tqdm(range(len(FILES_TO_TEST))):
         file_data = FILES_TO_TEST[i]
         test_model(*file_data)
