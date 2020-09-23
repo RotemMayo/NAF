@@ -11,9 +11,21 @@ from torch.autograd import Variable
 import torch
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
+from tqdm import tqdm
+from datetime import datetime
 
+
+DATE_TIME_FORMAT = "%d%m%Y_%H%M%S"
+
+
+def get_time_stamp():
+    return datetime.now().strftime(DATE_TIME_FORMAT)
+
+
+OUTPUT_FILE = "results/all_results_" + get_time_stamp()
 PDF_NAME_FORMAT = "results/{}_loss_plots.pdf"
-OBS_LABELS = ["Loss", "M_{jj}", "N_{j}", "m_{1}", "m_{2}", "First jet {\Tau}_{21}", "Second jet {\Tau}_{21}", "Classifier"]
+OBS_LABELS = ["Loss", "M_{jj}", "N_{j}", "m_{1}", "m_{2}", "First jet {\\tau}_{21}",
+              "Second jet {\\tau}_{21}", "Classifier"]
 FILES_TO_TEST = [
     ("lhc_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0, "affine"),
     ("lhc_sp0.001_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.001, "affine"),
@@ -22,13 +34,17 @@ FILES_TO_TEST = [
     ("lhc_sp0.05_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.05, "affine"),
     ("lhc_sp0.075_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.075, "affine"),
     ("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "affine"),
-    ("lhc_sp0.001_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.001, "ddsf"),
     ("lhc_sp0.01_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.01, "ddsf"),
     ("lhc_sp0.025_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.025, "ddsf"),
     ("lhc_sp0.05_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.05, "ddsf"),
     ("lhc_sp0.075_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.075, "ddsf"),
     ("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "ddsf"),
 ]
+NUMBERS_TO_CHECK = [10**j for j in range(7)] + [j*10**4 for j in range(1, 10)] + [j*10**5 for j in range(1, 10)]
+PDF_FLAG = False
+
+
+
 
 
 def load_model(fn, save_dir="models"):
@@ -40,9 +56,9 @@ def load_model(fn, save_dir="models"):
             return {x: d[x] for x in d if x not in keys}
         d = without_keys(json.loads(open(old_args, 'r').read()), ['to_train', 'epoch'])
         args.__dict__.update(d)
-        print_to_file('\nfilename: ' + fn)
+        # print_to_file('\nfilename: ' + fn)
         mdl = model(args, fn)
-        print_to_file(" [*] Loading model!")
+        # print_to_file(" [*] Loading model!")
         mdl.load(old_path)
         return mdl
 
@@ -74,8 +90,10 @@ def get_scores(mdl, dataset):
 
 
 def print_to_file(msg):
-    # print(msg)
-    subprocess.call(["echo ", msg], shell=True)
+    with open(OUTPUT_FILE, "a") as f:
+        f.write(msg + "\n")
+    print(msg)
+    # subprocess.call(["echo ", msg], shell=True)
 
 
 def all_plots(sig, bg, name):
@@ -94,7 +112,7 @@ def all_plots(sig, bg, name):
         plt.close()
 
         # Plotting observables vs loss
-        for i in range(1, sig.shape[1] - 2):
+        for i in tqdm(range(1, sig.shape[1] - 2)):
             sig_obs = sig[:, i]
             bg_obs = bg[:, i]
             plt.figure()
@@ -108,9 +126,9 @@ def all_plots(sig, bg, name):
 
 
 def test_model(file_name, sp, flow_type):
-    print_to_file("Signal percent: " + str(sp*100))
-    print_to_file("Num signals: " + str(sp*10**5))
-    print_to_file("Num bg: " + str(10**6))
+    print_to_file("Signal percent: " + str(sp * 100))
+    print_to_file("Num signals: " + str(sp * 10 ** 5))
+    print_to_file("Num bg: " + str(10 ** 6))
     print_to_file("Flow type: " + flow_type)
     print_to_file("File name: " + file_name)
     mdl = load_model(file_name)
@@ -129,23 +147,22 @@ def test_model(file_name, sp, flow_type):
     data = np.append(sig, bg, axis=0)
     sorted = data[(-data[:, 0]).argsort()]
 
-    print_to_file("Total signal: " + str(int(np.sum(sorted[:, -1]))))
     print_to_file("Going by largest loss: ")
-    for i in range(7):
-        n = 10**i
+    for n in NUMBERS_TO_CHECK:
         print_to_file("Number of signal in top events: [" + str(int(np.sum(sorted[:n, -1]))) + "/" + str(n) + "]")
 
     print_to_file("Going by smallest loss: ")
-    for i in range(7):
-        n = 10 ** i
+    for n in NUMBERS_TO_CHECK:
         print_to_file("Number of signal in bottom events: [" + str(int(np.sum(sorted[-n:, -1]))) + "/" + str(n) + "]")
     print_to_file("=========================================================================\n\n")
-    all_plots(sig, bg, PDF_NAME_FORMAT.format(file_name))
+    if PDF_FLAG:
+        all_plots(sig, bg, PDF_NAME_FORMAT.format(flow_type + "_" + str(sp)))
 
 
 def main():
-    for file_data in FILES_TO_TEST:
-        test_model(**file_data)
+    for i in tqdm(range(len(FILES_TO_TEST))):
+        file_data = FILES_TO_TEST[i]
+        test_model(*file_data)
 
 
 if __name__ == "__main__":
