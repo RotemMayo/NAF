@@ -12,8 +12,11 @@ import torch
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
+
+OUTPUT_FILE = "results/output.txt"
 PDF_NAME_FORMAT = "results/{}_loss_plots.pdf"
-OBS_LABELS = ["Loss", "M_{jj}", "N_{j}", "m_{1}", "m_{2}", "First jet {\Tau}_{21}", "Second jet {\Tau}_{21}", "Classifier"]
+OBS_LABELS = ["Loss", "M_{jj}", "N_{j}", "m_{1}", "m_{2}", "First jet {\Tau}_{21}",
+              "Second jet {\Tau}_{21}", "Classifier"]
 FILES_TO_TEST = [
     ("lhc_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0, "affine"),
     ("lhc_sp0.001_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.001, "affine"),
@@ -75,7 +78,9 @@ def get_scores(mdl, dataset):
 
 def print_to_file(msg):
     # print(msg)
-    subprocess.call(["echo ", msg], shell=True)
+    # subprocess.call(["echo ", msg], shell=True)
+    with open(OUTPUT_FILE, "a") as f:
+        f.write(msg)
 
 
 def all_plots(sig, bg, name):
@@ -129,7 +134,6 @@ def test_model(file_name, sp, flow_type):
     data = np.append(sig, bg, axis=0)
     sorted = data[(-data[:, 0]).argsort()]
 
-    print_to_file("Total signal: " + str(int(np.sum(sorted[:, -1]))))
     print_to_file("Going by largest loss: ")
     for i in range(7):
         n = 10**i
@@ -145,7 +149,7 @@ def test_model(file_name, sp, flow_type):
 
 def main():
     for file_data in FILES_TO_TEST:
-        test_model(**file_data)
+        test_model(*file_data)
 
 
 if __name__ == "__main__":
