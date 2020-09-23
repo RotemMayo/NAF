@@ -53,14 +53,12 @@ def load_model(fn, save_dir="models"):
             return {x: d[x] for x in d if x not in keys}
         d = without_keys(json.loads(open(old_args, 'r').read()), ['to_train', 'epoch'])
         args.__dict__.update(d)
-        # print_to_file('\nfilename: ' + fn)
         mdl = model(args, fn)
-        # print_to_file(" [*] Loading model!")
         mdl.load(old_path)
         return mdl
 
 
-def load_for_test(signal_percent):
+def load_for_scores(signal_percent):
     bg_path = datasets.root + 'lhc/bg.npy'
     sig_path = datasets.root + 'lhc/sig.npy'
     sig = np.nan_to_num(np.load(sig_path))
@@ -89,8 +87,6 @@ def get_scores(mdl, dataset):
 def print_to_file(msg):
     with open(OUTPUT_FILE, "a") as f:
         f.write(msg + "\n")
-    # print(msg)
-    # subprocess.call(["echo ", msg], shell=True)
 
 
 def save_plot(pdf, png_path):
@@ -143,10 +139,12 @@ def test_model(file_name, sp, flow_type):
     print_to_file("Flow type: " + flow_type)
     print_to_file("File name: " + file_name)
     mdl = load_model(file_name)
-    bg, sig = load_for_test(mdl.args.signal_percent)
+    bg = np.load(datasets.root + 'lhc/bg.npy')
+    sig = np.load(datasets.root + 'lhc/sig.npy')
+    bg_norm, sig_norm = load_for_scores(mdl.args.signal_percent)
 
-    n_bg = bg.shape[0]
-    bg_scores = get_scores(mdl, bg)
+    n_bg = bg_norm.shape[0]
+    bg_scores = get_scores(mdl, bg_norm)
     bg = np.append(bg_scores, bg, axis=1)
     bg = np.append(bg, np.zeros((n_bg, 1)), axis=1)
 
