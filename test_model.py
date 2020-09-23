@@ -13,20 +13,20 @@ from matplotlib import pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from tqdm import tqdm
 from datetime import datetime
+import matplotlib as mpl
+mpl.rcParams['agg.path.chunksize'] = 10000
 
-
-DATE_TIME_FORMAT = "%d%m%Y_%H%M%S"
-
-
-def get_time_stamp():
-    return datetime.now().strftime(DATE_TIME_FORMAT)
-
-
-OUTPUT_FILE = "results/all_results_" + get_time_stamp()
-PDF_NAME_FORMAT = "results/{}_loss_plots.pdf"
-OBS_LABELS = ["Loss", "M_{jj}", "N_{j}", "m_{1}", "m_{2}", "First jet {\\tau}_{21}",
-              "Second jet {\\tau}_{21}", "Classifier"]
+PLOT_FLAG = True
+PDF_FLAG = False
+PNG_FLAG = True
+OBS_LABELS = ["Loss", "Mjj", "Nj", "m1", "m2", "First_jet_tau21",
+              "Second_jet_tau_21", "Classifier"]
 FILES_TO_TEST = [
+    ("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "ddsf"),
+    ("lhc_sp0.01_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.01, "ddsf"),
+    ("lhc_sp0.025_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.025, "ddsf"),
+    ("lhc_sp0.05_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.05, "ddsf"),
+    ("lhc_sp0.075_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.075, "ddsf"),
     ("lhc_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0, "affine"),
     ("lhc_sp0.001_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.001, "affine"),
     ("lhc_sp0.01_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.01, "affine"),
@@ -34,17 +34,14 @@ FILES_TO_TEST = [
     ("lhc_sp0.05_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.05, "affine"),
     ("lhc_sp0.075_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.075, "affine"),
     ("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "affine"),
-    ("lhc_sp0.01_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.01, "ddsf"),
-    ("lhc_sp0.025_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.025, "ddsf"),
-    ("lhc_sp0.05_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.05, "ddsf"),
-    ("lhc_sp0.075_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.075, "ddsf"),
-    ("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "ddsf"),
+
 ]
 NUMBERS_TO_CHECK = [10**j for j in range(7)] + [j*10**4 for j in range(1, 10)] + [j*10**5 for j in range(1, 10)]
-PDF_FLAG = False
-
-
-
+TIME_STAMP = datetime.now().strftime("%d%m%Y_%H%M%S")
+OUTPUT_FILE = "results/all_results_" + TIME_STAMP + ".txt"
+OUTPUT_DIR_FORMAT = "results/{}_" + TIME_STAMP + "/"
+PDF_NAME_FORMAT = "{}plots.pdf"
+PNG_NAME_FORMAT = "{}{}.png"
 
 
 def load_model(fn, save_dir="models"):
@@ -92,23 +89,36 @@ def get_scores(mdl, dataset):
 def print_to_file(msg):
     with open(OUTPUT_FILE, "a") as f:
         f.write(msg + "\n")
-    print(msg)
+    # print(msg)
     # subprocess.call(["echo ", msg], shell=True)
 
 
+def save_plot(pdf, png_path):
+    if PDF_FLAG:
+        pdf.savefig()
+    if PNG_FLAG:
+        plt.savefig(png_path, dpi=300)
+
+
 def all_plots(sig, bg, name):
-    with PdfPages(name) as pdf:
+    output_dir = OUTPUT_DIR_FORMAT.format(name)
+    if not os.path.isdir(output_dir):
+        os.mkdir(OUTPUT_DIR_FORMAT.format(name))
+    pdf_path = PDF_NAME_FORMAT.format(output_dir)
+
+    with PdfPages(pdf_path) as pdf:
         sig_loss = sig[:, 0]
         bg_loss = bg[:, 0]
 
         # Plotting histograms
         plt.figure()
-        plt.hist(sig_loss, color="r", label="sig")
-        plt.hist(bg_loss, color="b", label="bg")
+        plt.hist(sig_loss, color="r", label="sig", log=True)
+        plt.hist(bg_loss, color="b", label="bg", log=True)
         plt.legend()
         plt.xlabel(OBS_LABELS[0])
         plt.ylabel("Num events")
-        pdf.savefig()
+        png_path = PNG_NAME_FORMAT.format(output_dir, "histogram")
+        save_plot(pdf, png_path)
         plt.close()
 
         # Plotting observables vs loss
@@ -116,12 +126,13 @@ def all_plots(sig, bg, name):
             sig_obs = sig[:, i]
             bg_obs = bg[:, i]
             plt.figure()
-            plt.plot(sig_obs, sig_loss, color="r", label="sig", marker='.')
-            plt.plot(bg_obs, bg_loss, color="b", label="bg", marker='.')
+            plt.scatter(sig_obs, sig_loss, color="r", label="sig", marker='.')
+            plt.scatter(bg_obs, bg_loss, color="b", label="bg", marker='.')
             plt.legend()
             plt.xlabel(OBS_LABELS[i])
             plt.ylabel(OBS_LABELS[0])
-            pdf.savefig()
+            png_path = PNG_NAME_FORMAT.format(output_dir, OBS_LABELS[i])
+            save_plot(pdf, png_path)
             plt.close()
 
 
@@ -155,8 +166,9 @@ def test_model(file_name, sp, flow_type):
     for n in NUMBERS_TO_CHECK:
         print_to_file("Number of signal in bottom events: [" + str(int(np.sum(sorted[-n:, -1]))) + "/" + str(n) + "]")
     print_to_file("=========================================================================\n\n")
-    if PDF_FLAG:
-        all_plots(sig, bg, PDF_NAME_FORMAT.format(flow_type + "_" + str(sp)))
+    if PLOT_FLAG:
+        name = flow_type + "_" + str(sp)
+        all_plots(sig, bg, name)
 
 
 def main():
