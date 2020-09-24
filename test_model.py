@@ -133,8 +133,10 @@ def all_plots(sig, bg, name):
             sig_obs = sig[:, i]
             bg_obs = bg[:, i]
             plt.figure()
-            plt.scatter(bg_obs, bg_loss, color="b", label="bg", marker='.')
-            plt.scatter(sig_obs, sig_loss, color="r", label="sig", marker='.')
+            # plt.scatter(bg_obs, bg_loss, color="b", label="bg", marker='.')
+            # plt.scatter(sig_obs, sig_loss, color="r", label="sig", marker='.')
+            plt.hexbin(bg_obs, bg_loss, cmap='Blues', mincnt=1, vmax=50, alpha=0.8, linewidths=0)
+            plt.hexbin(sig_obs, sig_loss, cmap='Reds', mincnt=1, vmax=50, alpha=0.8, linewidths=0)
             plt.legend()
             plt.xlabel(OBS_LABELS[i])
             plt.ylabel(OBS_LABELS[0])
@@ -143,15 +145,15 @@ def all_plots(sig, bg, name):
             plt.close()
 
 
-def test_model(file_name, sp, flow_type):
+def test_model(file_name, sp, flow_type, suffix=""):
     print_to_file("Signal percent: " + str(sp * 100))
     print_to_file("Num signals: " + str(sp * 10 ** 5))
     print_to_file("Num bg: " + str(10 ** 6))
     print_to_file("Flow type: " + flow_type)
     print_to_file("File name: " + file_name)
     mdl = load_model(file_name)
-    bg = np.load(datasets.root + 'lhc/bg.npy')
-    sig = np.load(datasets.root + 'lhc/sig.npy')
+    bg = np.load('{}lhc/bg{}.npy'.format(datasets.root, suffix))
+    sig = np.load('{}lhc/sig{}.npy'.format(datasets.root, suffix))
     bg_norm, sig_norm = load_for_scores(mdl.args.signal_percent)
 
     n_bg = bg_norm.shape[0]
