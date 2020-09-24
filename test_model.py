@@ -1,20 +1,19 @@
 from maf_experiments import model
 from maf_experiments import parse_args
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 import os
-import subprocess
 import json
 import external_maf.datasets as datasets
 import numpy as np
 import torch.utils.data as data
 import external_maf.lhc as lhc
 from torch.autograd import Variable
-import torch
-from matplotlib import pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
 from tqdm import tqdm
 from datetime import datetime
-import matplotlib as mpl
 mpl.rcParams['agg.path.chunksize'] = 10000
+
 
 PLOT_FLAG = True
 PDF_FLAG = False
