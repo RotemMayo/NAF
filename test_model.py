@@ -46,6 +46,8 @@ OUTPUT_FILE = "{}all_results.txt".format(RUN_OUTPUT_DIR)
 MODEL_OUTPUT_DIR_FORMAT = RUN_OUTPUT_DIR + "{}/"
 PDF_NAME_FORMAT = "{}plots.pdf"
 PNG_NAME_FORMAT = "{}{}.png"
+PNG_DPI = 300
+SCATTER_ALPHA = 0.5
 
 
 def load_model(fn, save_dir="models"):
@@ -62,20 +64,16 @@ def load_model(fn, save_dir="models"):
         return mdl
 
 
-def load_for_scores(signal_percent):
-    bg_path = datasets.root + 'lhc/bg.npy'
-    sig_path = datasets.root + 'lhc/sig.npy'
-    sig = np.nan_to_num(np.load(sig_path))
-    bg = np.nan_to_num(np.load(bg_path))
+def normalize_data(signal_percent, bg, sig):
     bg_rows, _ = bg.shape
     sig_rows, _ = sig.shape
     idx = np.random.randint(sig_rows, size=int(signal_percent * bg_rows))
     data = np.concatenate((bg, sig[idx, :]), axis=0)
     mu = data.mean(axis=0)
     s = data.std(axis=0)
-    bg = (bg - mu) / s
-    sig = (sig - mu) / s
-    return bg, sig
+    bg_norm = (bg - mu) / s
+    sig_norm = (sig - mu) / s
+    return bg_norm, sig_norm
 
 
 def get_scores(mdl, dataset):
@@ -97,7 +95,7 @@ def save_plot(pdf, png_path):
     if PDF_FLAG:
         pdf.savefig()
     if PNG_FLAG:
-        plt.savefig(png_path, dpi=300)
+        plt.savefig(png_path, dpi=PNG_DPI)
 
 
 def all_plots(sig, bg, name):
@@ -135,8 +133,8 @@ def all_plots(sig, bg, name):
             plt.figure()
             # plt.scatter(bg_obs, bg_loss, color="b", label="bg", marker='.')
             # plt.scatter(sig_obs, sig_loss, color="r", label="sig", marker='.')
-            plt.hexbin(bg_obs, bg_loss, cmap='Blues', mincnt=1, vmax=50, alpha=0.8, linewidths=0)
-            plt.hexbin(sig_obs, sig_loss, cmap='Reds', mincnt=1, vmax=50, alpha=0.8, linewidths=0)
+            plt.hexbin(bg_obs, bg_loss, cmap='Blues', mincnt=1, vmax=50, alpha=SCATTER_ALPHA, linewidths=0)
+            plt.hexbin(sig_obs, sig_loss, cmap='Reds', mincnt=1, vmax=50, alpha=SCATTER_ALPHA, linewidths=0)
             plt.legend()
             plt.xlabel(OBS_LABELS[i])
             plt.ylabel(OBS_LABELS[0])
@@ -151,10 +149,12 @@ def test_model(file_name, sp, flow_type, suffix=""):
     print_to_file("Num bg: " + str(10 ** 6))
     print_to_file("Flow type: " + flow_type)
     print_to_file("File name: " + file_name)
+
     mdl = load_model(file_name)
-    bg = np.load('{}lhc/bg{}.npy'.format(datasets.root, suffix))
-    sig = np.load('{}lhc/sig{}.npy'.format(datasets.root, suffix))
-    bg_norm, sig_norm = load_for_scores(mdl.args.signal_percent)
+
+    bg = np.nan_to_num(np.load('{}lhc/bg{}.npy'.format(datasets.root, suffix)))
+    sig = np.nan_to_num(np.load('{}lhc/sig{}.npy'.format(datasets.root, suffix)))
+    bg_norm, sig_norm = normalize_data(mdl.args.signal_percent, bg, sig)
 
     n_bg = bg_norm.shape[0]
     bg_scores = get_scores(mdl, bg_norm)
@@ -162,7 +162,7 @@ def test_model(file_name, sp, flow_type, suffix=""):
     bg = np.append(bg, np.zeros((n_bg, 1)), axis=1)
 
     n_sig = sig.shape[0]
-    sig_scores = get_scores(mdl, sig)
+    sig_scores = get_scores(mdl, sig_norm)
     sig = np.append(sig_scores, sig, axis=1)
     sig = np.append(sig, np.ones((n_sig, 1)), axis=1)
 
