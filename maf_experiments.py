@@ -286,7 +286,6 @@ def parse_args():
     parser.add_argument('--amsgrad', type=int, default=0)
     parser.add_argument('--polyak', type=float, default=0.0)
     parser.add_argument('--cuda', type=bool, default=False)
-
     parser.add_argument('--dimh', type=int, default=100)
     parser.add_argument('--flowtype', type=str, default='ddsf')
     parser.add_argument('--num_flow_layers', type=int, default=5)
@@ -296,6 +295,7 @@ def parse_args():
     parser.add_argument('--fixed_order', type=bool, default=True,
                         help='Fix the made ordering to be the given order')
     parser.add_argument('--signal_percent', type=float, default=0)
+    parser.add_argument('--experiment_name', type=str, default="")
 
     return check_args(parser.parse_args())
 
@@ -315,25 +315,23 @@ def check_args(args):
     # --result_dir
     if not os.path.exists(args.log_dir):
         os.makedirs(args.log_dir)
-
     # --epoch
     try:
         assert args.epoch >= 1
     except:
         print('number of epochs must be larger than or equal to one')
-
     # --batch_size
     try:
         assert args.batch_size >= 1
     except:
         print('batch size must be larger than or equal to one')
-
     return args
 
 
 def args2fn(args):
     prefix_key_pairs = [
         ('', 'dataset'),
+        ('en', 'experiment_name'),
         ('sp', 'signal_percent'),
         ('e', 'epoch'),
         ('s', 'seed'),

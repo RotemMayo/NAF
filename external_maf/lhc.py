@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
 import datasets
 import util
 
@@ -10,13 +9,12 @@ class LHC:
     class Data:
 
         def __init__(self, data):
-
             self.x = data.astype(np.float32)
             self.N = self.x.shape[0]
 
-    def __init__(self, signal_percent=0, val_percent=0.1, test_percent=0.1):
-        bg = datasets.root + 'lhc/bg.npy'
-        sig = datasets.root + 'lhc/sig.npy'
+    def __init__(self, signal_percent=0, val_percent=0.1, test_percent=0.1, suffix=""):
+        bg = '{}lhc/bg_{}.npy'.format(datasets.root, suffix)
+        sig = '{}lhc/sig_{}.npy'.format(datasets.root, suffix)
         trn, val, tst = load_data_normalised(bg, sig, signal_percent, val_percent, test_percent)
         self.trn = self.Data(trn)
         self.val = self.Data(val)
