@@ -12,9 +12,9 @@ class LHC:
             self.x = data.astype(np.float32)
             self.N = self.x.shape[0]
 
-    def __init__(self, signal_percent=0, val_percent=0.1, test_percent=0.1, suffix=""):
-        bg = '{}lhc/bg_{}.npy'.format(datasets.root, suffix)
-        sig = '{}lhc/sig_{}.npy'.format(datasets.root, suffix)
+    def __init__(self, signal_percent=0, val_percent=0.1, test_percent=0.1, experiment_name=""):
+        bg = '{}lhc/bg_{}.npy'.format(datasets.ROOT, experiment_name)
+        sig = '{}lhc/sig_{}.npy'.format(datasets.ROOT, experiment_name)
         trn, val, tst = load_data_normalised(bg, sig, signal_percent, val_percent, test_percent)
         self.trn = self.Data(trn)
         self.val = self.Data(val)

@@ -121,7 +121,7 @@ class model(object):
             D = load_maf_data('bsds300')
         elif args.dataset == 'lhc':
             p = 7  # size of row
-            D = load_maf_data('lhc', args.signal_percent)
+            D = load_maf_data('lhc', args.signal_percent, args.experiment_name)
 
         tr, va, te = D.trn.x, D.val.x, D.tst.x
 

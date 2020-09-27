@@ -23,7 +23,7 @@ class HEPMASS:
 
     def __init__(self):
 
-        path = datasets.root + 'hepmass/'
+        path = datasets.ROOT + 'hepmass/'
         trn, val, tst = load_data_no_discrete_normalised_as_array(path)
 
         self.trn = self.Data(trn)

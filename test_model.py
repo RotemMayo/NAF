@@ -151,8 +151,8 @@ def test_model(file_name, sp, flow_type, suffix=""):
 
     mdl = load_model(file_name)
 
-    bg = np.nan_to_num(np.load('{}lhc/bg{}.npy'.format(datasets.root, suffix)))
-    sig = np.nan_to_num(np.load('{}lhc/sig{}.npy'.format(datasets.root, suffix)))
+    bg = np.nan_to_num(np.load('{}lhc/bg{}.npy'.format(datasets.ROOT, suffix)))
+    sig = np.nan_to_num(np.load('{}lhc/sig{}.npy'.format(datasets.ROOT, suffix)))
     bg_norm, sig_norm = normalize_data(mdl.args.signal_percent, bg, sig)
 
     n_bg = bg_norm.shape[0]

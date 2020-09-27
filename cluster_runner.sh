@@ -11,5 +11,5 @@
 #SBTACH -p yonitq,allq
 
 source /opt/anaconda3/bin/activate NAF
-python maf_experiments.py --dataset 'lhc' --signal_percent 0.01
+python maf_experiments.py --dataset 'lhc' --flowtype 'affine' --signal '0.1'
 echo "Done"

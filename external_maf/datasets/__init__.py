@@ -1,1 +1,1 @@
-root = 'external_maf/datasets/data/'
+ROOT = 'external_maf/datasets/data/'

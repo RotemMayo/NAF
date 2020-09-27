@@ -108,7 +108,7 @@ class InputOnly(Dataset):
         return self.dataset[ind][0]
 
 
-def load_maf_data(name, signal_percent=0):
+def load_maf_data(name, signal_percent=0, experiment_name=""):
     if name == 'mnist':
         return maf.MNIST(logit=True, dequantize=True)
 
@@ -131,7 +131,7 @@ def load_maf_data(name, signal_percent=0):
         return maf.MINIBOONE()
 
     elif name == 'lhc':
-        return maf.LHC(signal_percent)
+        return maf.LHC(signal_percent, experiment_name)
 
     else:
         raise ValueError('Unknown dataset')
