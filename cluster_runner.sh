@@ -1,9 +1,8 @@
 #!/bin/bash
 #SBATCH -J NAF
 #SBATCH -o logs/NAF_%j.out
-#SBATCH -e logs/NAF_%j.err
-#SBATCH -N 2
-#SBATCH -c 20
+#SBATCH -N 4
+#SBATCH -c 32
 #SBATCH --mem=40G
 #SBATCH --mail-type=END
 #SBATCH --mail-user=rotem.ovadia@mail.huji.ac.il
@@ -13,8 +12,6 @@
 INPUT_DIM=${1:-"7"}
 EXPERIMENT_NAME=${2:-""}
 set --
-
-
 
 source /opt/anaconda3/bin/activate NAF
 cd /usr/people/snirgaz/rotemov/Projects/NAF

@@ -131,7 +131,7 @@ def load_maf_data(name, signal_percent=0, experiment_name=""):
         return maf.MINIBOONE()
 
     elif name == 'lhc':
-        return maf.LHC(signal_percent, experiment_name)
+        return maf.LHC(signal_percent, experiment_name=experiment_name)
 
     else:
         raise ValueError('Unknown dataset')
