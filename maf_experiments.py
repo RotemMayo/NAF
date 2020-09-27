@@ -120,7 +120,7 @@ class model(object):
             p = 63
             D = load_maf_data('bsds300')
         elif args.dataset == 'lhc':
-            p = 7  # size of row
+            p = args.input_dim  # size of row
             D = load_maf_data('lhc', args.signal_percent, args.experiment_name)
 
         tr, va, te = D.trn.x, D.val.x, D.tst.x
@@ -296,7 +296,7 @@ def parse_args():
                         help='Fix the made ordering to be the given order')
     parser.add_argument('--signal_percent', type=float, default=0)
     parser.add_argument('--experiment_name', type=str, default="")
-
+    parser.add_argument('--input_dim', type=int, default=7)
     return check_args(parser.parse_args())
 
 
