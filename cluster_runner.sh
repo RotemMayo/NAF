@@ -10,7 +10,13 @@
 #SBATCH -A rotemov-account
 #SBTACH -p yonitq,allq
 
+INPUT_DIM=${1:-"7"}
+EXPERIMENT_NAME=${2:-""}
+set --
+
+
+
 source /opt/anaconda3/bin/activate NAF
 cd /usr/people/snirgaz/rotemov/Projects/NAF
-python maf_experiments.py --dataset 'lhc' --flowtype 'affine' --signal '0.1'
+python maf_experiments.py --dataset 'lhc' --flowtype 'affine' --signal '0.1' --input_dim "$INPUT_DIM" --experiment_name "$EXPERIMENT_NAME"
 echo "Done"
