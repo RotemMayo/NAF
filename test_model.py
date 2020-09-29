@@ -206,6 +206,8 @@ def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPE
         print_to_file("Number of signal in bottom events: [" + str(int(np.sum(sorted[-n:, -1]))) + "/" + str(n) + "]")
     print_to_file("=========================================================================\n\n")
     if PLOT_FLAG:
+        if experiment_name != "":
+            experiment_name += "_"
         name = experiment_name + flow_type + "_" + str(sp)
         all_plots(sig, bg, name, obs_list)
 
