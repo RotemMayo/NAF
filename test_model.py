@@ -154,9 +154,6 @@ def all_plots(sig, bg, name, obs_list):
     save_plot(PNG_NAME_FORMAT.format(output_dir, "histogram_no_outliers"))
     plt.close()
 
-    sig_loss = np.log(sig_loss)
-    bg_loss = np.log(bg_loss)
-
     # Plotting observables vs loss
     for i in tqdm(range(1, sig.shape[1] - 1)):
         sig_obs = sig[:, i]
