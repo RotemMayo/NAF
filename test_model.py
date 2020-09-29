@@ -123,9 +123,9 @@ def save_plot(png_path):
 
 
 def create_pdf(image_dir, img_format=".png"):
-    pdf_name = image_dir - "/" + ".pdf"
+    pdf_name = image_dir[:-1] + ".pdf"
     pdf = FPDF()
-    image_list = [(image_dir + "/" + i) for i in os.listdir(image_dir) if i.endswith(img_format)]
+    image_list = [(image_dir + i) for i in os.listdir(image_dir) if i.endswith(img_format)]
     for image in image_list:
         pdf.add_page()
         pdf.image(image)
