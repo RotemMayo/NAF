@@ -23,20 +23,7 @@ FIRST_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "First_jet
 SECOND_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "m1 - m2", "Lead pt", "Ht", "MHt",
                               "First_jet_tau21", "Second_jet_tau_21", "Classifier"]
 
-FILES_TO_TEST = [
-    ("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "ddsf"),
-    ("lhc_sp0.01_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.01, "ddsf"),
-    ("lhc_sp0.025_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.025, "ddsf"),
-    ("lhc_sp0.05_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.05, "ddsf"),
-    ("lhc_sp0.075_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.075, "ddsf"),
-    ("lhc_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0, "affine"),
-    ("lhc_sp0.001_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.001, "affine"),
-    ("lhc_sp0.01_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.01, "affine"),
-    ("lhc_sp0.025_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.025, "affine"),
-    ("lhc_sp0.05_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.05, "affine"),
-    ("lhc_sp0.075_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.075, "affine"),
-    ("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "affine"),
-]
+FILES_TO_TEST = []
 
 SECOND_EXPERIMENTS = {
     "all_mjj-translation_10000": SECOND_EXPERIMENT_OBS_LIST,
@@ -63,6 +50,21 @@ for en in SECOND_EXPERIMENTS.keys():
             FILES_TO_TEST += [(SECOND_EXPERIMENTS_FILE_FORMAT.format(full_experiment_name, sp), sp, "affine",
                                full_experiment_name, SECOND_EXPERIMENTS[en])]
 
+FILES_TO_TEST += [
+    ("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "ddsf"),
+    ("lhc_sp0.01_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.01, "ddsf"),
+    ("lhc_sp0.025_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.025, "ddsf"),
+    ("lhc_sp0.05_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.05, "ddsf"),
+    ("lhc_sp0.075_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.075, "ddsf"),
+    ("lhc_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0, "affine"),
+    ("lhc_sp0.001_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.001, "affine"),
+    ("lhc_sp0.01_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.01, "affine"),
+    ("lhc_sp0.025_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.025, "affine"),
+    ("lhc_sp0.05_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.05, "affine"),
+    ("lhc_sp0.075_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.075, "affine"),
+    ("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "affine"),
+]
+
 NUMBERS_TO_CHECK = [10 ** j for j in range(7)] + [j * 10 ** 4 for j in range(1, 10)] + [j * 10 ** 5 for j in range(1, 10)]
 MIN_LOSS = -5
 MAX_LOSS = 100
@@ -75,6 +77,7 @@ PDF_PATH_FORMAT = RUN_OUTPUT_DIR + "{}.pdf"
 PNG_NAME_FORMAT = "{}{}.png"
 PNG_DPI = 50
 SCATTER_ALPHA = 0.5
+PLOT_TITLE_FORMAT = "{}: {} vs {}"
 
 
 def load_model(fn, save_dir="models"):
@@ -149,10 +152,12 @@ def all_plots(sig, bg, name, obs_list):
     plt.hist(bg_loss, color="b", label="bg", log=True, bins=bins)
     plt.hist(sig_loss, color="r", label="sig", log=True, bins=bins)
     plt.legend()
+    plt.title(name + " loss histogram")
     plt.xlabel(obs_list[0])
     plt.ylabel("Num events")
     save_plot(PNG_NAME_FORMAT.format(output_dir, "histogram"))
     plt.xlim(MIN_LOSS, MAX_LOSS)
+    plt.title(name + " loss histogram without outliers")
     save_plot(PNG_NAME_FORMAT.format(output_dir, "histogram_no_outliers"))
     plt.close()
 
@@ -161,8 +166,9 @@ def all_plots(sig, bg, name, obs_list):
         sig_obs = sig[:, i]
         bg_obs = bg[:, i]
         plt.figure()
-        plt.hexbin(bg_obs, bg_loss, cmap='Blues', mincnt=1, vmax=50, alpha=SCATTER_ALPHA, linewidths=0)
-        plt.hexbin(sig_obs, sig_loss, cmap='Reds', mincnt=1, vmax=50, alpha=SCATTER_ALPHA, linewidths=0)
+        plt.title(PLOT_TITLE_FORMAT.format(name, obs_list[0], obs_list[i]))
+        plt.hexbin(bg_obs, bg_loss, cmap='Blues', mincnt=10, vmax=50, alpha=SCATTER_ALPHA, linewidths=0, yscale='log')
+        plt.hexbin(sig_obs, sig_loss, cmap='Reds', mincnt=10, vmax=50, alpha=SCATTER_ALPHA, linewidths=0, yscale='log')
         plt.legend()
         plt.xlabel(obs_list[i])
         plt.ylabel(obs_list[0])
