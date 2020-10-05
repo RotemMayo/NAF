@@ -143,8 +143,8 @@ def all_plots(sig, bg, name, obs_list):
     if not os.path.isdir(output_dir):
         os.mkdir(MODEL_OUTPUT_DIR_FORMAT.format(name))
 
-    sig_loss = sig[:, 0]
-    bg_loss = bg[:, 0]
+    sig_loss = sig[:, 0] + np.abs(np.min(sig[:, 0])) + 1
+    bg_loss = bg[:, 0] + np.abs(np.min(bg[:, 0])) + 1
 
     # Plotting histograms
     plt.figure()
