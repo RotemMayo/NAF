@@ -54,13 +54,13 @@ SECOND_EXPERIMENTS = {
 
 SECOND_EXPERIMENT_R_VALUES = [1.0, 0.4]
 SECOND_EXPERIMENTS_SP = [0.1, 0.05, 0.01]
-SECOND_EXPERIMENTS_NAME_FORMAT = "R{}_{}_sp_{}"
-SECOND_EXPERIMENTS_FILE_FORMAT = "lhc_en{}_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best"
+SECOND_EXPERIMENTS_NAME_FORMAT = "R{}_{}"
+SECOND_EXPERIMENTS_FILE_FORMAT = "lhc_en{}_sp{}_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best"
 for en in SECOND_EXPERIMENTS.keys():
     for R in SECOND_EXPERIMENT_R_VALUES:
         for sp in SECOND_EXPERIMENTS_SP:
             full_experiment_name = SECOND_EXPERIMENTS_NAME_FORMAT.format(R, en, sp)
-            FILES_TO_TEST += [(SECOND_EXPERIMENTS_FILE_FORMAT.format(full_experiment_name), sp, "affine",
+            FILES_TO_TEST += [(SECOND_EXPERIMENTS_FILE_FORMAT.format(full_experiment_name, sp), sp, "affine",
                                full_experiment_name, SECOND_EXPERIMENTS[en])]
 
 NUMBERS_TO_CHECK = [10 ** j for j in range(7)] + [j * 10 ** 4 for j in range(1, 10)] + [j * 10 ** 5 for j in range(1, 10)]
@@ -210,7 +210,7 @@ def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPE
     if PLOT_FLAG:
         if experiment_name != "":
             experiment_name += "_"
-        name = experiment_name + flow_type + "_" + str(sp)
+        name = experiment_name + flow_type + "_sp" + str(sp)
         all_plots(sig, bg, name, obs_list)
 
 
