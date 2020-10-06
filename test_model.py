@@ -12,6 +12,7 @@ from tqdm import tqdm
 from datetime import datetime
 import os
 from fpdf import FPDF
+import sys
 
 mpl.rcParams['agg.path.chunksize'] = 10000
 
@@ -23,6 +24,7 @@ FIRST_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "First_jet
 SECOND_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "m1 - m2", "Lead pt", "Ht", "MHt",
                               "First_jet_tau21", "Second_jet_tau_21", "Classifier"]
 
+INTEREST_THRESHOLD = int(sys.argv[1])
 FILES_TO_TEST = []
 
 SECOND_EXPERIMENTS = {
@@ -211,7 +213,13 @@ def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPE
 
     print_to_file("Going by smallest loss: ")
     for n in NUMBERS_TO_CHECK:
-        print_to_file("Number of signal in bottom events: [" + str(int(np.sum(sorted[-n:, -1]))) + "/" + str(n) + "]")
+        num_sig = int(np.sum(sorted[-n:, -1]))
+        if num_sig/n < INTEREST_THRESHOLD:
+            suffix = "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+            print(file_name + " is  interesting")
+        else:
+            suffix = ""
+        print_to_file("Number of signal in bottom events: [" + str() + "/" + str(n) + "]" + suffix)
     print_to_file("=========================================================================\n\n")
     if PLOT_FLAG:
         if experiment_name != "":
