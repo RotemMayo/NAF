@@ -145,17 +145,16 @@ def create_pdf(image_dir, img_format=".png"):
 
 
 def plot_tsne(bg, sig, path):
-    data = np.concatenate((bg, sig), axis=0)
-    data_1000 = data[0:1000, :-1]
-    labels_1000 = data[0:1000, -1]
+    data = np.concatenate((bg, sig), axis=0)[:, :-1]
+    labels = data[:, -1]
     mdl = tsne(n_components=2, random_state=0)
     # configuring the parameteres
     # the number of components = 2
     # default perplexity = 30
     # default learning rate = 200
     # default Maximum number of iterations for the optimization = 1000
-    tsne_data = mdl.fit_transform(data_1000)  # creating a new data frame which help us in ploting the result data
-    tsne_data = np.vstack((tsne_data.T, labels_1000)).T
+    tsne_data = mdl.fit_transform(data)  # creating a new data frame which help us in ploting the result data
+    tsne_data = np.vstack((tsne_data.T, labels)).T
     tsne_df = pd.DataFrame(data=tsne_data, columns=("Dim_1", "Dim_2", "label"))  # Ploting the result of tsne
     sn.FacetGrid(tsne_df, hue="label", size=6).map(plt.scatter, "Dim_1", "Dim_2").add_legend()
     save_plot(path)
