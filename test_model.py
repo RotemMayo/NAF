@@ -143,7 +143,7 @@ def create_pdf(image_dir, img_format=".png"):
     pdf.output(pdf_name, "F")
 
 
-def plot_tsne(bg, sig):
+def plot_tsne(bg, sig, path):
     data = np.concatenate((bg, sig), axis=0)
     data_1000 = data[0:1000, :-1]
     labels_1000 = data[0:1000, -1]
@@ -157,8 +157,8 @@ def plot_tsne(bg, sig):
     tsne_data = np.vstack((tsne_data.T, labels_1000)).T
     tsne_df = pd.DataFrame(data=tsne_data, columns=("Dim_1", "Dim_2", "label"))  # Ploting the result of tsne
     sn.FacetGrid(tsne_df, hue="label", size = 6).map(plt.scatter, "Dim_1", "Dim_2").add_legend()
-    plt.show()
-    print("Need to implement")
+    save_plot(path)
+    plt.close()
 
 
 def all_plots(sig, bg, name, obs_list):
@@ -170,7 +170,7 @@ def all_plots(sig, bg, name, obs_list):
     bg_loss = bg[:, 0] + np.abs(np.min(bg[:, 0])) + 1
 
     # Plotting t-SNE
-    plot_tsne(bg, sig)
+    plot_tsne(bg, sig, PNG_NAME_FORMAT.format(output_dir, "tsne"))
 
     # Plotting histograms
     plt.figure()
