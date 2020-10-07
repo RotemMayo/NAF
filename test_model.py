@@ -13,6 +13,9 @@ from datetime import datetime
 import os
 from fpdf import FPDF
 import sys
+from sklearn.manifold import TSNE as tsne
+import pandas as pd
+import seaborn as sn
 
 mpl.rcParams['agg.path.chunksize'] = 10000
 
@@ -140,6 +143,24 @@ def create_pdf(image_dir, img_format=".png"):
     pdf.output(pdf_name, "F")
 
 
+def plot_tsne(bg, sig):
+    data = np.concatenate((bg, sig), axis=0)
+    data_1000 = data[0:1000, :-1]
+    labels_1000 = data[0:1000, -1]
+    mdl = tsne(n_components=2, random_state=0)
+    # configuring the parameteres
+    # the number of components = 2
+    # default perplexity = 30
+    # default learning rate = 200
+    # default Maximum number of iterations for the optimization = 1000
+    tsne_data = mdl.fit_transform(data_1000)  # creating a new data frame which help us in ploting the result data
+    tsne_data = np.vstack((tsne_data.T, labels_1000)).T
+    tsne_df = pd.DataFrame(data=tsne_data, columns=("Dim_1", "Dim_2", "label"))  # Ploting the result of tsne
+    sn.FacetGrid(tsne_df, hue="label", size = 6).map(plt.scatter, "Dim_1", "Dim_2").add_legend()
+    plt.show()
+    print("Need to implement")
+
+
 def all_plots(sig, bg, name, obs_list):
     output_dir = MODEL_OUTPUT_DIR_FORMAT.format(name)
     if not os.path.isdir(output_dir):
@@ -147,6 +168,9 @@ def all_plots(sig, bg, name, obs_list):
 
     sig_loss = sig[:, 0] + np.abs(np.min(sig[:, 0])) + 1
     bg_loss = bg[:, 0] + np.abs(np.min(bg[:, 0])) + 1
+
+    # Plotting t-SNE
+    plot_tsne(bg, sig)
 
     # Plotting histograms
     plt.figure()
@@ -214,7 +238,7 @@ def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPE
     print_to_file("Going by smallest loss: ")
     for n in NUMBERS_TO_CHECK:
         num_sig = int(np.sum(sorted[-n:, -1]))
-        if num_sig/n < INTEREST_THRESHOLD:
+        if num_sig/n < INTEREST_THRESHOLD and n >= 10**5:
             suffix = "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
             print(file_name + " is  interesting")
         else:
