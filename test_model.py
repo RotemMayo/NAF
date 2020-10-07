@@ -27,7 +27,7 @@ FIRST_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "First_jet
 SECOND_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "m1 - m2", "Lead pt", "Ht", "MHt",
                               "First_jet_tau21", "Second_jet_tau_21", "Classifier"]
 INTEREST_THRESHOLD = 0.03
-NUM_EVENTS_TSNE = 10**3
+NUM_EVENTS_TSNE = -1
 
 FILES_TO_TEST = []
 
