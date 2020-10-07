@@ -6,7 +6,7 @@
 #SBATCH --mem=40G
 #SBATCH --mail-type=END
 #SBATCH --mail-user=rotem.ovadia@mail.huji.ac.il
-#SBATCH -A rotemov-account
+#SBATCH -A yonit-account
 #SBATCH -p yonitq
 
 INPUT_DIM=${1:-"7"}
@@ -16,6 +16,5 @@ FLOW=${4:-"affine"}
 set --
 
 source /opt/anaconda3/bin/activate NAF
-cd /home/data/rotemov/Projects/NAF
 python maf_experiments.py --dataset "lhc" --flowtype "$FLOW" --signal "$SP" --input_dim "$INPUT_DIM" --experiment_name "$EXPERIMENT_NAME"
 echo "Done"
