@@ -146,8 +146,9 @@ def create_pdf(image_dir, img_format=".png"):
 
 
 def plot_tsne(bg, sig, path):
-    data = np.concatenate((bg[:NUM_EVENTS_TSNE, :], sig[:NUM_EVENTS_TSNE, :]), axis=0)[:, :-1]
-    labels = data[:, -1]
+    data_and_labels = np.concatenate((bg[:NUM_EVENTS_TSNE, :], sig[:NUM_EVENTS_TSNE, :]), axis=0)
+    data = data_and_labels[:, :-1]
+    labels = data_and_labels[:, -1]
     mdl = tsne(n_components=2, random_state=0)
     # configuring the parameteres
     # the number of components = 2
