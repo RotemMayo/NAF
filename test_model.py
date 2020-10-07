@@ -27,7 +27,6 @@ FIRST_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "First_jet
 SECOND_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "m1 - m2", "Lead pt", "Ht", "MHt",
                               "First_jet_tau21", "Second_jet_tau_21", "Classifier"]
 
-INTEREST_THRESHOLD = float(sys.argv[1])
 FILES_TO_TEST = []
 
 SECOND_EXPERIMENTS = {
@@ -70,7 +69,8 @@ FILES_TO_TEST += [
     ("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "affine"),
 ]
 
-NUMBERS_TO_CHECK = [10 ** j for j in range(7)] + [j * 10 ** 4 for j in range(1, 10)] + [j * 10 ** 5 for j in range(1, 10)]
+NUMBERS_TO_CHECK = [10 ** j for j in range(7)] + [j * 10 ** 4 for j in range(1, 10)] + [j * 10 ** 5 for j in
+                                                                                        range(1, 10)]
 MIN_LOSS = -5
 MAX_LOSS = 100
 NBINS = 300
@@ -156,7 +156,7 @@ def plot_tsne(bg, sig, path):
     tsne_data = mdl.fit_transform(data_1000)  # creating a new data frame which help us in ploting the result data
     tsne_data = np.vstack((tsne_data.T, labels_1000)).T
     tsne_df = pd.DataFrame(data=tsne_data, columns=("Dim_1", "Dim_2", "label"))  # Ploting the result of tsne
-    sn.FacetGrid(tsne_df, hue="label", size = 6).map(plt.scatter, "Dim_1", "Dim_2").add_legend()
+    sn.FacetGrid(tsne_df, hue="label", size=6).map(plt.scatter, "Dim_1", "Dim_2").add_legend()
     save_plot(path)
     plt.close()
 
@@ -238,7 +238,7 @@ def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPE
     print_to_file("Going by smallest loss: ")
     for n in NUMBERS_TO_CHECK:
         num_sig = int(np.sum(sorted[-n:, -1]))
-        if num_sig/n < INTEREST_THRESHOLD and n >= 10**5:
+        if num_sig / n < INTEREST_THRESHOLD and n >= 10 ** 5:
             suffix = "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
             print(file_name + " is  interesting")
         else:
@@ -261,4 +261,5 @@ def main():
 
 
 if __name__ == "__main__":
+    INTEREST_THRESHOLD = float(sys.argv[1])
     main()
