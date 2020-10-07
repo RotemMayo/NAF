@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH -J NAF
 #SBATCH -o logs/NAF_%j.log
-#SBATCH -N 1
-#SBATCH -c 16
-#SBATCH --mem=32G
+#SBATCH -N 4
+#SBATCH -c 32
+#SBATCH --mem=64G
 #SBATCH --mail-type=END
 #SBATCH --mail-user=rotem.ovadia@mail.huji.ac.il
 #SBATCH -A yonit-account
