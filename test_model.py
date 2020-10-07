@@ -26,6 +26,7 @@ FIRST_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "First_jet
                              "Second_jet_tau_21", "Classifier"]
 SECOND_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "m1 - m2", "Lead pt", "Ht", "MHt",
                               "First_jet_tau21", "Second_jet_tau_21", "Classifier"]
+INTEREST_THRESHOLD = 0.03
 
 FILES_TO_TEST = []
 
@@ -261,5 +262,4 @@ def main():
 
 
 if __name__ == "__main__":
-    INTEREST_THRESHOLD = float(sys.argv[1])
     main()
