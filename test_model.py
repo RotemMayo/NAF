@@ -27,7 +27,7 @@ FIRST_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "First_jet
 SECOND_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "m1 - m2", "Lead pt", "Ht", "MHt",
                               "First_jet_tau21", "Second_jet_tau_21", "Classifier"]
 INTEREST_THRESHOLD = 0.03
-NUM_EVENTS_TSNE = 10**5
+NUM_EVENTS_TSNE = 5*10**4
 
 FILES_TO_TEST = []
 
@@ -56,7 +56,7 @@ for en in SECOND_EXPERIMENTS.keys():
             FILES_TO_TEST += [(SECOND_EXPERIMENTS_FILE_FORMAT.format(full_experiment_name, sp), sp, "affine",
                                full_experiment_name, SECOND_EXPERIMENTS[en])]
 
-FILES_TO_TEST = [
+FILES_TO_TEST += [
     ("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "ddsf"),
     ("lhc_sp0.01_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.01, "ddsf"),
     ("lhc_sp0.025_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.025, "ddsf"),
