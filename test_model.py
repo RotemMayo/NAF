@@ -56,7 +56,7 @@ for en in SECOND_EXPERIMENTS.keys():
             FILES_TO_TEST += [(SECOND_EXPERIMENTS_FILE_FORMAT.format(full_experiment_name, sp), sp, "affine",
                                full_experiment_name, SECOND_EXPERIMENTS[en])]
 
-FILES_TO_TEST += [
+FILES_TO_TEST = [
     ("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "ddsf"),
     ("lhc_sp0.01_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.01, "ddsf"),
     ("lhc_sp0.025_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.025, "ddsf"),
