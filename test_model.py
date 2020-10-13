@@ -158,7 +158,8 @@ def plot_tsne(bg, sig, path):
     tsne_data = mdl.fit_transform(data)  # creating a new data frame which help us in ploting the result data
     tsne_data = np.vstack((tsne_data.T, labels)).T
     tsne_df = pd.DataFrame(data=tsne_data, columns=("Dim_1", "Dim_2", "label"))  # Ploting the result of tsne
-    sn.FacetGrid(tsne_df, hue="label", size=6).map(plt.hexbin, "Dim_1", "Dim_2", mincnt=10, vmax=50, alpha=SCATTER_ALPHA*1.5, linewidths=0).add_legend()
+    sn.FacetGrid(tsne_df, hue="label", size=6).map(plt.scatter, "Dim_1", "Dim_2", alpha=SCATTER_ALPHA/5).add_legend()
+    # sn.FacetGrid(tsne_df, hue="label", size=2).map(plt.hexbin, "Dim_1", "Dim_2", mincnt=10, vmax=50, alpha=SCATTER_ALPHA*1.5, linewidths=0).add_legend()
     save_plot(path)
     plt.close()
 
