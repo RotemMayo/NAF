@@ -27,7 +27,7 @@ FIRST_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "First_jet
 SECOND_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "m1 - m2", "Lead pt", "Ht", "MHt",
                               "First_jet_tau21", "Second_jet_tau_21", "Classifier"]
 INTEREST_THRESHOLD = 0.03
-NUM_EVENTS_TSNE = 10**4
+NUM_EVENTS_TSNE = 10**5
 
 FILES_TO_TEST = []
 
@@ -158,7 +158,7 @@ def plot_tsne(bg, sig, path):
     tsne_data = mdl.fit_transform(data)  # creating a new data frame which help us in ploting the result data
     tsne_data = np.vstack((tsne_data.T, labels)).T
     tsne_df = pd.DataFrame(data=tsne_data, columns=("Dim_1", "Dim_2", "label"))  # Ploting the result of tsne
-    sn.FacetGrid(tsne_df, hue="label", size=6).map(plt.hexbin, "Dim_1", "Dim_2", mincnt=10, vmax=50, alpha=SCATTER_ALPHA, linewidths=0).add_legend()
+    sn.FacetGrid(tsne_df, hue="label", size=6).map(plt.hexbin, "Dim_1", "Dim_2", mincnt=10, vmax=50, alpha=SCATTER_ALPHA*1.5, linewidths=0).add_legend()
     save_plot(path)
     plt.close()
 
