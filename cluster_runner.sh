@@ -6,8 +6,8 @@
 #SBATCH --mem=40G
 #SBATCH --mail-type=END
 #SBATCH --mail-user=rotem.ovadia@mail.huji.ac.il
-#SBATCH -A yonit-account
-#SBATCH -p yonitq
+#SBATCH -A rotemov-account
+#SBATCH -p allq
 
 INPUT_DIM=${1:-"7"}
 EXPERIMENT_NAME=${2:-""}
