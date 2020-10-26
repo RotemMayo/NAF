@@ -90,7 +90,7 @@ PLOT_TITLE_FORMAT = "{}: {} vs {}"
 
 BG_LOSS_DATA_FILE_NAME = "results/losses/bg_{}_loss.npy"
 SIG_LOSS_DATA_FILE_NAME = "results/losses/sig_{}_loss.npy"
-TSNE_DATA_FILE_NAME = "results/tsne_data/{}_tsne.csv"
+TSNE_DATA_FILE_NAME = "results/tsne_data/{}_tsne_{}.csv".format("{}", NUM_EVENTS_TSNE)
 
 
 def load_model(fn, save_dir="models"):
