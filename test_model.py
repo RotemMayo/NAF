@@ -43,10 +43,11 @@ SECOND_EXPERIMENTS = {
     "mjj_m1minusm2": ["Loss", "mjj", "m1 - m2", "Classifier"],
     "anode": ["Loss", "m1", "m1_minus_m2", "tau21_1", "tau21_2", "Classifier"],
     "salad": ["Loss", "m1", "m2", "First tau21", "Second tau21", "Classifier"],
+    "all_filter_1": SECOND_EXPERIMENT_OBS_LIST,
 }
 
-SECOND_EXPERIMENT_R_VALUES = [1.0, 0.4]
-SECOND_EXPERIMENTS_SP = [0.1, 0.05, 0.01]
+SECOND_EXPERIMENT_R_VALUES = [0.4]  # [1.0, 0.4]
+SECOND_EXPERIMENTS_SP = [0.1]  # 0.05, 0.01]
 SECOND_EXPERIMENTS_NAME_FORMAT = "R{}_{}"
 SECOND_EXPERIMENTS_FILE_FORMAT = "lhc_en{}_sp{}_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best"
 for en in SECOND_EXPERIMENTS.keys():
@@ -71,6 +72,7 @@ FILES_TO_TEST += [
     ("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "affine"),
 ]
 
+
 NUMBERS_TO_CHECK = [10 ** j for j in range(7)] + [j * 10 ** 4 for j in range(1, 10)] + [j * 10 ** 5 for j in
                                                                                         range(1, 10)]
 MIN_LOSS = -5
@@ -85,6 +87,10 @@ PNG_NAME_FORMAT = "{}{}.png"
 PNG_DPI = 50
 SCATTER_ALPHA = 0.5
 PLOT_TITLE_FORMAT = "{}: {} vs {}"
+
+BG_LOSS_DATA_FILE_NAME = "results/losses/bg_{}_loss.npy"
+SIG_LOSS_DATA_FILE_NAME = "results/losses/sig_{}_loss.npy"
+TSNE_DATA_FILE_NAME = "results/tsne_data/{}_tsne.csv"
 
 
 def load_model(fn, save_dir="models"):
@@ -114,9 +120,9 @@ def normalize_data(signal_percent, bg, sig):
     return bg_norm, sig_norm
 
 
-def get_scores(mdl, dataset):
-    size = dataset.shape[0]
-    loader = data.DataLoader(lhc.LHC.Data(dataset).x, batch_size=size, shuffle=False)
+def get_scores(mdl, normalized_dataset):
+    size = normalized_dataset.shape[0]
+    loader = data.DataLoader(lhc.LHC.Data(normalized_dataset).x, batch_size=size, shuffle=False)
     losses = np.array([])
     for x in loader:
         x = Variable(x)
@@ -145,22 +151,28 @@ def create_pdf(image_dir, img_format=".png"):
     pdf.output(pdf_name, "F")
 
 
-def plot_tsne(bg, sig, path):
-    data_and_labels = np.concatenate((bg[:NUM_EVENTS_TSNE, :], sig[:NUM_EVENTS_TSNE, :]), axis=0)
-    data = data_and_labels[:, :-1]
-    labels = data_and_labels[:, -1]
-    mdl = tsne(n_components=2, random_state=0)
-    # configuring the parameteres
-    # the number of components = 2
-    # default perplexity = 30
-    # default learning rate = 200
-    # default Maximum number of iterations for the optimization = 1000
-    tsne_data = mdl.fit_transform(data)  # creating a new data frame which help us in ploting the result data
-    tsne_data = np.vstack((tsne_data.T, labels)).T
-    tsne_df = pd.DataFrame(data=tsne_data, columns=("Dim_1", "Dim_2", "label"))  # Ploting the result of tsne
+def plot_tsne(bg, sig, plot_path, data_path):
+    if os.path.exists(data_path):
+        tsne_df = pd.read_csv(data_path)
+    else:
+        data_and_labels = np.concatenate((bg[:NUM_EVENTS_TSNE, :], sig[:NUM_EVENTS_TSNE, :]), axis=0)
+        data = data_and_labels[:, :-1]
+        labels = data_and_labels[:, -1]
+        mdl = tsne(n_components=2, random_state=0)
+        # configuring the parameteres
+        # the number of components = 2
+        # default perplexity = 30
+        # default learning rate = 200
+        # default Maximum number of iterations for the optimization = 1000
+        tsne_data = mdl.fit_transform(data)  # creating a new data frame which help us in ploting the result data
+        tsne_data = np.vstack((tsne_data.T, labels)).T
+        tsne_df = pd.DataFrame(data=tsne_data, columns=("Dim_1", "Dim_2", "label"))  # Ploting the result of tsne
+        tsne_df.to_csv(data_path)
+
     sn.FacetGrid(tsne_df, hue="label", size=6).map(plt.scatter, "Dim_1", "Dim_2", alpha=SCATTER_ALPHA/5).add_legend()
+
     # sn.FacetGrid(tsne_df, hue="label", size=2).map(plt.hexbin, "Dim_1", "Dim_2", mincnt=10, vmax=50, alpha=SCATTER_ALPHA*1.5, linewidths=0).add_legend()
-    save_plot(path)
+    save_plot(plot_path)
     plt.close()
 
 
@@ -173,7 +185,7 @@ def all_plots(sig, bg, name, obs_list):
     bg_loss = bg[:, 0] + np.abs(np.min(bg[:, 0])) + 1
 
     # Plotting t-SNE
-    plot_tsne(bg, sig, PNG_NAME_FORMAT.format(output_dir, "tsne"))
+    plot_tsne(bg, sig, PNG_NAME_FORMAT.format(output_dir, "tsne"), TSNE_DATA_FILE_NAME.format(name))
 
     # Plotting histograms
     plt.figure()
@@ -210,6 +222,10 @@ def all_plots(sig, bg, name, obs_list):
 
 
 def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPERIMENT_OBS_LIST):
+    if experiment_name != "":
+        experiment_name += "_"
+    name = experiment_name + flow_type + "_sp" + str(sp)
+
     print_to_file("Signal percent: " + str(sp * 100))
     print_to_file("Num signals: " + str(sp * 10 ** 5))
     print_to_file("Num bg: " + str(10 ** 6))
@@ -219,15 +235,24 @@ def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPE
     mdl = load_model(file_name)
     bg = np.nan_to_num(np.load('{}lhc/bg_{}.npy'.format(datasets.ROOT, experiment_name)))
     sig = np.nan_to_num(np.load('{}lhc/sig_{}.npy'.format(datasets.ROOT, experiment_name)))
-    bg_norm, sig_norm = normalize_data(mdl.args.signal_percent, bg, sig)
 
-    n_bg = bg_norm.shape[0]
-    bg_scores = get_scores(mdl, bg_norm)
+    bg_loss_file_name = BG_LOSS_DATA_FILE_NAME.format(name)
+    sig_loss_file_name = SIG_LOSS_DATA_FILE_NAME.format(name)
+    if os.path.isfile(bg_loss_file_name) and os.path.isfile(sig_loss_file_name):
+        bg_scores = np.load(bg_loss_file_name)
+        sig_scores = np.load(sig_loss_file_name)
+    else:
+        bg_norm, sig_norm = normalize_data(mdl.args.signal_percent, bg, sig)
+        bg_scores = get_scores(mdl, bg_norm)
+        sig_scores = get_scores(mdl, sig_norm)
+        np.save(bg_loss_file_name, bg_scores)
+        np.save(sig_loss_file_name,sig_scores)
+
+    n_bg = bg.shape[0]
     bg = np.append(bg_scores, bg, axis=1)
     bg = np.append(bg, np.zeros((n_bg, 1)), axis=1)
 
     n_sig = sig.shape[0]
-    sig_scores = get_scores(mdl, sig_norm)
     sig = np.append(sig_scores, sig, axis=1)
     sig = np.append(sig, np.ones((n_sig, 1)), axis=1)
 
@@ -249,9 +274,6 @@ def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPE
         print_to_file("Number of signal in bottom events: [" + str() + "/" + str(n) + "]" + suffix)
     print_to_file("=========================================================================\n\n")
     if PLOT_FLAG:
-        if experiment_name != "":
-            experiment_name += "_"
-        name = experiment_name + flow_type + "_sp" + str(sp)
         all_plots(sig, bg, name, obs_list)
 
 

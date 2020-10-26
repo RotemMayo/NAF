@@ -5,8 +5,8 @@ SP = 0.1
 MODEL_NAME = "lhc_en{}_sp{}_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best".format(EXPERIMENT_NAME, SP)
 FILTER_NUMBER = 1
 REMOVE_SMALLEST = 3*10**5
-BG_FILE_FORMAT = "{}bg_{}_filter_{}"
-SIG_FILE_FORMAT = "{}sig_{}_filter_{}"
+BG_FILE_FORMAT = "{}lhc/bg_{}_filter_{}"
+SIG_FILE_FORMAT = "{}lhc/sig_{}_filter_{}"
 
 
 def main():
