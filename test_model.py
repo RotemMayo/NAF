@@ -27,11 +27,12 @@ FIRST_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "First_jet
 SECOND_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "m1 - m2", "Lead pt", "Ht", "MHt",
                               "First_jet_tau21", "Second_jet_tau_21", "Classifier"]
 INTEREST_THRESHOLD = 0.03
-NUM_EVENTS_TSNE = 5*10**4
+NUM_EVENTS_TSNE = 3*10**4
 
 FILES_TO_TEST = []
 
 SECOND_EXPERIMENTS = {
+    "all_filter_1": SECOND_EXPERIMENT_OBS_LIST,
     "all_mjj-translation_10000": SECOND_EXPERIMENT_OBS_LIST,
     "all_mjj-translation_5000": SECOND_EXPERIMENT_OBS_LIST,
     "all_mjj-translation_1000": SECOND_EXPERIMENT_OBS_LIST,
@@ -43,7 +44,6 @@ SECOND_EXPERIMENTS = {
     "mjj_m1minusm2": ["Loss", "mjj", "m1 - m2", "Classifier"],
     "anode": ["Loss", "m1", "m1_minus_m2", "tau21_1", "tau21_2", "Classifier"],
     "salad": ["Loss", "m1", "m2", "First tau21", "Second tau21", "Classifier"],
-    "all_filter_1": SECOND_EXPERIMENT_OBS_LIST,
 }
 
 SECOND_EXPERIMENT_R_VALUES = [0.4]  # [1.0, 0.4]
