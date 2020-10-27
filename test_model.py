@@ -223,7 +223,7 @@ def all_plots(sig, bg, name, obs_list):
 
 def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPERIMENT_OBS_LIST):
     if experiment_name != "":
-        experiment_name += "_"
+        name = experiment_name + "_"  + flow_type + "_sp" + str(sp)
     name = experiment_name + flow_type + "_sp" + str(sp)
 
     print_to_file("Signal percent: " + str(sp * 100))

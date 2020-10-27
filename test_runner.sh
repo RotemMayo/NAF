@@ -10,6 +10,8 @@
 #SBATCH --partition=yonitq
 
 source /opt/anaconda3/bin/activate NAF
+echo "Filtering by loss"
+python loss_filter.py
 echo "Starting tests"
 python test_model.py 
 echo "Done" 
