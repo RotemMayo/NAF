@@ -1,0 +1,120 @@
+Signal percent: 10.0
+Num signals: 10000.0
+Num bg: 1000000
+Flow type: affine
+File name: lhc_enR0.4_all_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best
+Going by largest loss: 
+Number of signal in top events: [0/1]
+Number of signal in top events: [0/10]
+Number of signal in top events: [3/100]
+Number of signal in top events: [50/1000]
+Number of signal in top events: [527/10000]
+Number of signal in top events: [4697/100000]
+Number of signal in top events: [99847/1000000]
+Number of signal in top events: [527/10000]
+Number of signal in top events: [945/20000]
+Number of signal in top events: [1367/30000]
+Number of signal in top events: [1829/40000]
+Number of signal in top events: [2280/50000]
+Number of signal in top events: [2746/60000]
+Number of signal in top events: [3187/70000]
+Number of signal in top events: [3707/80000]
+Number of signal in top events: [4214/90000]
+Number of signal in top events: [4697/100000]
+Number of signal in top events: [10993/200000]
+Number of signal in top events: [19786/300000]
+Number of signal in top events: [30972/400000]
+Number of signal in top events: [44757/500000]
+Number of signal in top events: [60188/600000]
+Number of signal in top events: [76280/700000]
+Number of signal in top events: [89992/800000]
+Number of signal in top events: [97593/900000]
+Going by smallest loss: 
+Number of signal in bottom events: [/1]
+Number of signal in bottom events: [/10]
+Number of signal in bottom events: [/100]
+Number of signal in bottom events: [/1000]
+Number of signal in bottom events: [/10000]
+Number of signal in bottom events: [/100000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Number of signal in bottom events: [/1000000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Number of signal in bottom events: [/10000]
+Number of signal in bottom events: [/20000]
+Number of signal in bottom events: [/30000]
+Number of signal in bottom events: [/40000]
+Number of signal in bottom events: [/50000]
+Number of signal in bottom events: [/60000]
+Number of signal in bottom events: [/70000]
+Number of signal in bottom events: [/80000]
+Number of signal in bottom events: [/90000]
+Number of signal in bottom events: [/100000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Number of signal in bottom events: [/200000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Number of signal in bottom events: [/300000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Number of signal in bottom events: [/400000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Number of signal in bottom events: [/500000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Number of signal in bottom events: [/600000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Number of signal in bottom events: [/700000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Number of signal in bottom events: [/800000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Number of signal in bottom events: [/900000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+=========================================================================
+
+
+Signal percent: 10.0
+Num signals: 10000.0
+Num bg: 1000000
+Flow type: affine
+File name: lhc_enR0.4_mjj_m1_m1minusm2_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best
+Going by largest loss: 
+Number of signal in top events: [0/1]
+Number of signal in top events: [1/10]
+Number of signal in top events: [4/100]
+Number of signal in top events: [48/1000]
+Number of signal in top events: [265/10000]
+Number of signal in top events: [3022/100000]
+Number of signal in top events: [99577/1000000]
+Number of signal in top events: [265/10000]
+Number of signal in top events: [571/20000]
+Number of signal in top events: [883/30000]
+Number of signal in top events: [1200/40000]
+Number of signal in top events: [1544/50000]
+Number of signal in top events: [1869/60000]
+Number of signal in top events: [2188/70000]
+Number of signal in top events: [2471/80000]
+Number of signal in top events: [2756/90000]
+Number of signal in top events: [3022/100000]
+Number of signal in top events: [5860/200000]
+Number of signal in top events: [9527/300000]
+Number of signal in top events: [15872/400000]
+Number of signal in top events: [25731/500000]
+Number of signal in top events: [39331/600000]
+Number of signal in top events: [56435/700000]
+Number of signal in top events: [75543/800000]
+Number of signal in top events: [93582/900000]
+Going by smallest loss: 
+Number of signal in bottom events: [/1]
+Number of signal in bottom events: [/10]
+Number of signal in bottom events: [/100]
+Number of signal in bottom events: [/1000]
+Number of signal in bottom events: [/10000]
+Number of signal in bottom events: [/100000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Number of signal in bottom events: [/1000000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Number of signal in bottom events: [/10000]
+Number of signal in bottom events: [/20000]
+Number of signal in bottom events: [/30000]
+Number of signal in bottom events: [/40000]
+Number of signal in bottom events: [/50000]
+Number of signal in bottom events: [/60000]
+Number of signal in bottom events: [/70000]
+Number of signal in bottom events: [/80000]
+Number of signal in bottom events: [/90000]
+Number of signal in bottom events: [/100000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Number of signal in bottom events: [/200000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Number of signal in bottom events: [/300000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Number of signal in bottom events: [/400000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Number of signal in bottom events: [/500000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Number of signal in bottom events: [/600000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Number of signal in bottom events: [/700000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Number of signal in bottom events: [/800000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Number of signal in bottom events: [/900000]<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+=========================================================================
+
+
