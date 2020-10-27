@@ -26,6 +26,6 @@ source /opt/anaconda3/bin/activate NAF
 echo "env activated"
 python maf_experiments.py --dataset "lhc" --flowtype "$FLOW" --signal "$SP" --input_dim "$INPUT_DIM" --experiment_name "$EXPERIMENT_NAME"
 echo "model trained"
-python python test_model.py
+python test_model.py
 echo "test complete"
 echo "Done"
