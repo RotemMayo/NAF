@@ -45,10 +45,10 @@ def main():
     print(sorted_events.shape)
     sorted_events = sorted_events[REMOVE_LARGEST[FILTER_NUMBER]:-REMOVE_SMALLEST[FILTER_NUMBER], :]
     print(sorted_events.shape)
-    sig_new = np.ndarray([event[1:-1] for event in sorted_events if event[-1] == 1])
-    bg_new = np.ndarray([event[1:-1] for event in sorted_events if event[-1] == 0])
-    print(sig_new.shape)
-    print(bg_new.shape)
+    sig_new = [event[1:-1] for event in sorted_events if event[-1] == 1]
+    bg_new = [event[1:-1] for event in sorted_events if event[-1] == 0]
+    print(len(sig_new[0]))
+    print(len(sig_new))
     np.save(OUTPUT_BG_FILE_FORMAT.format(datasets.ROOT, INPUT_ORIGINAL_EXPERIMENT_NAME, FILTER_NUMBER), bg_new)
     np.save(OUTPUT_SIG_FILE_FORMAT.format(datasets.ROOT, INPUT_ORIGINAL_EXPERIMENT_NAME, FILTER_NUMBER), sig_new)
 
