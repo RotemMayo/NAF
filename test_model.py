@@ -267,12 +267,11 @@ def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPE
     print_to_file("Going by smallest loss: ")
     for n in numbers_to_check:
         num_sig = int(np.sum(sorted[-n:, -1]))
+        suffix = ""
         if num_sig / n < INTEREST_THRESHOLD and n >= 10 ** 5:
             suffix = "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
             print(file_name + " is  interesting")
-        else:
-            suffix = ""
-        print_to_file("Number of signal in bottom events: [" + str(np.sum(sorted[-n:, -1]) + "/"                                                               + str(n) + "]" + suffix))
+        print_to_file("Number of signal in bottom events: [" + str(np.sum(sorted[-n:, -1])) + "/" + str(n) + "]" + suffix)
     print_to_file("=========================================================================\n\n")
 
     if PLOT_FLAG:
