@@ -24,7 +24,8 @@ def main():
     bg = np.nan_to_num(np.load('{}lhc/bg_{}_filter_{}.npy'.format(datasets.ROOT, INPUT_EXPERIMENT_NAME, FILTER_NUMBER-1)))
     sig = np.nan_to_num(np.load('{}lhc/sig_{}_filter_{}.npy'.format(datasets.ROOT, INPUT_EXPERIMENT_NAME, FILTER_NUMBER-1)))
     bg_norm, sig_norm = normalize_data(mdl.args.signal_percent, bg, sig)
-
+    print(bg.shape)
+    print(sig.shape)
     n_bg = bg_norm.shape[0]
     bg_scores = get_scores(mdl, bg_norm)
     bg = np.append(bg_scores, bg, axis=1)
@@ -38,11 +39,12 @@ def main():
     data = np.append(sig, bg, axis=0)
     sorted = data[(-data[:, 0]).argsort()]
 
-    sorted = sorted[REMOVE_LARGEST[FILTER_NUMBER]:-REMOVE_SMALLEST[FILTER_NUMBER]]
-
-    sig_new = [event[1:-1] for event in sorted if event[-1] == 1]
-    bg_new = [event[1:-1] for event in sorted if event[-1] == 0]
-
+    sorted = sorted[REMOVE_LARGEST[FILTER_NUMBER]:-REMOVE_SMALLEST[FILTER_NUMBER], :]
+    print(sorted.shape)
+    sig_new = np.ndarray([event[1:-1] for event in sorted if event[-1] == 1])
+    bg_new = np.ndarray([event[1:-1] for event in sorted if event[-1] == 0])
+    print(sig_new.shape)
+    print(bg_new.shape)
     np.save(OUTPUT_BG_FILE_FORMAT.format(datasets.ROOT, INPUT_EXPERIMENT_NAME, FILTER_NUMBER), bg_new)
     np.save(OUTPUT_SIG_FILE_FORMAT.format(datasets.ROOT, INPUT_EXPERIMENT_NAME, FILTER_NUMBER), sig_new)
 

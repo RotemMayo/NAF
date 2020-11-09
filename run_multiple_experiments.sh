@@ -14,4 +14,4 @@ set --
 #/usr/bin/sbatch cluster_runner.sh 2 R"$R"_mjj_m1 "$SP"
 #/usr/bin/sbatch cluster_runner.sh 2 R"$R"_mjj_m1minusm2 "$SP"
 #/usr/bin/sbatch cluster_runner.sh 3 R"$R"_mjj_m1_m1minusm2 "$SP"
-/usr/bin/sbatch cluster_runner.sh 11 R"$R"_all_filter_1 "$SP"
+/usr/bin/sbatch cluster_runner.sh 11 R"$R"_all_filter_2 "$SP"
