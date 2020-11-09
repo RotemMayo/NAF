@@ -260,19 +260,23 @@ def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPE
     data = np.append(sig, bg, axis=0)
     sorted = data[(-data[:, 0]).argsort()]
 
+    numbers_to_check = [n for n in NUMBERS_TO_CHECK if n <= sorted.shape(0)]
+
     print_to_file("Going by largest loss: ")
-    for n in NUMBERS_TO_CHECK:
+    for n in numbers_to_check:
         print_to_file("Number of signal in top events: [" + str(int(np.sum(sorted[:n, -1]))) + "/" + str(n) + "]")
 
     print_to_file("Going by smallest loss: ")
-    for n in NUMBERS_TO_CHECK:
+    for n in numbers_to_check:
         num_sig = int(np.sum(sorted[-n:, -1]))
         if num_sig / n < INTEREST_THRESHOLD and n >= 10 ** 5:
             suffix = "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
             print(file_name + " is  interesting")
         else:
             suffix = ""
-        print_to_file("Number of signal in bottom events: [" + str() + "/" + str(n) + "]" + suffix)
+        print_to_file("Number of signal in bottom events: [" + str(np.sum(sorted[-n:, -1]) + "/"
+                                                                   + str(n) + "]" + suffix))
+
     print_to_file("=========================================================================\n\n")
     if PLOT_FLAG:
         all_plots(sig, bg, name, obs_list)
