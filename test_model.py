@@ -258,7 +258,7 @@ def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPE
     numbers_to_check = [n for n in NUMBERS_TO_CHECK if n <= sorted.shape[0]]
 
     print_to_file("Signal percent: " + str(sp * 100))
-    print_to_file("Num signals: " + str(sp * sig.shape[0]))
+    print_to_file("Num signals: " + str(sp * bg.shape[0]))
     print_to_file("Num bg: " + str(bg.shape[0]))
     print_to_file("Flow type: " + flow_type)
     print_to_file("File name: " + file_name)
@@ -269,7 +269,9 @@ def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPE
     for n in numbers_to_check:
         num_sig = int(np.sum(sorted[-n:, -1]))
         suffix = ""
-        if ((num_sig / n) < INTEREST_THRESHOLD) and (n >= INTEREST_NUMBER):
+        print(num_sig/n)
+        print(INTEREST_THRESHOLD)
+        if ((num_sig/n) < INTEREST_THRESHOLD) and (n >= INTEREST_NUMBER):
             suffix = "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
             print(file_name + " is  interesting")
         print_to_file("Number of signal in bottom events: [" + str(num_sig) + "/" + str(n) + "]" + suffix)
