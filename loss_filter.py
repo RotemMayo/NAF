@@ -41,12 +41,12 @@ def main():
     print(bg.shape)
     print(sig.shape)
     data = np.append(sig, bg, axis=0)
-    sorted = data[(-data[:, 0]).argsort()]
-
-    sorted = sorted[REMOVE_LARGEST[FILTER_NUMBER]:-REMOVE_SMALLEST[FILTER_NUMBER], :]
-    print(sorted.shape)
-    sig_new = np.ndarray([event[1:-1] for event in sorted if event[-1] == 1])
-    bg_new = np.ndarray([event[1:-1] for event in sorted if event[-1] == 0])
+    sorted_events = data[(-data[:, 0]).argsort()]
+    print(sorted_events.shape)
+    sorted_events = sorted_events[REMOVE_LARGEST[FILTER_NUMBER]:-REMOVE_SMALLEST[FILTER_NUMBER], :]
+    print(sorted_events.shape)
+    sig_new = np.ndarray([event[1:-1] for event in sorted_events if event[-1] == 1])
+    bg_new = np.ndarray([event[1:-1] for event in sorted_events if event[-1] == 0])
     print(sig_new.shape)
     print(bg_new.shape)
     np.save(OUTPUT_BG_FILE_FORMAT.format(datasets.ROOT, INPUT_ORIGINAL_EXPERIMENT_NAME, FILTER_NUMBER), bg_new)
