@@ -20,7 +20,7 @@ import seaborn as sn
 
 mpl.rcParams['agg.path.chunksize'] = 10000
 
-PLOT_FLAG = False
+PLOT_FLAG = True
 PDF_FLAG = True
 PNG_FLAG = True
 FIRST_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "First_jet_tau21",
