@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH -J NAF_TEST
-#SBATCH -o logs/NAF_TEST_%j.log
+#SBATCH -J NAF_FILTER
+#SBATCH -o logs/NAF_FILTER_%j.log
 #SBATCH -N 2
 #SBATCH -c 16
 #SBATCH --mem=32G
