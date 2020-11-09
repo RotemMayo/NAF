@@ -19,7 +19,7 @@ import seaborn as sn
 
 mpl.rcParams['agg.path.chunksize'] = 10000
 
-PLOT_FLAG = True
+PLOT_FLAG = False
 PDF_FLAG = True
 PNG_FLAG = True
 FIRST_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "First_jet_tau21",
@@ -27,6 +27,7 @@ FIRST_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "First_jet
 SECOND_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "m1 - m2", "Lead pt", "Ht", "MHt",
                               "First_jet_tau21", "Second_jet_tau_21", "Classifier"]
 INTEREST_THRESHOLD = 0.03
+INTEREST_NUMBER = 10**5
 NUM_EVENTS_TSNE = 3*10**4
 
 FILES_TO_TEST = []
@@ -268,10 +269,10 @@ def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPE
     for n in numbers_to_check:
         num_sig = int(np.sum(sorted[-n:, -1]))
         suffix = ""
-        if num_sig / n < INTEREST_THRESHOLD and n >= 10 ** 5:
+        if ((num_sig / n) < INTEREST_THRESHOLD) and (n >= INTEREST_NUMBER):
             suffix = "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
             print(file_name + " is  interesting")
-        print_to_file("Number of signal in bottom events: [" + str(np.sum(sorted[-n:, -1])) + "/" + str(n) + "]" + suffix)
+        print_to_file("Number of signal in bottom events: [" + str(num_sig) + "/" + str(n) + "]" + suffix)
     print_to_file("=========================================================================\n\n")
 
     if PLOT_FLAG:
