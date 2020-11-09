@@ -1,3 +1,4 @@
+from __future__ import division
 from maf_experiments import model
 from maf_experiments import parse_args
 import matplotlib as mpl
@@ -258,8 +259,9 @@ def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPE
     numbers_to_check = [n for n in NUMBERS_TO_CHECK if n <= sorted.shape[0]]
 
     print_to_file("Signal percent: " + str(sp * 100))
-    print_to_file("Num signals: " + str(sp * bg.shape[0]))
+    print_to_file("Num signals: " + str(sig.shape[0]))
     print_to_file("Num bg: " + str(bg.shape[0]))
+    print_to_file("Num signals trained on: " + str(bg.shape[0] * sp))
     print_to_file("Flow type: " + flow_type)
     print_to_file("File name: " + file_name)
     print_to_file("Going by largest loss: ")
