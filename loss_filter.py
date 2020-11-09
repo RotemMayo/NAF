@@ -9,7 +9,7 @@ MODEL_NAME = "lhc_en{}_sp{}_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cud
 
 REMOVE_SMALLEST = {
     1: 3*10**5,
-    2: 0
+    2: 1
 }
 
 REMOVE_LARGEST = {
