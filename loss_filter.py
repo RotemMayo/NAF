@@ -1,18 +1,18 @@
 from test_model import *
 
-EXPERIMENT_NAME = "R0.4_all"
+INPUT_EXPERIMENT_NAME = "R0.4_all_filter_1"
 SP = 0.1
-MODEL_NAME = "lhc_en{}_sp{}_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best".format(EXPERIMENT_NAME, SP)
+MODEL_NAME = "lhc_en{}_sp{}_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best".format(INPUT_EXPERIMENT_NAME, SP)
 FILTER_NUMBER = 2
 REMOVE_SMALLEST = 3*10**5
-BG_FILE_FORMAT = "{}lhc/bg_{}_filter_{}"
-SIG_FILE_FORMAT = "{}lhc/sig_{}_filter_{}"
+OUTPUT_BG_FILE_FORMAT = "{}lhc/bg_{}_filter_{}"
+OUTPUT_SIG_FILE_FORMAT = "{}lhc/sig_{}_filter_{}"
 
 
 def main():
     mdl = load_model(MODEL_NAME)
-    bg = np.nan_to_num(np.load('{}lhc/bg_{}.npy'.format(datasets.ROOT, EXPERIMENT_NAME)))
-    sig = np.nan_to_num(np.load('{}lhc/sig_{}.npy'.format(datasets.ROOT, EXPERIMENT_NAME)))
+    bg = np.nan_to_num(np.load('{}lhc/bg_{}.npy'.format(datasets.ROOT, INPUT_EXPERIMENT_NAME)))
+    sig = np.nan_to_num(np.load('{}lhc/sig_{}.npy'.format(datasets.ROOT, INPUT_EXPERIMENT_NAME)))
     bg_norm, sig_norm = normalize_data(mdl.args.signal_percent, bg, sig)
 
     n_bg = bg_norm.shape[0]
@@ -33,8 +33,8 @@ def main():
     sig = [event[1:-1] for event in sorted if event[-1] == 1]
     bg = [event[1:-1] for event in sorted if event[-1] == 0]
 
-    np.save(BG_FILE_FORMAT.format(datasets.ROOT, EXPERIMENT_NAME, FILTER_NUMBER), bg)
-    np.save(SIG_FILE_FORMAT.format(datasets.ROOT, EXPERIMENT_NAME, FILTER_NUMBER), sig)
+    np.save(OUTPUT_BG_FILE_FORMAT.format(datasets.ROOT, INPUT_EXPERIMENT_NAME, FILTER_NUMBER), bg)
+    np.save(OUTPUT_SIG_FILE_FORMAT.format(datasets.ROOT, INPUT_EXPERIMENT_NAME, FILTER_NUMBER), sig)
 
 
 if __name__ == "__main__":
