@@ -28,8 +28,8 @@ FIRST_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "First_jet
 SECOND_EXPERIMENT_OBS_LIST = ["Loss", "Mjj", "Nj", "Mtot", "m1", "m2", "m1 - m2", "Lead pt", "Ht", "MHt",
                               "First_jet_tau21", "Second_jet_tau_21", "Classifier"]
 INTEREST_THRESHOLD = 0.03
-INTEREST_NUMBER = 10**5
-NUM_EVENTS_TSNE = 3*10**4
+INTEREST_NUMBER = 10 ** 5
+NUM_EVENTS_TSNE = 3 * 10 ** 4
 
 FILES_TO_TEST = []
 
@@ -73,7 +73,6 @@ FILES_TO_TEST += [
     ("lhc_sp0.075_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.075, "affine"),
     ("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "affine"),
 ]
-
 
 NUMBERS_TO_CHECK = [10 ** j for j in range(7)] + [j * 10 ** 4 for j in range(1, 10)] + [j * 10 ** 5 for j in
                                                                                         range(1, 10)]
@@ -171,7 +170,7 @@ def plot_tsne(bg, sig, plot_path, data_path):
         tsne_df = pd.DataFrame(data=tsne_data, columns=("Dim_1", "Dim_2", "label"))  # Ploting the result of tsne
         tsne_df.to_csv(data_path)
 
-    sn.FacetGrid(tsne_df, hue="label", size=6).map(plt.scatter, "Dim_1", "Dim_2", alpha=SCATTER_ALPHA/5).add_legend()
+    sn.FacetGrid(tsne_df, hue="label", size=6).map(plt.scatter, "Dim_1", "Dim_2", alpha=SCATTER_ALPHA / 5).add_legend()
 
     # sn.FacetGrid(tsne_df, hue="label", size=2).map(plt.hexbin, "Dim_1", "Dim_2", mincnt=10, vmax=50, alpha=SCATTER_ALPHA*1.5, linewidths=0).add_legend()
     save_plot(plot_path)
@@ -223,6 +222,20 @@ def all_plots(sig, bg, name, obs_list):
         create_pdf(output_dir)
 
 
+def print_cuts(sorted_events, numbers_to_check, file_name, from_end=False):
+    if from_end:
+        s = -1
+    else:
+        s = 1
+    for n in numbers_to_check:
+        num_sig = int(np.sum(sorted_events[s * n:, -1]))
+        suffix = ""
+        if ((num_sig / n) < INTEREST_THRESHOLD) and (n >= INTEREST_NUMBER):
+            suffix = "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+            print(file_name + " is  interesting")
+        print_to_file("Number of signal in bottom events: [" + str(num_sig) + "/" + str(n) + "]" + suffix)
+
+
 def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPERIMENT_OBS_LIST):
     name = ""
     if experiment_name != "":
@@ -243,7 +256,7 @@ def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPE
         bg_scores = get_scores(mdl, bg_norm)
         sig_scores = get_scores(mdl, sig_norm)
         np.save(bg_loss_file_name, bg_scores)
-        np.save(sig_loss_file_name,sig_scores)
+        np.save(sig_loss_file_name, sig_scores)
 
     n_bg = bg.shape[0]
     bg = np.append(bg_scores, bg, axis=1)
@@ -254,30 +267,23 @@ def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPE
     sig = np.append(sig, np.ones((n_sig, 1)), axis=1)
 
     data = np.append(sig, bg, axis=0)
-    sorted = data[(-data[:, 0]).argsort()]
+    sorted_events = data[(-data[:, 0]).argsort()]
 
-    numbers_to_check = [n for n in NUMBERS_TO_CHECK if n <= sorted.shape[0]]
+    numbers_to_check = [n for n in NUMBERS_TO_CHECK if n <= sorted_events.shape[0]]
 
+    print_to_file("Experiment: " + experiment_name)
+    print_to_file("File name: " + file_name)
     print_to_file("Signal percent: " + str(sp * 100))
     print_to_file("Num signals: " + str(sig.shape[0]))
     print_to_file("Num bg: " + str(bg.shape[0]))
     print_to_file("Num signals trained on: " + str(bg.shape[0] * sp))
     print_to_file("Flow type: " + flow_type)
-    print_to_file("File name: " + file_name)
+
     print_to_file("Going by largest loss: ")
-    for n in numbers_to_check:
-        print_to_file("Number of signal in top events: [" + str(int(np.sum(sorted[:n, -1]))) + "/" + str(n) + "]")
+    print_cuts(sorted_events, numbers_to_check, file_name, False)
+
     print_to_file("Going by smallest loss: ")
-    for n in numbers_to_check:
-        num_sig = int(np.sum(sorted[-n:, -1]))
-        suffix = ""
-        print(num_sig/n)
-        print(INTEREST_THRESHOLD)
-        if ((num_sig/n) < INTEREST_THRESHOLD) and (n >= INTEREST_NUMBER):
-            suffix = "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-            print(file_name + " is  interesting")
-        print_to_file("Number of signal in bottom events: [" + str(num_sig) + "/" + str(n) + "]" + suffix)
-    print_to_file("=========================================================================\n\n")
+    print_cuts(sorted_events, numbers_to_check, file_name, True)
 
     if PLOT_FLAG:
         all_plots(sig, bg, name, obs_list)

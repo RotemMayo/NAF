@@ -4,7 +4,17 @@ INPUT_EXPERIMENT_NAME = "R0.4_all_filter_1"
 SP = 0.1
 MODEL_NAME = "lhc_en{}_sp{}_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best".format(INPUT_EXPERIMENT_NAME, SP)
 FILTER_NUMBER = 2
-REMOVE_SMALLEST = 3*10**5
+
+REMOVE_SMALLEST = {
+    1: 3*10**5,
+    2: 0
+}
+
+REMOVE_LARGEST = {
+    1: 0,
+    2: 10**5
+}
+
 OUTPUT_BG_FILE_FORMAT = "{}lhc/bg_{}_filter_{}"
 OUTPUT_SIG_FILE_FORMAT = "{}lhc/sig_{}_filter_{}"
 
@@ -28,7 +38,7 @@ def main():
     data = np.append(sig, bg, axis=0)
     sorted = data[(-data[:, 0]).argsort()]
 
-    sorted = sorted[:-REMOVE_SMALLEST]
+    sorted = sorted[REMOVE_LARGEST[FILTER_NUMBER]:-REMOVE_SMALLEST[FILTER_NUMBER]]
 
     sig = [event[1:-1] for event in sorted if event[-1] == 1]
     bg = [event[1:-1] for event in sorted if event[-1] == 0]
