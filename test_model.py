@@ -79,7 +79,7 @@ NUMBERS_TO_CHECK = [10 ** j for j in range(7)] + [j * 10 ** 4 for j in range(1, 
                                                                                         range(1, 10)]
 MIN_LOSS = -5
 MAX_LOSS = 100
-NBINS = 300
+NBINS = 3000
 TIME_STAMP = datetime.now().strftime("%d%m%Y_%H%M%S")
 RUN_OUTPUT_DIR = "results/run_{}/".format(TIME_STAMP)
 OUTPUT_FILE = "{}all_results.txt".format(RUN_OUTPUT_DIR)
@@ -225,11 +225,13 @@ def all_plots(sig, bg, name, obs_list):
 
 def print_cuts(sorted_events, numbers_to_check, file_name, from_end=False):
     if from_end:
-        s = -1
+        s = -n
+        e = -1
     else:
-        s = 1
+        s = 0
+        e= n
     for n in numbers_to_check:
-        num_sig = int(np.sum(sorted_events[s * n:, -1]))
+        num_sig = int(np.sum(sorted_events[s:e, -1]))
         suffix = ""
         if ((num_sig / n) < INTEREST_THRESHOLD) and (n >= INTEREST_NUMBER):
             suffix = "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
@@ -286,6 +288,7 @@ def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPE
 
     print_to_file("Going by smallest loss: ")
     print_cuts(sorted_events, numbers_to_check, file_name, True)
+    print_to_file("====================================================\n\n")
 
     if PLOT_FLAG:
         all_plots(sig, bg, name, obs_list)
