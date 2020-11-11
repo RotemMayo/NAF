@@ -87,7 +87,7 @@ MODEL_OUTPUT_DIR_FORMAT = RUN_OUTPUT_DIR + "{}/"
 PDF_PATH_FORMAT = RUN_OUTPUT_DIR + "{}.pdf"
 PNG_NAME_FORMAT = "{}{}.png"
 PNG_DPI = 50
-SCATTER_ALPHA = 0.1
+SCATTER_ALPHA = 0.25
 PLOT_TITLE_FORMAT = "{}: {} vs {}"
 
 BG_LOSS_DATA_FILE_NAME = "results/losses/bg_{}_loss.npy"
