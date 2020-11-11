@@ -83,4 +83,13 @@ To:
 
 ## Troubleshooting
 
-The datasets might contain nan values causing losses not to work. In order to solve this use np.nan_to_num on the data when loading.
+The datasets might contain nan values causing losses not to work. In order to solve this use np.nan_to_num on the data when loadingg.sg   lakfg.g.g.g
+
+## TODO
+1. Smaller bin sizes
+2. Train on removed events
+3. tsne without loss
+4. train on mjj translation + 1 obs
+5. 2 of papers sent by Tau (review on ML and embedding clustering)
+6. AE filtering
+7. Anomally score slide (need to ask tau to send)
