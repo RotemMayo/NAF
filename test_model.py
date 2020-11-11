@@ -224,13 +224,13 @@ def all_plots(sig, bg, name, obs_list):
 
 
 def print_cuts(sorted_events, numbers_to_check, file_name, from_end=False):
-    if from_end:
-        s = -n
-        e = -1
-    else:
-        s = 0
-        e= n
     for n in numbers_to_check:
+        if from_end:
+            s = -n
+            e = -1
+        else:
+            s = 0
+            e = n
         num_sig = int(np.sum(sorted_events[s:e, -1]))
         suffix = ""
         if ((num_sig / n) < INTEREST_THRESHOLD) and (n >= INTEREST_NUMBER):
