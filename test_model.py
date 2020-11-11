@@ -256,15 +256,9 @@ def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPE
         bg_scores = np.load(bg_loss_file_name)
         sig_scores = np.load(sig_loss_file_name)
     else:
-        print(bg.shape)
-        print(sig.shape)
         bg_norm, sig_norm = normalize_data(mdl.args.signal_percent, bg, sig)
-        print(bg_norm.shape)
-        print(sig_norm.shape)
         bg_scores = get_scores(mdl, bg_norm)
         sig_scores = get_scores(mdl, sig_norm)
-        print(bg_scores.shape)
-        print(sig_scores.shape)
         np.save(bg_loss_file_name, bg_scores)
         np.save(sig_loss_file_name, sig_scores)
 
