@@ -35,6 +35,7 @@ FILES_TO_TEST = []
 
 SECOND_EXPERIMENTS = {
     "all_filter_1": SECOND_EXPERIMENT_OBS_LIST,
+    "all_filter_2": SECOND_EXPERIMENT_OBS_LIST,
     "all_mjj-translation_10000": SECOND_EXPERIMENT_OBS_LIST,
     "all_mjj-translation_5000": SECOND_EXPERIMENT_OBS_LIST,
     "all_mjj-translation_1000": SECOND_EXPERIMENT_OBS_LIST,
