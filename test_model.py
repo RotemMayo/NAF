@@ -238,6 +238,7 @@ def print_cuts(sorted_events, numbers_to_check, file_name, from_end=False):
 
 
 def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPERIMENT_OBS_LIST):
+    print("Experiment: " + experiment_name)
     name = ""
     if experiment_name != "":
         name += experiment_name + "_"
