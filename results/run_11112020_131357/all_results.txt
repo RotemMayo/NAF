@@ -1,0 +1,8 @@
+Experiment: R0.4_all
+File name: lhc_enR0.4_all_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best
+Signal percent: 10.0
+Num signals: 100028
+Num bg: 1000260
+Num signals trained on: 100026.0
+Flow type: affine
+Going by largest loss: 
