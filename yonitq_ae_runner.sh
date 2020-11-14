@@ -9,23 +9,7 @@
 #SBATCH -A yonit-account
 #SBATCH -p yonitq
 
-INPUT_DIM=${1:-"7"}
-EXPERIMENT_NAME=${2:-""}
-SP=${3:-"0.1"}
-FLOW=${4:-"affine"}
-set --
-
-echo "Parameters"
-echo "INPUT_DIM: $INPUT_DIM"
-echo "EXPERIMENT_NAME: $EXPERIMENT_NAME"
-echo "SP: $SP"
-echo "FLOW: $FLOW"
-echo "=================================="
-
 source /opt/anaconda3/bin/activate NAF
 echo "env activated"
-python maf_experiments.py --dataset "lhc" --flowtype "$FLOW" --signal "$SP" --input_dim "$INPUT_DIM" --experiment_name "$EXPERIMENT_NAME"
+python auto_encoder.py
 echo "model trained"
-python test_model.py
-echo "test complete"
-echo "Done"
