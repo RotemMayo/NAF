@@ -9,7 +9,7 @@
 #SBATCH -A yonit-account
 #SBATCH -p yonitq
 
-source /opt/anaconda3/bin/activate NAF
+source /opt/anaconda3/bin/activate ae
 echo "env activated"
 python auto_encoder.py
 echo "model trained"
