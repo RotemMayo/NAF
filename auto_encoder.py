@@ -10,7 +10,8 @@ import os
 from matplotlib import pyplot as plt
 
 
-DATA_SET_PATH = "C:\\Users\\rotem\\PycharmProjects\\ML4Jets\\ML4Jets-HUJI\\Data\\events_anomalydetection.h5"
+#DATA_SET_PATH = "C:\\Users\\rotem\\PycharmProjects\\ML4Jets\\ML4Jets-HUJI\\Data\\events_anomalydetection.h5"
+DATA_SET_PATH = "/usr/people/snirgaz/rotemov/rotemov/Projects/ML4Jets-HUJI/Data/events_anomalydetection.h5"
 CHUNK_SIZE = 10 ** 4  # TOTAL_SIZE / CHUNK_SIZE should be a natural number
 TOTAL_SIZE = int(1.1 * 10 ** 6)
 BATCH_SIZE = 5 * 10 ** 2
