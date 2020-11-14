@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J NAF
+#SBATCH -J AE
 #SBATCH -o logs/AE_%j.out
 #SBATCH -N 4
 #SBATCH -c 32
