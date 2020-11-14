@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -J NAF
-#SBATCH -o logs/NAF_%j.out
+#SBATCH -o logs/AE_%j.out
 #SBATCH -N 4
 #SBATCH -c 32
 #SBATCH --mem=40G
