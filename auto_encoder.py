@@ -104,19 +104,22 @@ def train(net, optimizer, data_loader_gen, criterion, epochs, last_cp_path, best
     net.eval()
     losses = []
     for epoch_num in tqdm(range(epochs)):
-        loss_sum = 0
         data_loader_gen.reset()
+        epoch_losses = []
         for data_loader in tqdm(data_loader_gen):
+            mini_epoch_loss = 0
             for x in data_loader:
                 optimizer.zero_grad()  # zero the gradient buffers
                 output = net(x.float())
                 loss = criterion(output, x.float())
                 loss.backward()
                 optimizer.step()  # Does the update
-                losses.append(loss)
-                loss_sum += loss
-        print(loss_sum)
-        save(net, optimizer, loss_sum, epoch_num, last_cp_path)
+                mini_epoch_loss += loss.detach().item()
+                gc.collect()
+            epoch_losses.append(mini_epoch_loss)
+            print(mini_epoch_loss)
+        losses += epoch_losses
+        save(net, optimizer, sum(epoch_losses), epoch_num, last_cp_path)
     return losses
 
 
