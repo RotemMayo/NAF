@@ -12,7 +12,7 @@ import gc
 
 #DATA_SET_PATH = "C:\\Users\\rotem\\PycharmProjects\\ML4Jets\\ML4Jets-HUJI\\Data\\events_anomalydetection.h5"
 DATA_SET_PATH = "/usr/people/snirgaz/rotemov/rotemov/Projects/ML4Jets-HUJI/Data/events_anomalydetection.h5"
-CHUNK_SIZE = 10 ** 4  # TOTAL_SIZE / CHUNK_SIZE should be a natural number
+CHUNK_SIZE = 10 ** 5  # TOTAL_SIZE / CHUNK_SIZE should be a natural number
 TOTAL_SIZE = int(1.1 * 10 ** 6)
 BATCH_SIZE = 5 * 10 ** 2
 
@@ -108,7 +108,7 @@ def train(net, optimizer, data_loader_gen, criterion, epochs, last_cp_path, best
         epoch_losses = []
         for data_loader in tqdm(data_loader_gen):
             mini_epoch_loss = 0
-            for x in data_loader:
+            for x in tqdm(data_loader):
                 optimizer.zero_grad()  # zero the gradient buffers
                 output = net(x.float())
                 loss = criterion(output, x.float())
@@ -151,7 +151,7 @@ def test(net, data_loader_gen, criterion):
     data_loader_gen.reset()
     for data_loader in tqdm(data_loader_gen):
         mini_epoch_loss = 0
-        for x in data_loader:
+        for x in tqdm(data_loader):
             output = net(x.float())
             loss = criterion(output, x.float())
             loss.backward()
