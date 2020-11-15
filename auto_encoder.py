@@ -8,7 +8,7 @@ import numpy as np
 from tqdm import tqdm
 import os
 from matplotlib import pyplot as plt
-
+import gc
 
 #DATA_SET_PATH = "C:\\Users\\rotem\\PycharmProjects\\ML4Jets\\ML4Jets-HUJI\\Data\\events_anomalydetection.h5"
 DATA_SET_PATH = "/usr/people/snirgaz/rotemov/rotemov/Projects/ML4Jets-HUJI/Data/events_anomalydetection.h5"
@@ -147,11 +147,14 @@ def test(net, data_loader_gen, criterion):
     losses = []
     data_loader_gen.reset()
     for data_loader in tqdm(data_loader_gen):
+        mini_epoch_loss = 0
         for x in data_loader:
             output = net(x.float())
             loss = criterion(output, x.float())
             loss.backward()
-            losses.append(loss)
+            mini_epoch_loss += loss.detach().item()
+            gc.collect()
+        losses.append(mini_epoch_loss)
     return losses
 
 
