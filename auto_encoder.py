@@ -21,11 +21,12 @@ SHUFFLE = False
 LEARNING_RATE = 0.01
 EPOCHS = 20
 
-LAST_CHECKPOINT_PATH = "ae_models\\last_basic_ae_checkpoint.pt"
-BEST_CHECKPOINT_PATH = "ae_models\\best_basic_ae_checkpoint.pt"
+OUTUT_FOLDER = "ae_models"
+LAST_CHECKPOINT_PATH = os.path.join(OUTPUT_FOLDER, "last_basic_ae_checkpoint.pt")
+BEST_CHECKPOINT_PATH = os.path.join(OUTPUT_FOLDER, "best_basic_ae_checkpoint.pt")
 PNG_DPI = 100
-TRAINING_LOSS_PNG = "ae_models\\training_loss.png"
-TEST_LOSS_PNG = "ae_models\\test_loss.png"
+TRAINING_LOSS_PNG = os.path.join(OUTPUT_FOLDER, "training_loss.png")
+TEST_LOSS_PNG = os.path.join(OUTPUT_FOLDER, "test_loss.png")
 # TODO: Add best checkpoints
 # TODO: Make running script
 
