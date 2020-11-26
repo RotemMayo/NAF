@@ -165,7 +165,7 @@ def test(net, data_loader_gen, criterion):
 
 def plot_losses(losses, path):
     plt.figure()
-    plt.plot(losses, "r+")
+    plt.plot(losses)
     plt.savefig(path, dpi=PNG_DPI)
 
 
