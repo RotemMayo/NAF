@@ -14,51 +14,52 @@ import gc
 DATA_SET_PATH = "/usr/people/snirgaz/rotemov/rotemov/Projects/ML4Jets-HUJI/Data/events_anomalydetection.h5"
 MINI_EPOCH_SIZE = 10 ** 5  # MINI_EPOCH_SIZE / EPOCH_SIZE should be a natural number
 EPOCH_SIZE = int(1.1 * 10 ** 6)  # needs to be updated to reflect exact size
-BATCH_SIZE = 5 * 10 ** 2
+BATCH_SIZE = int(1.25 * 10 ** 2)
 
-CRITERION = nn.CrossEntropyLoss()  # the loss function
+CRITERION = nn.MSELoss()  # the loss function
 SHUFFLE = False
 LEARNING_RATE = 0.01
-EPOCHS = 20
+EPOCHS = 5
 
-OUTUT_FOLDER = "ae_models"
-LAST_CHECKPOINT_PATH = os.path.join(OUTPUT_FOLDER, "last_basic_ae_checkpoint.pt")
-BEST_CHECKPOINT_PATH = os.path.join(OUTPUT_FOLDER, "best_basic_ae_checkpoint.pt")
-PNG_DPI = 100
-TRAINING_LOSS_PNG = os.path.join(OUTPUT_FOLDER, "training_loss.png")
-TEST_LOSS_PNG = os.path.join(OUTPUT_FOLDER, "test_loss.png")
+OUTPUT_FOLDER = "ae_models"
+NAME_TEMPLATE = "in{}_lat{}_lr{}_do{}"
+CHECKPOINT_TEMPLATE = "basic_ae_checkpoint_{}.pt"  # input size, latent size, learning rate, dropout
+LAST_CHECKPOINT_PATH_TEMPLATE = os.path.join(OUTPUT_FOLDER, "last_{}".format(CHECKPOINT_TEMPLATE))
+BEST_CHECKPOINT_PATH_TEMPLATE = os.path.join(OUTPUT_FOLDER, "best_{}".format(CHECKPOINT_TEMPLATE))
+PNG_DPI = 200
+TRAINING_LOSS_PNG = os.path.join(OUTPUT_FOLDER, "training_loss_{}.png")
+TEST_LOSS_PNG = os.path.join(OUTPUT_FOLDER, "test_loss_{}.png")
 # TODO: Add best checkpoints
 # TODO: Make running script
 
 
 class BasicAutoEncoder(nn.Module):
-    INPUT_DIM = 2 ** 11
-    LATENT_SPACE_DIM = 2 ** 4  # Has to be a power of 2
-    DROPOUT = 0.1
 
-    def __init__(self):
+    def __init__(self, input_dim=2**8, latent_dim=2**2, dropout=0.1):
+        self.dropout = dropout
+        self.input_dim = input_dim
         super(BasicAutoEncoder, self).__init__()
         self.encoder = []
-        dim = BasicAutoEncoder.INPUT_DIM
-        while dim / 2 >= BasicAutoEncoder.LATENT_SPACE_DIM:
+        dim = input_dim
+        while dim / 2 >= latent_dim:
             self.encoder.append(nn.Linear(dim, int(dim / 2)))
             dim = int(dim / 2)
         self.encoder = nn.ModuleList(self.encoder)
 
         self.decoder = []
-        while dim * 2 <= BasicAutoEncoder.INPUT_DIM:
+        while dim * 2 <= input_dim:
             self.decoder.append(nn.Linear(dim, int(dim * 2)))
             dim = int(dim * 2)
         self.decoder = nn.ModuleList(self.decoder)
 
     def encode(self, x):
         for i in range(len(self.encoder)):
-            x = F.dropout(F.relu(self.encoder[i](x)), p=BasicAutoEncoder.DROPOUT)
+            x = F.dropout(F.relu(self.encoder[i](x)), p=self.dropout)
         return x
 
     def decode(self, x):
         for i in range(len(self.decoder)):
-            x = F.dropout(F.relu(self.decoder[i](x)), p=BasicAutoEncoder.DROPOUT)
+            x = F.dropout(F.relu(self.decoder[i](x)), p=self.dropout)
         return x
 
     def forward(self, x):
@@ -164,26 +165,42 @@ def test(net, data_loader_gen, criterion):
 
 def plot_losses(losses, path):
     plt.figure()
-    plt.plot(losses)
+    plt.plot(losses, "r+")
     plt.savefig(path, dpi=PNG_DPI)
 
 
-def main():
-    if os.path.exists(LAST_CHECKPOINT_PATH):
-        net, optimizer, epoch, _ = load(LAST_CHECKPOINT_PATH, LEARNING_RATE)
+def run_net(input_dim, latent_dim, learning_rate, dropout):
+    name = NAME_TEMPLATE.format(input_dim, latent_dim, learning_rate, dropout)
+    last_cp_name = LAST_CHECKPOINT_PATH_TEMPLATE.format(name)
+    best_cp_name = BEST_CHECKPOINT_PATH_TEMPLATE.format(name)
+    if os.path.exists(last_cp_name):
+        net, optimizer, epoch, _ = load(last_cp_name, learning_rate)
     else:
-        net = BasicAutoEncoder()
-        optimizer = optim.AdamW(net.parameters(), lr=LEARNING_RATE)
+        net = BasicAutoEncoder(input_dim, latent_dim, dropout)
+        optimizer = optim.AdamW(net.parameters(), lr=learning_rate)
         epoch = 0
-    data_gen = DataLoaderGenerator(DATA_SET_PATH, MINI_EPOCH_SIZE, EPOCH_SIZE, BasicAutoEncoder.INPUT_DIM,
-                                   BATCH_SIZE, SHUFFLE)
+    data_gen = DataLoaderGenerator(DATA_SET_PATH, MINI_EPOCH_SIZE, EPOCH_SIZE, input_dim, BATCH_SIZE, SHUFFLE)
 
-    training_losses = train(net, optimizer, data_gen, CRITERION, EPOCHS - epoch, LAST_CHECKPOINT_PATH,
-                            BEST_CHECKPOINT_PATH)
-    plot_losses(training_losses, TRAINING_LOSS_PNG)
+    training_losses = train(net, optimizer, data_gen, CRITERION, EPOCHS - epoch, last_cp_name, best_cp_name)
+    plot_losses(training_losses, TRAINING_LOSS_PNG.format(name))
 
     test_losses = test(net, data_gen, CRITERION)
-    plot_losses(test_losses, TEST_LOSS_PNG)
+    plot_losses(test_losses, TEST_LOSS_PNG.format(name))
+
+
+def parameter_search():
+    n = np.random.random((10, 3))
+    latent_dim = 2**2
+    for params in n:
+        learning_rate = round(10 ** (-5*params[0]), ndigits=5)
+        dropout = round(10 ** (-3*params[1]), ndigits=3)
+        input_dim = 2 ** (int(7*params[2])+3)
+        print("lr={}, do={}, input={}".format(learning_rate, dropout, input_dim))
+        run_net(input_dim, latent_dim, learning_rate, dropout)
+
+
+def main():
+    parameter_search()
 
 
 if __name__ == "__main__":
