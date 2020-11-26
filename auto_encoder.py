@@ -12,11 +12,11 @@ import gc
 
 #DATA_SET_PATH = "C:\\Users\\rotem\\PycharmProjects\\ML4Jets\\ML4Jets-HUJI\\Data\\events_anomalydetection.h5"
 DATA_SET_PATH = "/usr/people/snirgaz/rotemov/rotemov/Projects/ML4Jets-HUJI/Data/events_anomalydetection.h5"
-CHUNK_SIZE = 10 ** 5  # TOTAL_SIZE / CHUNK_SIZE should be a natural number
-TOTAL_SIZE = int(1.1 * 10 ** 6)
+MINI_EPOCH_SIZE = 10 ** 5  # MINI_EPOCH_SIZE / EPOCH_SIZE should be a natural number
+EPOCH_SIZE = int(1.1 * 10 ** 6)  # needs to be updated to reflect exact size
 BATCH_SIZE = 5 * 10 ** 2
 
-CRITERION = nn.MSELoss()  # the loss function
+CRITERION = nn.CrossEntropyLoss()  # the loss function
 SHUFFLE = False
 LEARNING_RATE = 0.01
 EPOCHS = 20
@@ -174,7 +174,7 @@ def main():
         net = BasicAutoEncoder()
         optimizer = optim.AdamW(net.parameters(), lr=LEARNING_RATE)
         epoch = 0
-    data_gen = DataLoaderGenerator(DATA_SET_PATH, CHUNK_SIZE, TOTAL_SIZE, BasicAutoEncoder.INPUT_DIM,
+    data_gen = DataLoaderGenerator(DATA_SET_PATH, MINI_EPOCH_SIZE, EPOCH_SIZE, BasicAutoEncoder.INPUT_DIM,
                                    BATCH_SIZE, SHUFFLE)
 
     training_losses = train(net, optimizer, data_gen, CRITERION, EPOCHS - epoch, LAST_CHECKPOINT_PATH,
