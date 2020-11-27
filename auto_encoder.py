@@ -192,9 +192,9 @@ def parameter_search():
     n = np.random.random((10, 3))
     latent_dim = 2**2
     for params in n:
-        learning_rate = round(10 ** (-5*params[0]), ndigits=5)
-        dropout = round(10 ** (-3*params[1]), ndigits=3)
-        input_dim = 2 ** (int(7*params[2])+3)
+        learning_rate = round(10 ** (-2.5 * params[0] - 2.5), ndigits=5)
+        dropout = round(10 ** (-2 * params[1] - 2), ndigits=5)
+        input_dim = 2 ** (int(2 * params[2]) + 6)  # 64 or 128
         print("lr={}, do={}, input={}".format(learning_rate, dropout, input_dim))
         run_net(input_dim, latent_dim, learning_rate, dropout)
 
