@@ -111,10 +111,11 @@ class DataLoaderGenerator:
             raise StopIteration
         else:
             x = pd.read_hdf(self.filename, start=self.idx * self.chunk_size, stop=(self.idx + 1) * self.chunk_size)
+            labels = x.rename_axis('ID').values[:, -1]
             x = x.rename_axis('ID').values[:, :self.input_dim]
             x = data.DataLoader(x, batch_size=self.batch_size, shuffle=self.shuffle)
             self.idx += 1
-            return x
+            return x, labels
 
     def __iter__(self):
         return self
@@ -134,7 +135,7 @@ def train(net, optimizer, data_loader_gen, criterion, epochs, last_cp_path, best
         epoch_losses = []
         for data_loader in data_loader_gen:
             mini_epoch_loss = 0
-            for x in data_loader:
+            for x, _ in data_loader:
                 optimizer.zero_grad()  # zero the gradient buffers
                 output = net(x.float())
                 loss = criterion(output, x.float())
@@ -143,7 +144,6 @@ def train(net, optimizer, data_loader_gen, criterion, epochs, last_cp_path, best
                 mini_epoch_loss += loss.detach().item()
                 gc.collect()
             epoch_losses.append(mini_epoch_loss)
-            print(mini_epoch_loss)
         losses += epoch_losses
         if save(net, optimizer, sum(epoch_losses), epoch_num, last_cp_path, best_cp_path, lr):
             epochs_since_last_improvement = 0
@@ -181,30 +181,41 @@ def load(path, lr):
     return net, optimizer, epoch, loss
 
 
-def test(net, data_loader_gen, criterion):
+def test(net, data_loader_gen, criterion, name):
     # TODO: needs to see how well this finds signals.
     net.eval()
-    losses = []
+    losses = [[],[]]
     data_loader_gen.reset()
+    data_loader_gen.batch_size = 1
     for data_loader in tqdm(data_loader_gen):
-        mini_epoch_loss = 0
-        for x in tqdm(data_loader):
+        for x, label in tqdm(data_loader):
             output = net(x.float())
             loss = criterion(output, x.float())
             loss.backward()
-            mini_epoch_loss += loss.detach().item()
+            losses[0].append(loss.detach().item())
+            losses[1].append(label)
             gc.collect()
-        losses.append(mini_epoch_loss)
-    return losses
+
+    sig_losses, bg_losses = [], []
+    for i in range(len(losses)):
+        if losses[1][i]:
+            sig_losses.append(losses[0][i])
+        else:
+            bg_losses.append(losses[0][i])
+
+    plot_losses(losses, TEST_LOSS_PNG.format(name), plt.hist)
+    plot_losses(sig_losses, TEST_LOSS_PNG.format(name)+ "_sig", plt.hist)
+    plot_losses(bg_losses, TEST_LOSS_PNG.format(name)+ "_bg", plt.hist)
 
 
-def plot_losses(losses, path):
+def plot_losses(losses, path, plot_function=plt.plot):
     plt.figure()
-    plt.plot(losses)
+    plot_function(losses)
     plt.savefig(path, dpi=PNG_DPI)
+    plt.close()
 
 
-def run_net(input_dim=INPUT_DIM, latent_dim=LATENT_DIM, learning_rate=LEARNING_RATE, dropout=DROPOUT):
+def run_net(input_dim=INPUT_DIM, latent_dim=LATENT_DIM, learning_rate=LEARNING_RATE, dropout=DROPOUT, do_train=True, do_test=True):
     name = NAME_TEMPLATE.format(input_dim, latent_dim, learning_rate, dropout)
     last_cp_name = LAST_CHECKPOINT_PATH_TEMPLATE.format(name)
     best_cp_name = BEST_CHECKPOINT_PATH_TEMPLATE.format(name)
@@ -215,12 +226,12 @@ def run_net(input_dim=INPUT_DIM, latent_dim=LATENT_DIM, learning_rate=LEARNING_R
         optimizer = optim.AdamW(net.parameters(), lr=learning_rate)
         epoch = 0
     data_gen = DataLoaderGenerator(DATA_SET_PATH, MINI_EPOCH_SIZE, EPOCH_SIZE, input_dim, BATCH_SIZE, SHUFFLE)
+    if do_train and EPOCHS-epoch>0:
+        training_losses = train(net, optimizer, data_gen, CRITERION, EPOCHS - epoch, last_cp_name, best_cp_name, learning_rate)
+        plot_losses(training_losses, TRAINING_LOSS_PNG.format(name))
+    if do_test:
+        test(net, data_gen, CRITERION, name)
 
-    training_losses = train(net, optimizer, data_gen, CRITERION, EPOCHS - epoch, last_cp_name, best_cp_name, learning_rate)
-    plot_losses(training_losses, TRAINING_LOSS_PNG.format(name))
-
-    test_losses = test(net, data_gen, CRITERION)
-    plot_losses(test_losses, TEST_LOSS_PNG.format(name))
 
 
 def parameter_search():
