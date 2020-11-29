@@ -1,7 +1,7 @@
 from test_model import *
 
 INPUT_ORIGINAL_EXPERIMENT_NAME = "R0.4_all"
-FILTER_NUMBER = 3
+FILTER_NUMBER = 4
 PREV_FILTER_EXPERIMENT = "{}_filter_{}".format(INPUT_ORIGINAL_EXPERIMENT_NAME, FILTER_NUMBER-1)
 SP = 0.1
 MODEL_NAME = "lhc_en{}_sp{}_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best".format(PREV_FILTER_EXPERIMENT, SP)
@@ -11,12 +11,14 @@ REMOVE_SMALLEST = {
     1: 3*10**5,
     2: 1,
     3: 3*10**5,
+    4: 0,
 }
 
 REMOVE_LARGEST = {
     1: 0,
     2: 10**5,
-    3: 5*10**4
+    3: 5*10**4,
+    4: 2.5 * 10**5,
 }
 
 OUTPUT_BG_FILE_FORMAT = "{}lhc/bg_{}_filter_{}"

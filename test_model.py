@@ -66,7 +66,10 @@ SECOND_EXPERIMENTS = {
 }
 
 SECOND_EXPERIMENTS = {
-    "all_filter_3": SECOND_EXPERIMENT_OBS_LIST
+    "all_filter_4": SECOND_EXPERIMENT_OBS_LIST,
+    "all_filter_3": SECOND_EXPERIMENT_OBS_LIST,
+    "all_mjj-translation_1000": SECOND_EXPERIMENT_OBS_LIST,
+    "all": SECOND_EXPERIMENT_OBS_LIST,
 }
 
 SECOND_EXPERIMENT_R_VALUES = [0.4]  # [1.0, 0.4]
@@ -82,8 +85,7 @@ for en in SECOND_EXPERIMENTS.keys():
 
 NUMBERS_TO_CHECK = [10 ** j for j in range(7)] + [j * 10 ** 4 for j in range(1, 10)] + [j * 10 ** 5 for j in
                                                                                         range(1, 10)]
-MIN_LOSS = -5
-MAX_LOSS = 100
+TRIM_PERCENT = 0.02
 NBINS = 100
 TIME_STAMP = datetime.now().strftime("%d%m%Y_%H%M%S")
 RUN_OUTPUT_DIR = "results/run_{}/".format(TIME_STAMP)
@@ -183,12 +185,23 @@ def plot_tsne(bg, sig, plot_path, data_path):
     plt.close()
 
 
-def plot_histograms(sig, bg, sig_loss, bg_loss, name, obs_list, output_dir):
+def trim_outliers(data, trim_percent):
+    """
+    @param data: A one dimensional array
+    @param trim_percent: The percentage to cut off the edges
+    """
+    l = data.shape[0]
+    start = int(l*trim_percent)
+    end = l-start
+    return np.sort(data)[start, end]
+
+
+def plot_histograms(sig, bg, sig_loss, bg_loss, name, obs_list, output_dir, trim_percent=TRIM_PERCENT):
     sig[:, 0] = sig_loss
     bg[:, 0] = bg_loss
     for i in tqdm(range(0, sig.shape[1] - 1)):
         plt.figure()
-        combined = np.hstack((sig[:, i], bg[:, i]))
+        combined = trim_outliers(np.hstack((sig[:, i], bg[:, i])), trim_percent)
         bins = np.histogram(combined, bins=NBINS)[1]
         plt.hist(bg[:, i], color="b", label="bg", log=True, bins=bins)
         plt.hist(sig[:, i], color="r", label="sig", log=True, bins=bins)
@@ -197,9 +210,6 @@ def plot_histograms(sig, bg, sig_loss, bg_loss, name, obs_list, output_dir):
         plt.xlabel(obs_list[i])
         plt.ylabel("Num events")
         save_plot(PNG_NAME_FORMAT.format(output_dir, "{}_histogram".format(obs_list[i])))
-        plt.xlim(MIN_LOSS, MAX_LOSS)
-        plt.title(name + " {} histogram without outliers".format(obs_list[i]))
-        save_plot(PNG_NAME_FORMAT.format(output_dir, "{}_histogram_no_outliers".format(obs_list[i])))
         plt.close()
         plt.figure()
         plt.hist(combined, bins=bins, label="combined", color="purple", log=True)
