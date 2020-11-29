@@ -160,7 +160,9 @@ def save(net, optimizer, loss, epoch, path, best_path=None, lr=None):
         'loss': loss,
     }
     torch.save(cp_dict, path)
-    if best_path and lr:
+    if not os.path.exists(best_path):
+        torch.save(cp_dict, best_path)
+    elif best_path and lr:
         _, _, _, best_loss = load(best_path, lr)
         if (loss / best_loss) < LOSS_IMPROVEMENT_THRESHOLD:
             torch.save(cp_dict, best_path)
