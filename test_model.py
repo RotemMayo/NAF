@@ -31,6 +31,21 @@ INTEREST_THRESHOLD = 0.03
 INTEREST_NUMBER = 10 ** 5
 NUM_EVENTS_TSNE = 3 * 10 ** 4
 
+FILES_TO_TEST = [
+    ("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "ddsf"),
+    ("lhc_sp0.01_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.01, "ddsf"),
+    ("lhc_sp0.025_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.025, "ddsf"),
+    ("lhc_sp0.05_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.05, "ddsf"),
+    ("lhc_sp0.075_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.075, "ddsf"),
+    ("lhc_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0, "affine"),
+    ("lhc_sp0.001_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.001, "affine"),
+    ("lhc_sp0.01_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.01, "affine"),
+    ("lhc_sp0.025_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.025, "affine"),
+    ("lhc_sp0.05_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.05, "affine"),
+    ("lhc_sp0.075_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.075, "affine"),
+    ("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "affine"),
+]
+
 FILES_TO_TEST = []
 
 SECOND_EXPERIMENTS = {
@@ -50,6 +65,10 @@ SECOND_EXPERIMENTS = {
     "salad": ["Loss", "m1", "m2", "First tau21", "Second tau21", "Classifier"],
 }
 
+SECOND_EXPERIMENTS = {
+    "all_filter_3": SECOND_EXPERIMENT_OBS_LIST
+}
+
 SECOND_EXPERIMENT_R_VALUES = [0.4]  # [1.0, 0.4]
 SECOND_EXPERIMENTS_SP = [0.1]  # 0.05, 0.01]
 SECOND_EXPERIMENTS_NAME_FORMAT = "R{}_{}"
@@ -60,21 +79,6 @@ for en in SECOND_EXPERIMENTS.keys():
             full_experiment_name = SECOND_EXPERIMENTS_NAME_FORMAT.format(R, en, sp)
             FILES_TO_TEST += [(SECOND_EXPERIMENTS_FILE_FORMAT.format(full_experiment_name, sp), sp, "affine",
                                full_experiment_name, SECOND_EXPERIMENTS[en])]
-
-FILES_TO_TEST += [
-    ("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "ddsf"),
-    ("lhc_sp0.01_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.01, "ddsf"),
-    ("lhc_sp0.025_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.025, "ddsf"),
-    ("lhc_sp0.05_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.05, "ddsf"),
-    ("lhc_sp0.075_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.075, "ddsf"),
-    ("lhc_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0, "affine"),
-    ("lhc_sp0.001_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.001, "affine"),
-    ("lhc_sp0.01_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.01, "affine"),
-    ("lhc_sp0.025_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.025, "affine"),
-    ("lhc_sp0.05_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.05, "affine"),
-    ("lhc_sp0.075_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.075, "affine"),
-    ("lhc_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_best", 0.1, "affine"),
-]
 
 NUMBERS_TO_CHECK = [10 ** j for j in range(7)] + [j * 10 ** 4 for j in range(1, 10)] + [j * 10 ** 5 for j in
                                                                                         range(1, 10)]
@@ -179,6 +183,30 @@ def plot_tsne(bg, sig, plot_path, data_path):
     plt.close()
 
 
+def plot_histograms(sig, bg, sig_loss, bg_loss, name, obs_list, output_dir):
+    sig[:, 0] = sig_loss
+    bg[:, 0] = bg_loss
+    for i in tqdm(range(0, sig.shape[1] - 1)):
+        plt.figure()
+        combined = np.hstack((sig_loss, bg_loss))
+        bins = np.histogram(combined, bins=NBINS)[1]
+        plt.hist(bg[:, i], color="b", label="bg", log=True, bins=bins)
+        plt.hist(sig[:, i], color="r", label="sig", log=True, bins=bins)
+        plt.legend()
+        plt.title(name + " {} histogram".format(obs_list[i]))
+        plt.xlabel(obs_list[i])
+        plt.ylabel("Num events")
+        save_plot(PNG_NAME_FORMAT.format(output_dir, "{}_histogram".format(obs_list[i])))
+        plt.xlim(MIN_LOSS, MAX_LOSS)
+        plt.title(name + " {} histogram without outliers".format(obs_list[i]))
+        save_plot(PNG_NAME_FORMAT.format(output_dir, "{}_histogram_no_outliers".format(obs_list[i])))
+        plt.close()
+        plt.figure()
+        plt.hist(combined, bins=bins, label="combined", color="purple")
+        plt.legend()
+        save_plot(PNG_NAME_FORMAT.format(output_dir, "{}_combined_histogram".format(obs_list[i])))
+
+
 def all_plots(sig, bg, name, obs_list):
     output_dir = MODEL_OUTPUT_DIR_FORMAT.format(name)
     if not os.path.isdir(output_dir):
@@ -191,19 +219,7 @@ def all_plots(sig, bg, name, obs_list):
     plot_tsne(bg, sig, PNG_NAME_FORMAT.format(output_dir, "tsne"), TSNE_DATA_FILE_NAME.format(name))
 
     # Plotting histograms
-    plt.figure()
-    bins = np.histogram(np.hstack((sig_loss, bg_loss)), bins=NBINS)[1]
-    plt.hist(bg_loss, color="b", label="bg", log=True, bins=bins)
-    plt.hist(sig_loss, color="r", label="sig", log=True, bins=bins)
-    plt.legend()
-    plt.title(name + " loss histogram")
-    plt.xlabel(obs_list[0])
-    plt.ylabel("Num events")
-    save_plot(PNG_NAME_FORMAT.format(output_dir, "histogram"))
-    plt.xlim(MIN_LOSS, MAX_LOSS)
-    plt.title(name + " loss histogram without outliers")
-    save_plot(PNG_NAME_FORMAT.format(output_dir, "histogram_no_outliers"))
-    plt.close()
+    plot_histograms(sig, bg, sig_loss, bg_loss, name, obs_list, output_dir)
 
     # Plotting observables vs loss
     for i in tqdm(range(1, sig.shape[1] - 1)):
