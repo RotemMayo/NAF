@@ -10,7 +10,16 @@ import os
 from matplotlib import pyplot as plt
 import gc
 
-#DATA_SET_PATH = "C:\\Users\\rotem\\PycharmProjects\\ML4Jets\\ML4Jets-HUJI\\Data\\events_anomalydetection.h5"
+"""
+Parameter search results:
+input layer = 128 or 64
+latent layer = 4
+learning rate = 0.002
+dropout = 0.001
+Running for 400 epochs to see if we can get good results
+"""
+
+# DATA_SET_PATH = "C:\\Users\\rotem\\PycharmProjects\\ML4Jets\\ML4Jets-HUJI\\Data\\events_anomalydetection.h5"
 DATA_SET_PATH = "/usr/people/snirgaz/rotemov/rotemov/Projects/ML4Jets-HUJI/Data/events_anomalydetection.h5"
 MINI_EPOCH_SIZE = 10 ** 5  # MINI_EPOCH_SIZE / EPOCH_SIZE should be a natural number
 EPOCH_SIZE = int(1.1 * 10 ** 6)  # needs to be updated to reflect exact size
@@ -18,8 +27,13 @@ BATCH_SIZE = int(1.25 * 10 ** 2)
 
 CRITERION = nn.MSELoss()  # the loss function
 SHUFFLE = False
-LEARNING_RATE = 0.01
-EPOCHS = 5
+LEARNING_RATE = 0.002
+DROPOUT = 0.001
+INPUT_LAYER = 128
+LATENT_LAYER = 4
+EPOCHS = 400
+LOSS_IMPROVEMENT_THRESHOLD = 0.99
+PATIENCE = 30
 
 OUTPUT_FOLDER = "ae_models"
 NAME_TEMPLATE = "in{}_lat{}_lr{}_do{}"
@@ -29,13 +43,19 @@ BEST_CHECKPOINT_PATH_TEMPLATE = os.path.join(OUTPUT_FOLDER, "best_{}".format(CHE
 PNG_DPI = 200
 TRAINING_LOSS_PNG = os.path.join(OUTPUT_FOLDER, "training_loss_{}.png")
 TEST_LOSS_PNG = os.path.join(OUTPUT_FOLDER, "test_loss_{}.png")
+
+
 # TODO: Add best checkpoints
 # TODO: Make running script
 
 
 class BasicAutoEncoder(nn.Module):
 
-    def __init__(self, input_dim=2**8, latent_dim=2**2, dropout=0.1):
+    def __init__(self, input_dim, latent_dim, dropout):
+        """
+        @param input_dim: the amount of data points to take per event
+        @param latent_dim: the dimension of the latent space, this is the effective dimension of the input after training
+        """
         self.dropout = dropout
         self.input_dim = input_dim
         super(BasicAutoEncoder, self).__init__()
@@ -73,6 +93,7 @@ class DataLoaderGenerator:
     A class for creating data loaders for the network. This allows us to control the amount of memory used by the NN
     at each time, as the dataset is fairly large.
     """
+
     def __init__(self, filename, chunksize, total_size, input_dim, batch_size, shuffle):
         self.filename = filename
         self.chunk_size = chunksize
@@ -102,10 +123,13 @@ class DataLoaderGenerator:
         return int(np.floor(self.total_size / self.chunk_size))
 
 
-def train(net, optimizer, data_loader_gen, criterion, epochs, last_cp_path, best_cp_path):
+def train(net, optimizer, data_loader_gen, criterion, epochs, last_cp_path, best_cp_path, lr):
     net.eval()
     losses = []
+    epochs_since_last_improvement = 0
     for epoch_num in tqdm(range(epochs)):
+        if epochs_since_last_improvement > PATIENCE:
+            return losses
         data_loader_gen.reset()
         epoch_losses = []
         for data_loader in tqdm(data_loader_gen):
@@ -121,18 +145,27 @@ def train(net, optimizer, data_loader_gen, criterion, epochs, last_cp_path, best
             epoch_losses.append(mini_epoch_loss)
             print(mini_epoch_loss)
         losses += epoch_losses
-        save(net, optimizer, sum(epoch_losses), epoch_num, last_cp_path)
+        if save(net, optimizer, sum(epoch_losses), epoch_num, last_cp_path, best_cp_path, lr):
+            epochs_since_last_improvement = 0
+        else:
+            epochs_since_last_improvement += 1
     return losses
 
 
-def save(net, optimizer, loss, epoch, path):
-    torch.save({
+def save(net, optimizer, loss, epoch, path, best_path=None, lr=None):
+    cp_dict = {
         'epoch': epoch,
         'model_state_dict': net.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
         'loss': loss,
-        },
-        path)
+    }
+    torch.save(cp_dict, path)
+    if best_path and lr:
+        _, _, _, best_loss = load(best_path, lr)
+        if (loss / best_loss) < LOSS_IMPROVEMENT_THRESHOLD:
+            torch.save(cp_dict, best_path)
+            return True
+    return False
 
 
 def load(path, lr):
@@ -169,7 +202,7 @@ def plot_losses(losses, path):
     plt.savefig(path, dpi=PNG_DPI)
 
 
-def run_net(input_dim, latent_dim, learning_rate, dropout):
+def run_net(input_dim=INPUT_LAYER, latent_dim=LATENT_LAYER, learning_rate=LEARNING_RATE, dropout=DROPOUT):
     name = NAME_TEMPLATE.format(input_dim, latent_dim, learning_rate, dropout)
     last_cp_name = LAST_CHECKPOINT_PATH_TEMPLATE.format(name)
     best_cp_name = BEST_CHECKPOINT_PATH_TEMPLATE.format(name)
@@ -181,7 +214,7 @@ def run_net(input_dim, latent_dim, learning_rate, dropout):
         epoch = 0
     data_gen = DataLoaderGenerator(DATA_SET_PATH, MINI_EPOCH_SIZE, EPOCH_SIZE, input_dim, BATCH_SIZE, SHUFFLE)
 
-    training_losses = train(net, optimizer, data_gen, CRITERION, EPOCHS - epoch, last_cp_name, best_cp_name)
+    training_losses = train(net, optimizer, data_gen, CRITERION, EPOCHS - epoch, last_cp_name, best_cp_name, learning_rate)
     plot_losses(training_losses, TRAINING_LOSS_PNG.format(name))
 
     test_losses = test(net, data_gen, CRITERION)
@@ -190,7 +223,7 @@ def run_net(input_dim, latent_dim, learning_rate, dropout):
 
 def parameter_search():
     n = np.random.random((10, 3))
-    latent_dim = 2**2
+    latent_dim = 2 ** 2
     for params in n:
         learning_rate = round(10 ** (-2.5 * params[0] - 2.5), ndigits=5)
         dropout = round(10 ** (-2 * params[1] - 2), ndigits=5)
@@ -200,7 +233,8 @@ def parameter_search():
 
 
 def main():
-    parameter_search()
+    # parameter_search()
+    run_net()
 
 
 if __name__ == "__main__":
