@@ -84,7 +84,7 @@ NUMBERS_TO_CHECK = [10 ** j for j in range(7)] + [j * 10 ** 4 for j in range(1, 
                                                                                         range(1, 10)]
 MIN_LOSS = -5
 MAX_LOSS = 100
-NBINS = 300
+NBINS = 100
 TIME_STAMP = datetime.now().strftime("%d%m%Y_%H%M%S")
 RUN_OUTPUT_DIR = "results/run_{}/".format(TIME_STAMP)
 OUTPUT_FILE = "{}all_results.txt".format(RUN_OUTPUT_DIR)
@@ -202,7 +202,7 @@ def plot_histograms(sig, bg, sig_loss, bg_loss, name, obs_list, output_dir):
         save_plot(PNG_NAME_FORMAT.format(output_dir, "{}_histogram_no_outliers".format(obs_list[i])))
         plt.close()
         plt.figure()
-        plt.hist(combined, bins=bins, label="combined", color="purple")
+        plt.hist(combined, bins=bins, label="combined", color="purple", log=True)
         plt.legend()
         save_plot(PNG_NAME_FORMAT.format(output_dir, "{}_combined_histogram".format(obs_list[i])))
 
