@@ -188,7 +188,7 @@ def plot_histograms(sig, bg, sig_loss, bg_loss, name, obs_list, output_dir):
     bg[:, 0] = bg_loss
     for i in tqdm(range(0, sig.shape[1] - 1)):
         plt.figure()
-        combined = np.hstack((sig_loss, bg_loss))
+        combined = np.hstack((sig[:, i], bg[:, i]))
         bins = np.histogram(combined, bins=NBINS)[1]
         plt.hist(bg[:, i], color="b", label="bg", log=True, bins=bins)
         plt.hist(sig[:, i], color="r", label="sig", log=True, bins=bins)
@@ -204,6 +204,8 @@ def plot_histograms(sig, bg, sig_loss, bg_loss, name, obs_list, output_dir):
         plt.figure()
         plt.hist(combined, bins=bins, label="combined", color="purple", log=True)
         plt.legend()
+        plt.xlabel(obs_list[i])
+        plt.ylabel("Num events")
         save_plot(PNG_NAME_FORMAT.format(output_dir, "{}_combined_histogram".format(obs_list[i])))
 
 
