@@ -29,8 +29,8 @@ CRITERION = nn.MSELoss()  # the loss function
 SHUFFLE = False
 LEARNING_RATE = 0.002
 DROPOUT = 0.001
-INPUT_LAYER = 128
-LATENT_LAYER = 4
+INPUT_DIM = 128
+LATENT_DIM = 4
 EPOCHS = 400
 LOSS_IMPROVEMENT_THRESHOLD = 0.99
 PATIENCE = 30
@@ -51,7 +51,7 @@ TEST_LOSS_PNG = os.path.join(OUTPUT_FOLDER, "test_loss_{}.png")
 
 class BasicAutoEncoder(nn.Module):
 
-    def __init__(self, input_dim, latent_dim, dropout):
+    def __init__(self, input_dim=INPUT_DIM, latent_dim=LATENT_DIM, dropout=DROPOUT):
         """
         @param input_dim: the amount of data points to take per event
         @param latent_dim: the dimension of the latent space, this is the effective dimension of the input after training
@@ -204,7 +204,7 @@ def plot_losses(losses, path):
     plt.savefig(path, dpi=PNG_DPI)
 
 
-def run_net(input_dim=INPUT_LAYER, latent_dim=LATENT_LAYER, learning_rate=LEARNING_RATE, dropout=DROPOUT):
+def run_net(input_dim=INPUT_DIM, latent_dim=LATENT_DIM, learning_rate=LEARNING_RATE, dropout=DROPOUT):
     name = NAME_TEMPLATE.format(input_dim, latent_dim, learning_rate, dropout)
     last_cp_name = LAST_CHECKPOINT_PATH_TEMPLATE.format(name)
     best_cp_name = BEST_CHECKPOINT_PATH_TEMPLATE.format(name)
