@@ -84,7 +84,7 @@ NUMBERS_TO_CHECK = [10 ** j for j in range(7)] + [j * 10 ** 4 for j in range(1, 
                                                                                         range(1, 10)]
 MIN_LOSS = -5
 MAX_LOSS = 100
-NBINS = 3000
+NBINS = 300
 TIME_STAMP = datetime.now().strftime("%d%m%Y_%H%M%S")
 RUN_OUTPUT_DIR = "results/run_{}/".format(TIME_STAMP)
 OUTPUT_FILE = "{}all_results.txt".format(RUN_OUTPUT_DIR)
