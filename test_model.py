@@ -193,7 +193,7 @@ def trim_outliers(data, trim_percent):
     l = data.shape[0]
     start = int(l*trim_percent)
     end = l-start
-    return np.sort(data)[start, end]
+    return np.sort(data)[start:end]
 
 
 def plot_histograms(sig, bg, sig_loss, bg_loss, name, obs_list, output_dir, trim_percent=TRIM_PERCENT):
