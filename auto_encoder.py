@@ -132,9 +132,9 @@ def train(net, optimizer, data_loader_gen, criterion, epochs, last_cp_path, best
             return losses
         data_loader_gen.reset()
         epoch_losses = []
-        for data_loader in tqdm(data_loader_gen):
+        for data_loader in data_loader_gen:
             mini_epoch_loss = 0
-            for x in tqdm(data_loader):
+            for x in data_loader:
                 optimizer.zero_grad()  # zero the gradient buffers
                 output = net(x.float())
                 loss = criterion(output, x.float())
