@@ -11,7 +11,7 @@ REMOVE_SMALLEST = {
     1: 3*10**5,
     2: 1,
     3: 3*10**5,
-    4: 0,
+    4: 1,
 }
 
 REMOVE_LARGEST = {
