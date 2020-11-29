@@ -18,7 +18,7 @@ REMOVE_LARGEST = {
     1: 0,
     2: 10**5,
     3: 5*10**4,
-    4: 2.5 * 10**5,
+    4: 2.5*10**5,
 }
 
 OUTPUT_BG_FILE_FORMAT = "{}lhc/bg_{}_filter_{}"
@@ -41,6 +41,7 @@ def main():
     sig = np.append(sig, np.ones((n_sig, 1)), axis=1)
     data = np.append(sig, bg, axis=0)
     sorted_events = data[(-data[:, 0]).argsort()]
+    print(REMOVE_LARGEST[FILTER_NUMBER], REMOVE_SMALLEST[FILTER_NUMBER])
     sorted_events = sorted_events[REMOVE_LARGEST[FILTER_NUMBER]:-REMOVE_SMALLEST[FILTER_NUMBER], :]
     sig_new = [event[1:-1] for event in sorted_events if event[-1] == 1]
     bg_new = [event[1:-1] for event in sorted_events if event[-1] == 0]
