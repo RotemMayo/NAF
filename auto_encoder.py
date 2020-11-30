@@ -183,33 +183,37 @@ def load(path, lr):
 
 def test(net, data_loader_gen, criterion, name):
     # TODO: needs to see how well this finds signals.
-    net.eval()
-    losses = [[], []]  # first column is loss and second is label
-    data_loader_gen.reset()
-    data_loader_gen.batch_size = 1
-    data_loader_gen.shuffle = False
-    data_loader_gen.chunk_size = 10**3
-    for data_loader, labels in tqdm(data_loader_gen):
-        losses[1] += labels
-        for x in data_loader:
-            output = net(x.float())
-            loss = criterion(output, x.float())
-            loss.backward()
-            losses[0].append(loss.detach().item())
-            gc.collect()
-
-    np.save(SINGLE_EVENT_LOSS_FILE_TEMPLATE.format(name), np.array(losses))
+    loss_file_name = SINGLE_EVENT_LOSS_FILE_TEMPLATE.format(name)
+    if os.path.exists(loss_file_name):
+        losses = np.load(loss_file_name, "r+")
+    else:
+        net.eval()
+        losses = [[], []]  # first column is loss and second is label
+        data_loader_gen.reset()
+        data_loader_gen.batch_size = 1
+        data_loader_gen.shuffle = False
+        data_loader_gen.chunk_size = 10**3
+        for data_loader, labels in tqdm(data_loader_gen):
+            losses[1] += labels
+            for x in data_loader:
+                output = net(x.float())
+                loss = criterion(output, x.float())
+                loss.backward()
+                losses[0].append(loss.detach().item())
+                gc.collect()
+        losses = np.array(losses)
+        np.save(SINGLE_EVENT_LOSS_FILE_TEMPLATE.format(name), losses)
 
     sig_losses, bg_losses = [], []
     for i in range(len(losses)):
-        if losses[1][i]:
-            sig_losses.append(losses[0][i])
+        if losses[1, i]:
+            sig_losses.append(losses[0, i])
         else:
-            bg_losses.append(losses[0][i])
+            bg_losses.append(losses[0, i])
 
     plot_losses(losses, TEST_LOSS_PNG_FORMAT.format(name), plt.hist)
-    plot_losses(sig_losses, TEST_LOSS_PNG_FORMAT.format(name) + "_sig", plt.hist)
-    plot_losses(bg_losses, TEST_LOSS_PNG_FORMAT.format(name) + "_bg", plt.hist)
+    plot_losses(sig_losses, TEST_LOSS_PNG_FORMAT.format(name+"_sig"), plt.hist)
+    plot_losses(bg_losses, TEST_LOSS_PNG_FORMAT.format(name+"_bg"), plt.hist)
 
 
 def plot_losses(losses, path, plot_function=plt.plot):
