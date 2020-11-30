@@ -41,9 +41,9 @@ CHECKPOINT_TEMPLATE = "basic_ae_checkpoint_{}.pt"  # input size, latent size, le
 LAST_CHECKPOINT_PATH_TEMPLATE = os.path.join(OUTPUT_FOLDER, "last_{}".format(CHECKPOINT_TEMPLATE))
 BEST_CHECKPOINT_PATH_TEMPLATE = os.path.join(OUTPUT_FOLDER, "best_{}".format(CHECKPOINT_TEMPLATE))
 PNG_DPI = 200
-TRAINING_LOSS_PNG = os.path.join(OUTPUT_FOLDER, "training_loss_{}.png")
-TEST_LOSS_PNG = os.path.join(OUTPUT_FOLDER, "test_loss_{}.png")
-
+TRAINING_LOSS_PNG_TEMPLATE = os.path.join(OUTPUT_FOLDER, "training_loss_{}.png")
+TEST_LOSS_PNG_FORMAT = os.path.join(OUTPUT_FOLDER, "loss_histogram_{}.png")
+SINGLE_EVENT_LOSS_FILE_TEMPLATE = os.path.join(OUTPUT_FOLDER, "losses_{}")
 
 # TODO: Add best checkpoints
 # TODO: Make running script
@@ -184,10 +184,11 @@ def load(path, lr):
 def test(net, data_loader_gen, criterion, name):
     # TODO: needs to see how well this finds signals.
     net.eval()
-    losses = [[], []]
+    losses = [[], []]  # first column is loss and second is label
     data_loader_gen.reset()
     data_loader_gen.batch_size = 1
     data_loader_gen.shuffle = False
+    data_loader_gen.chunk_size = 10**3
     for data_loader, labels in tqdm(data_loader_gen):
         losses[1] += labels
         for x in data_loader:
@@ -197,6 +198,8 @@ def test(net, data_loader_gen, criterion, name):
             losses[0].append(loss.detach().item())
             gc.collect()
 
+    np.save(SINGLE_EVENT_LOSS_FILE_TEMPLATE.format(name), np.array(losses))
+
     sig_losses, bg_losses = [], []
     for i in range(len(losses)):
         if losses[1][i]:
@@ -204,9 +207,9 @@ def test(net, data_loader_gen, criterion, name):
         else:
             bg_losses.append(losses[0][i])
 
-    plot_losses(losses, TEST_LOSS_PNG.format(name), plt.hist)
-    plot_losses(sig_losses, TEST_LOSS_PNG.format(name)+ "_sig", plt.hist)
-    plot_losses(bg_losses, TEST_LOSS_PNG.format(name)+ "_bg", plt.hist)
+    plot_losses(losses, TEST_LOSS_PNG_FORMAT.format(name), plt.hist)
+    plot_losses(sig_losses, TEST_LOSS_PNG_FORMAT.format(name) + "_sig", plt.hist)
+    plot_losses(bg_losses, TEST_LOSS_PNG_FORMAT.format(name) + "_bg", plt.hist)
 
 
 def plot_losses(losses, path, plot_function=plt.plot):
@@ -216,7 +219,8 @@ def plot_losses(losses, path, plot_function=plt.plot):
     plt.close()
 
 
-def run_net(input_dim=INPUT_DIM, latent_dim=LATENT_DIM, learning_rate=LEARNING_RATE, dropout=DROPOUT, do_train=True, do_test=True):
+def run_net(input_dim=INPUT_DIM, latent_dim=LATENT_DIM, learning_rate=LEARNING_RATE, dropout=DROPOUT, do_train=True,
+            do_test=True):
     name = NAME_TEMPLATE.format(input_dim, latent_dim, learning_rate, dropout)
     last_cp_name = LAST_CHECKPOINT_PATH_TEMPLATE.format(name)
     best_cp_name = BEST_CHECKPOINT_PATH_TEMPLATE.format(name)
@@ -227,9 +231,10 @@ def run_net(input_dim=INPUT_DIM, latent_dim=LATENT_DIM, learning_rate=LEARNING_R
         optimizer = optim.AdamW(net.parameters(), lr=learning_rate)
         epoch = 0
     data_gen = DataLoaderGenerator(DATA_SET_PATH, MINI_EPOCH_SIZE, EPOCH_SIZE, input_dim, BATCH_SIZE, SHUFFLE)
-    if do_train and EPOCHS-epoch>0:
-        training_losses = train(net, optimizer, data_gen, CRITERION, EPOCHS - epoch, last_cp_name, best_cp_name, learning_rate)
-        plot_losses(training_losses, TRAINING_LOSS_PNG.format(name))
+    if do_train and EPOCHS - epoch > 0:
+        training_losses = train(net, optimizer, data_gen, CRITERION, EPOCHS - epoch, last_cp_name, best_cp_name,
+                                learning_rate)
+        plot_losses(training_losses, TRAINING_LOSS_PNG_TEMPLATE.format(name))
     if do_test:
         test(net, data_gen, CRITERION, name)
 
