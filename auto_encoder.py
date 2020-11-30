@@ -113,9 +113,9 @@ class DataLoaderGenerator:
             x = pd.read_hdf(self.filename, start=self.idx * self.chunk_size, stop=(self.idx + 1) * self.chunk_size)
             labels = x.rename_axis('ID').values[:, -1]
             x = x.rename_axis('ID').values[:, :self.input_dim]
-            x = data.DataLoader(x, batch_size=self.batch_size, shuffle=self.shuffle)
+            loader = data.DataLoader(x, batch_size=self.batch_size, shuffle=self.shuffle)
             self.idx += 1
-            return (x, labels)
+            return loader, labels.tolist()
 
     def __iter__(self):
         return self
@@ -133,9 +133,9 @@ def train(net, optimizer, data_loader_gen, criterion, epochs, last_cp_path, best
             return losses
         data_loader_gen.reset()
         epoch_losses = []
-        for data_loader in data_loader_gen:
+        for data_loader, _ in data_loader_gen:
             mini_epoch_loss = 0
-            for x, _ in data_loader:
+            for x in data_loader:
                 optimizer.zero_grad()  # zero the gradient buffers
                 output = net(x.float())
                 loss = criterion(output, x.float())
@@ -187,13 +187,14 @@ def test(net, data_loader_gen, criterion, name):
     losses = [[], []]
     data_loader_gen.reset()
     data_loader_gen.batch_size = 1
-    for data_loader in tqdm(data_loader_gen):
-        for x, label in tqdm(data_loader):
+    data_loader_gen.shuffle = False
+    for data_loader, labels in tqdm(data_loader_gen):
+        losses[1] += labels
+        for x in data_loader:
             output = net(x.float())
             loss = criterion(output, x.float())
             loss.backward()
             losses[0].append(loss.detach().item())
-            losses[1].append(label)
             gc.collect()
 
     sig_losses, bg_losses = [], []
