@@ -115,7 +115,7 @@ class DataLoaderGenerator:
             x = x.rename_axis('ID').values[:, :self.input_dim]
             x = data.DataLoader(x, batch_size=self.batch_size, shuffle=self.shuffle)
             self.idx += 1
-            return x, labels
+            return (x, labels)
 
     def __iter__(self):
         return self
@@ -184,7 +184,7 @@ def load(path, lr):
 def test(net, data_loader_gen, criterion, name):
     # TODO: needs to see how well this finds signals.
     net.eval()
-    losses = [[],[]]
+    losses = [[], []]
     data_loader_gen.reset()
     data_loader_gen.batch_size = 1
     for data_loader in tqdm(data_loader_gen):
@@ -233,7 +233,6 @@ def run_net(input_dim=INPUT_DIM, latent_dim=LATENT_DIM, learning_rate=LEARNING_R
         test(net, data_gen, CRITERION, name)
 
 
-
 def parameter_search():
     n = np.random.random((10, 3))
     latent_dim = 2 ** 2
@@ -247,7 +246,7 @@ def parameter_search():
 
 def main():
     # parameter_search()
-    run_net()
+    run_net(do_train=False)
 
 
 if __name__ == "__main__":
