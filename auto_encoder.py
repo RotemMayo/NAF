@@ -43,7 +43,7 @@ BEST_CHECKPOINT_PATH_TEMPLATE = os.path.join(OUTPUT_FOLDER, "best_{}".format(CHE
 PNG_DPI = 200
 TRAINING_LOSS_PNG_TEMPLATE = os.path.join(OUTPUT_FOLDER, "training_loss_{}.png")
 TEST_LOSS_PNG_FORMAT = os.path.join(OUTPUT_FOLDER, "loss_histogram_{}.png")
-SINGLE_EVENT_LOSS_FILE_TEMPLATE = os.path.join(OUTPUT_FOLDER, "losses_{}")
+SINGLE_EVENT_LOSS_FILE_TEMPLATE = os.path.join(OUTPUT_FOLDER, "losses_{}.npy")
 
 # TODO: Add best checkpoints
 # TODO: Make running script
