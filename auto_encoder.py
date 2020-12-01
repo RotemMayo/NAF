@@ -18,7 +18,7 @@ dropout = 0.001
 Running for 400 epochs to see if we can get good results
 """
 
-RUN = "rotemov"
+RUN = "cluster"
 PARAM_DICT ={
     "rotemov": ("C:\\Users\\rotem\\PycharmProjects\\ML4Jets\\ML4Jets-HUJI\\Data\\events_anomalydetection.h5", 10**3,
                 10**4, 3),
