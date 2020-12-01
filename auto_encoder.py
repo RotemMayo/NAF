@@ -206,7 +206,6 @@ def test(net, data_loader_gen, criterion, name):
                 for x in data_loader:
                     output = net(x.float())
                     loss = criterion(output, x.float())
-                    loss.backward()
                     losses[0].append(loss.detach().item())
                     gc.collect()
         print("Losses calculated")
@@ -214,8 +213,8 @@ def test(net, data_loader_gen, criterion, name):
         np.save(loss_file_name, losses)
         print("Losses saved to: {}".format(loss_file_name))
     print("Separating losses to sig and bg")
-    sig_losses = np.array([losses[0, i] for i in range(len(losses[0])) if losses[1, i]])
-    bg_losses = np.array([losses[0, i] for i in range(len(losses[0])) if not losses[1, i]])
+    sig_losses = np.array([losses[0, i] for i in tqdm(range(len(losses[0]))) if losses[1, i]])
+    bg_losses = np.array([losses[0, i] for i in tqdm(range(len(losses[0]))) if not losses[1, i]])
     gc.collect()
     plot_losses(losses, TEST_LOSS_PNG_FORMAT.format(name), plt.hist)
     plot_losses(sig_losses, TEST_LOSS_PNG_FORMAT.format(name+"_sig"), plt.hist)
