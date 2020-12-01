@@ -217,7 +217,7 @@ def test(net, data_loader_gen, criterion, name):
     sig_losses = np.array([losses[0, i] for i in tqdm(range(len(losses[0]))) if losses[1, i]])
     bg_losses = np.array([losses[0, i] for i in tqdm(range(len(losses[0]))) if not losses[1, i]])
     gc.collect()
-    plot_histogram(losses, "all data loss", name, TEST_LOSS_PNG_FORMAT.format(name))
+    plot_histogram(losses[0, :], "all data loss", name, TEST_LOSS_PNG_FORMAT.format(name))
     plot_histogram(sig_losses, "sig loss", name, TEST_LOSS_PNG_FORMAT.format(name+"_sig"))
     plot_histogram(bg_losses, "bg loss", name, TEST_LOSS_PNG_FORMAT.format(name+"_bg"))
 
@@ -245,7 +245,7 @@ def plot_histogram(data_set, x_axis_label,  name, path, nbins=NBINS, trim_percen
     plt.figure()
     trimmed = trim_outliers(data_set, trim_percent)
     bins = np.histogram(trimmed, bins=nbins)[1]
-    plt.hist(data_set, color="b", label="bg", log=True, bins=bins)
+    plt.hist(data_set, label="bg", log=True, bins=bins)
     plt.legend()
     plt.title(name + " {} histogram".format(x_axis_label))
     plt.xlabel(x_axis_label)
