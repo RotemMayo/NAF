@@ -18,10 +18,14 @@ dropout = 0.001
 Running for 400 epochs to see if we can get good results
 """
 
-# DATA_SET_PATH = "C:\\Users\\rotem\\PycharmProjects\\ML4Jets\\ML4Jets-HUJI\\Data\\events_anomalydetection.h5"
-DATA_SET_PATH = "/usr/people/snirgaz/rotemov/rotemov/Projects/ML4Jets-HUJI/Data/events_anomalydetection.h5"
-MINI_EPOCH_SIZE = 10 ** 5  # MINI_EPOCH_SIZE / EPOCH_SIZE should be a natural number
-EPOCH_SIZE = int(1.1 * 10 ** 6)  # needs to be updated to reflect exact size
+RUN = "rotemov"
+PARAM_DICT ={
+    "rotemov": ("C:\\Users\\rotem\\PycharmProjects\\ML4Jets\\ML4Jets-HUJI\\Data\\events_anomalydetection.h5", 10**3,
+                10**4, 3),
+    "cluster": ("/usr/people/snirgaz/rotemov/rotemov/Projects/ML4Jets-HUJI/Data/events_anomalydetection.h5", 10**5,
+                int(1.1 * 10 ** 6), 400)  # TODO: needs to be updated to reflect exact size
+}
+DATA_SET_PATH, MINI_EPOCH_SIZE, EPOCH_SIZE, EPOCHS = PARAM_DICT[RUN]
 BATCH_SIZE = int(1.25 * 10 ** 2)
 
 CRITERION = nn.MSELoss()  # the loss function
@@ -30,7 +34,6 @@ LEARNING_RATE = 0.002
 DROPOUT = 0.001
 INPUT_DIM = 128
 LATENT_DIM = 4
-EPOCHS = 400
 LOSS_IMPROVEMENT_THRESHOLD = 0.99
 PATIENCE = 30
 TRIM_PERCENT = 0.02
@@ -57,6 +60,7 @@ class BasicAutoEncoder(nn.Module):
         """
         self.dropout = dropout
         self.input_dim = input_dim
+        self.latent_dim = latent_dim
         super(BasicAutoEncoder, self).__init__()
         self.encoder = []
         dim = input_dim
@@ -167,7 +171,7 @@ def save(net, optimizer, loss, epoch, path, best_path=None, lr=None):
         print("Best checkpoint not found.\nInitializing best checkpoint.")
         torch.save(cp_dict, best_path)
     elif best_path and lr:
-        _, _, _, best_loss = load(best_path, lr)
+        _, _, _, best_loss = load(best_path, lr, net.input_dim, net.latent_dim, net.dropout)
         if (loss / best_loss) < LOSS_IMPROVEMENT_THRESHOLD:
             print("Epoch {} is less than {} smaller than the previous best."
                   "\nUpdating best checkpoint.".format(epoch, LOSS_IMPROVEMENT_THRESHOLD))
@@ -176,9 +180,9 @@ def save(net, optimizer, loss, epoch, path, best_path=None, lr=None):
     return False
 
 
-def load(path, lr):
+def load(path, lr, input_dim, latent_dim, dropout):
     checkpoint = torch.load(path)
-    net = BasicAutoEncoder()
+    net = BasicAutoEncoder(input_dim=input_dim, latent_dim=latent_dim, dropout=dropout)
     optimizer = optim.AdamW(net.parameters(), lr)
     net.load_state_dict(checkpoint['model_state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
@@ -192,7 +196,7 @@ def test(net, data_loader_gen, criterion, name):
     loss_file_name = SINGLE_EVENT_LOSS_FILE_TEMPLATE.format(name)
     if os.path.exists(loss_file_name):
         print("Previous loss file detected, loading losses")
-        losses = np.load(loss_file_name, "r+")
+        losses = np.load(loss_file_name, "r")
     else:
         print("No previous loss file detected, calculating losses")
         net.eval()
@@ -207,7 +211,7 @@ def test(net, data_loader_gen, criterion, name):
                 for x in data_loader:
                     output = net(x.float())
                     loss = criterion(output, x.float())
-                    losses[0].append(loss.detach().item())
+                    losses[0] += loss.detach().item()
                     gc.collect()
         print("Losses calculated")
         losses = np.array(losses)
@@ -261,7 +265,7 @@ def run_net(input_dim=INPUT_DIM, latent_dim=LATENT_DIM, learning_rate=LEARNING_R
     last_cp_name = LAST_CHECKPOINT_PATH_TEMPLATE.format(name)
     best_cp_name = BEST_CHECKPOINT_PATH_TEMPLATE.format(name)
     if os.path.exists(last_cp_name):
-        net, optimizer, epoch, _ = load(last_cp_name, learning_rate)
+        net, optimizer, epoch, _ = load(last_cp_name, learning_rate, input_dim, latent_dim, dropout)
     else:
         net = BasicAutoEncoder(input_dim, latent_dim, dropout)
         optimizer = optim.AdamW(net.parameters(), lr=learning_rate)
@@ -288,7 +292,7 @@ def parameter_search():
 
 def main():
     # parameter_search()
-    run_net(do_train=False)
+    # run_net(do_train=False)
     run_net(input_dim=2**6)
 
 
