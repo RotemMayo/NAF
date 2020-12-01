@@ -9,7 +9,6 @@ from tqdm import tqdm
 import os
 from matplotlib import pyplot as plt
 import gc
-from test_model import trim_outliers, TRIM_PERCENT, NBINS
 """
 Parameter search results:
 input layer = 128 or 64
@@ -34,6 +33,8 @@ LATENT_DIM = 4
 EPOCHS = 400
 LOSS_IMPROVEMENT_THRESHOLD = 0.99
 PATIENCE = 30
+TRIM_PERCENT = 0.02
+NBINS = 100
 
 OUTPUT_FOLDER = "ae_models"
 NAME_TEMPLATE = "in{}_lat{}_lr{}_do{}"
@@ -227,6 +228,17 @@ def plot_losses(losses, path, plot_function=plt.plot):
     plt.savefig(path, dpi=PNG_DPI)
     plt.close()
     print("Plotted: {}".format(path))
+
+
+def trim_outliers(data, trim_percent):
+    """
+    @param data: A one dimensional array
+    @param trim_percent: The percentage to cut off the edges
+    """
+    data_size = data.shape[0]
+    start = int(data_size*trim_percent)
+    end = data_size-start
+    return np.sort(data)[start:end]
 
 
 def plot_histogram(data_set, x_axis_label,  name, path, nbins=NBINS, trim_percent=TRIM_PERCENT):
