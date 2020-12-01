@@ -45,16 +45,14 @@ TRAINING_LOSS_PNG_TEMPLATE = os.path.join(OUTPUT_FOLDER, "training_loss_{}.png")
 TEST_LOSS_PNG_FORMAT = os.path.join(OUTPUT_FOLDER, "loss_histogram_{}.png")
 SINGLE_EVENT_LOSS_FILE_TEMPLATE = os.path.join(OUTPUT_FOLDER, "losses_{}.npy")
 
-# TODO: Add best checkpoints
-# TODO: Make running script
-
 
 class BasicAutoEncoder(nn.Module):
 
     def __init__(self, input_dim=INPUT_DIM, latent_dim=LATENT_DIM, dropout=DROPOUT):
         """
         @param input_dim: the amount of data points to take per event
-        @param latent_dim: the dimension of the latent space, this is the effective dimension of the input after training
+        @param latent_dim: the dimension of the latent space, this is the effective dimension of the input after
+                           training
         """
         self.dropout = dropout
         self.input_dim = input_dim
@@ -94,9 +92,9 @@ class DataLoaderGenerator:
     at each time, as the dataset is fairly large.
     """
 
-    def __init__(self, filename, chunksize, total_size, input_dim, batch_size, shuffle):
+    def __init__(self, filename, chunk_size, total_size, input_dim, batch_size, shuffle):
         self.filename = filename
-        self.chunk_size = chunksize
+        self.chunk_size = chunk_size
         self.total_size = total_size
         self.input_dim = input_dim
         self.batch_size = batch_size
@@ -125,7 +123,8 @@ class DataLoaderGenerator:
 
 
 def train(net, optimizer, data_loader_gen, criterion, epochs, last_cp_path, best_cp_path, lr):
-    net.eval()
+    print()
+    net.train()
     losses = []
     epochs_since_last_improvement = 0
     for epoch_num in tqdm(range(epochs)):
@@ -153,6 +152,7 @@ def train(net, optimizer, data_loader_gen, criterion, epochs, last_cp_path, best
 
 
 def save(net, optimizer, loss, epoch, path, best_path=None, lr=None):
+    print("Saving checkpoints for epoch: {}".format(epoch))
     cp_dict = {
         'epoch': epoch,
         'model_state_dict': net.state_dict(),
@@ -161,10 +161,13 @@ def save(net, optimizer, loss, epoch, path, best_path=None, lr=None):
     }
     torch.save(cp_dict, path)
     if not os.path.exists(best_path):
+        print("Best checkpoint not found.\nInitializing best checkpoint.")
         torch.save(cp_dict, best_path)
     elif best_path and lr:
         _, _, _, best_loss = load(best_path, lr)
         if (loss / best_loss) < LOSS_IMPROVEMENT_THRESHOLD:
+            print("Epoch {} is less than {} smaller than the previous best."
+                  "\nUpdating best checkpoint.".format(epoch, LOSS_IMPROVEMENT_THRESHOLD))
             torch.save(cp_dict, best_path)
             return True
     return False
@@ -182,28 +185,33 @@ def load(path, lr):
 
 
 def test(net, data_loader_gen, criterion, name):
-    # TODO: needs to see how well this finds signals.
+    print("Starting test for: {}".format(name))
     loss_file_name = SINGLE_EVENT_LOSS_FILE_TEMPLATE.format(name)
     if os.path.exists(loss_file_name):
+        print("Previous loss file detected, loading losses")
         losses = np.load(loss_file_name, "r+")
     else:
+        print("No previous loss file detected, calculating losses")
         net.eval()
-        losses = [[], []]  # first column is loss and second is label
-        data_loader_gen.reset()
-        data_loader_gen.batch_size = 1
-        data_loader_gen.shuffle = False
-        data_loader_gen.chunk_size = 10**3
-        for data_loader, labels in tqdm(data_loader_gen):
-            losses[1] += labels
-            for x in data_loader:
-                output = net(x.float())
-                loss = criterion(output, x.float())
-                loss.backward()
-                losses[0].append(loss.detach().item())
-                gc.collect()
+        with torch.no_grad():
+            losses = [[], []]  # first column is loss and second is label
+            data_loader_gen.reset()
+            data_loader_gen.batch_size = 1
+            data_loader_gen.shuffle = False
+            data_loader_gen.chunk_size = 10**3
+            for data_loader, labels in tqdm(data_loader_gen):
+                losses[1] += labels
+                for x in data_loader:
+                    output = net(x.float())
+                    loss = criterion(output, x.float())
+                    loss.backward()
+                    losses[0].append(loss.detach().item())
+                    gc.collect()
+        print("Losses calculated")
         losses = np.array(losses)
-        np.save(SINGLE_EVENT_LOSS_FILE_TEMPLATE.format(name), losses)
-
+        np.save(loss_file_name, losses)
+        print("Losses saved to: {}".format(loss_file_name))
+    print("Separating losses to sig and bg")
     sig_losses = np.array([losses[0, i] for i in range(len(losses[0])) if losses[1, i]])
     bg_losses = np.array([losses[0, i] for i in range(len(losses[0])) if not losses[1, i]])
     gc.collect()
@@ -217,6 +225,7 @@ def plot_losses(losses, path, plot_function=plt.plot):
     plot_function(losses)
     plt.savefig(path, dpi=PNG_DPI)
     plt.close()
+    print("Plotted: {}".format(path))
 
 
 def run_net(input_dim=INPUT_DIM, latent_dim=LATENT_DIM, learning_rate=LEARNING_RATE, dropout=DROPOUT, do_train=True,
@@ -253,6 +262,7 @@ def parameter_search():
 def main():
     # parameter_search()
     run_net(do_train=False)
+    run_net(input_dim=2**6)
 
 
 if __name__ == "__main__":
