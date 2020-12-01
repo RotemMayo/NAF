@@ -204,13 +204,9 @@ def test(net, data_loader_gen, criterion, name):
         losses = np.array(losses)
         np.save(SINGLE_EVENT_LOSS_FILE_TEMPLATE.format(name), losses)
 
-    sig_losses, bg_losses = [], []
-    for i in range(len(losses)):
-        if losses[1, i]:
-            sig_losses.append(losses[0, i])
-        else:
-            bg_losses.append(losses[0, i])
-
+    sig_losses = np.array([losses[0, i] for i in range(len(losses[0])) if losses[1, i]])
+    bg_losses = np.array([losses[0, i] for i in range(len(losses[0])) if not losses[1, i]])
+    gc.collect()
     plot_losses(losses, TEST_LOSS_PNG_FORMAT.format(name), plt.hist)
     plot_losses(sig_losses, TEST_LOSS_PNG_FORMAT.format(name+"_sig"), plt.hist)
     plot_losses(bg_losses, TEST_LOSS_PNG_FORMAT.format(name+"_bg"), plt.hist)
