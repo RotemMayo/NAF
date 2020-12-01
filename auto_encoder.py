@@ -123,12 +123,14 @@ class DataLoaderGenerator:
 
 
 def train(net, optimizer, data_loader_gen, criterion, epochs, last_cp_path, best_cp_path, lr):
-    print()
+    print("Training for {} epochs".format(epochs))
     net.train()
     losses = []
     epochs_since_last_improvement = 0
     for epoch_num in tqdm(range(epochs)):
         if epochs_since_last_improvement > PATIENCE:
+            print("Terminating due to impatience. No major improvements seen in"
+                  " the last {} epochs.".format(epochs_since_last_improvement))
             return losses
         data_loader_gen.reset()
         epoch_losses = []
