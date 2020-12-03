@@ -11,5 +11,7 @@
 
 source /opt/anaconda3/bin/activate ae
 echo "env activated"
+python combine_bg_sig_dataset.py "R0.4_all"
+echo "dataset combined"
 python auto_encoder.py
 echo "model trained"
