@@ -1,0 +1,1000 @@
+cd ../results/
+git add run_27102020_213538/
+cd ..
+ll
+git commit -m "new alphas"
+gti push
+git push
+cat test_model.py
+ll logs/NAF_TEST_1291782.log 
+cat logs/NAF_TEST_1291782.log 
+cd rotemov/Projects/NAF/
+squeue --user=rotemov
+ll logs/NAF_TEST_1291782.log 
+cat logs/NAF_TEST_1291782.log 
+git add results/run_27102020_213538
+git commit -m "full run 30k tsne"
+git add
+git push
+cd rotemov/Projects/NAF/
+cd results/tsne_data/
+pwd
+cd ../losses/
+pwd
+cd ../../external_maf/datasets/data/lhc
+pwd
+squeue --user=rotemov
+scancel 1505382 1505384
+scancel 1505385 1505386
+squeue --user=rotemov
+scancel 1505383
+squeue --user=rotemov
+cd rotemov/Projects/
+cd NAF
+ll
+sh run_multiple_experiments.sh 
+squeue --user=rotemov
+cat run_multiple_experiments.sh 
+squeue
+squeue --user=rotemov
+scancel 1505387 1505488 1505389 1505390 1505391
+squeue --user=rotemov
+scancel 1505388
+squeue --user=rotemov
+cat run_multiple_experiments.sh 
+sh run_multiple_experiments.sh 0.4 0.1
+squeue --user=rotemopv
+squeue --user=rotemov
+cd rotemov/Projects/NAF/
+ll
+git pul
+git pull
+ll test_model.py
+cat test_model.py
+git stash
+git pull
+ll
+ll logs/
+mv logs/NAF* logs/bkp
+ll logs/
+sbatch test_model.py
+sbatch test_runner.sh 
+squeue
+squeue -user=rotemov
+squeue --user=rotemov
+squeue -P=yonitq
+squeue -p=yonitq
+squeue --user=rotemov
+tail -f logs/NAF_TEST_1505233.log 
+git pull
+sbatch test_runner.sh 
+squeue --user=rotemov
+tail -f logs/NAF_TEST_1505270.log 
+git pull 
+sbatch test_runner.sh 
+ll external_maf/datasets/data/lhc/*_fi
+squeue -p=yonitq
+squeue --user=rotemov
+tail -f logs/NAF_TEST_1505271.log 
+cat results/run_09112020_200705/
+cat results/run_09112020_200705/all_results.txt 
+cd ..
+cd NAF
+ll
+tail -f logs/NAF_TEST_1505271.log 
+ll
+squeue --user=rotemov
+scancel 1505271
+squeue --user=rotemov
+ll
+rm -rf results/run_09112020_*
+ll
+git pulll
+git pull
+sbatch test_runner.sh 
+squeue --user=rotemov
+cat logs/NAF_TEST_1505274.log 
+tail -f results/run_09112020_201856/all_results.txt 
+squeue --user=rotemov
+git pull
+sbatch test_runner.sh 
+cat results/run_09112020_201856/all_results.txt 
+vim results/run_09112020_201856/all_results.txt 
+ll
+ll results/run_09112020_202603/all_results.txt 
+cat results/run_09112020_202603/all_results.txt 
+ll logs/NAF_TEST_1505278.log 
+cat logs/NAF_TEST_1505278.log 
+git pull
+sbatch test_runner.sh 
+squeue --user=rotemov
+mv logs/NAF_TEST_1505* logs/bkp
+ll
+squeue --user=rotemov
+ךך
+ll
+cat results/run_09112020_202603/all_results.txt 
+cat results/run_09112020_203744/
+cat results/run_09112020_203744/all_results.txt 
+vim results/run_09112020_203744/all_results.txt 
+ll
+git pull
+sbatch test_runner.sh 
+sbatch filter_runner.sh 
+squeue --user=rotemov
+cat filter_runner.sh 
+squeue --user=rotemov
+cat logs/NAF_TEST_1505285.log 
+cat logs/NAF_TEST_1505286
+cat logs/NAF_TEST_1505286.log 
+ll
+cd external_maf/datasets/data/lhc/
+ll
+rm -f *filter_2*
+ll
+cd ../../..
+cd ..
+ll
+git pull
+sbatch filter_runner.sh 
+squeue --user=rotemov
+cd external_maf/datasets/data/lhc/
+ll
+python
+cd ~/rotemov/Projects/ML4Jets-HUJI/logs/
+ll
+cd ..
+ll
+cd Data/Parsed_Data/
+ll
+python
+cd ~/rotemov/Projects/NAF/external_maf/datasets/data/
+ll
+cd lhc
+ll
+mkdir bkp
+mv *mjj-translation* bkp/.
+ll
+ll bkp
+cp ~/rotemov/Projects/ML4Jets-HUJI/Data/Parsed_Data/*mjj-translation* .
+ll
+pyhton
+python
+ll
+cd ..
+cd ../..
+cd ..
+git pull
+cd external_maf/datasets/data/lhc/
+ll
+cd ..
+cd ../..
+cd ..
+cd NAF/
+ll
+cd logs/
+ll
+cat NAF_TEST_1505286.log 
+mv NAF_TEST_150528* bkp/.
+ll NAF_FILTER_1505328.log 
+cat NAF_FILTER_1505328.log 
+mv NAF_FILTER_1505328.log bkp/.
+ll
+cd ..
+git pull
+sbatch filter_runner.sh 
+squeu --user=rotemov
+squeue --user=rotemov
+ll
+squeue --user=rotemov
+tail -f logs/NAF_FILTER_1505337.log 
+ll models/*filter*
+ll
+git pull
+cd external_maf/datasets/data/lhc/
+rm -f *filter_2*
+ll
+cd ../../../..
+sbatch filter_runner.sh 
+ll
+squeue --user=rotemov
+cat loss_filter.py 
+squeue --user=rotemov
+cat logs/NAF_FILTER_1505341.log 
+git pull
+sbatch filter_runner.sh 
+squeue --user=rotemov
+cd logs/
+mv NAF_FILTER_15053* bkp/.
+ll
+cd ..
+ll
+squeue --user=rotemov
+cat logs/NAF_FILTER_1505344.log 
+git pull
+sbatch filter_runner.sh 
+squeue filter_runner.sh 
+squeue --user=rotemov
+cat logs/NAF_FILTER_1505375.log 
+git pull
+ll
+sbatch filter_runner.sh 
+cd logs/
+ll
+mv NAF_FILTER_15053* bkp/.
+ll
+squeue --user=rotemov
+ll
+squeue --user=rotemov
+ll
+cat NAF_FILTER_1505379.log 
+squeue --user=rotemov
+cat NAF_FILTER_1505379.log 
+cd ..
+ll external_maf/datasets/data/lhc/*filter*
+sbatch run_multiple_experiments.sh 
+cat run_multiple_experiments.sh 
+cd
+squeue --user=rotemov\
+squeue --user=rotemov
+scancel 1505381
+squeue --user=rotemov
+cd rotemov/Projects/NAF/
+sh run_multiple_experiments.sh 
+squeue --user=rotemov
+ll
+cd rotemov/Projects/NAF/
+ll
+cd models/translation_bkp/
+cd ..
+ll
+mv *mjj-translation* translation_bkp/
+ll
+cd ..
+ll
+squeue --user=rotemov
+cat run_multiple_experiments.sh 
+cp cluster_runner.sh yonitq_cluster_runner.sh
+cat test_runner.sh 
+vim yonitq_cluster_runner.sh 
+cat cluster_runner.sh 
+sbatch yonitq_cluster_runner.sh 11 R0.4_all_mjj-translation_10000 0.1
+squeue --user=rotemov
+cat run_multiple_experiments.sh 
+sbatch yonitq_cluster_runner.sh 11 R0.4_all_filter_2 0.1
+squeue --user=rotemov
+allq      NAF  rotemov PD       0:00      4 (Resources)
+squeue --user=rotemov
+ll
+cd Projects/
+cd rotemov
+cd ../rotemov/Projects/NAF/
+ll
+cat logs/NAF_1505591.out 
+cat logs/NAF_1505592.out 
+cat logs/NAF_1505591.out 
+cat logs/NAF_1505592.out 
+cd rotemov/Projects/NAF/
+ll
+cat logs/
+cat logs/NAF_1505591.out 
+cat logs/NAF_1505592.out 
+cat logs/NAF_1505591.out 
+squeue --user=rotemov
+cat logs/NAF_1505591.out 
+cat logs/NAF_1505592.out 
+squeue --user=roteov
+squeue --user=rotemov
+cd rotemov/Projects/NAF/
+ll
+cat logs/NAF_1505592.out 
+cat logs/NAF_1505591.out 
+cd rotemov/Projects/
+cd NAF/
+ll
+cat logs/NAF_1505397.out 
+squeue --user=rotemov
+cd results/
+ll
+git add run_11112020_022636/
+cd ..
+git commit -m "added most updated results"
+git push
+git pull
+sbatch test_runner.sh 
+squeue --user=rotemov
+cat logs/NAF_TEST_1510292.log 
+tail -f logs/NAF_TEST_1510292.log 
+git pull
+sbatch test_runner.sh 
+tail -f logs/NAF_TEST_1510292.log 
+squeue --user=rotemov
+tail -f logs/NAF_TEST_1510292.log 
+tail -f logs/NAF_TEST_1510293.log 
+tail -f logs/NAF_TEST_1510292.log 
+sbatch test_runner.sh 
+squeue --user=rotemov
+cat logs/NAF_TEST_1510294.log 
+tail -f logs/NAF_TEST_1510294.log 
+cat results/run_11112020_103440/all_results.txt 
+git pull
+sbatch test_runner.sh 
+squeue --user=rotemov
+l results/losses/
+ll results/losses/
+squeue --user=rotemov
+cat logs/NAF_TEST_1510295.log 
+cd results\
+cd results/losses/
+rm -f *filter*
+cd ../tsne_data/
+rm -f *filter*
+cd ..
+sbatch test_runner.sh 
+squeue --user=rotemov
+cat logs/NAF_TEST_1510296.log 
+tail -f logs/NAF_TEST_1510296.log 
+git pull
+tail -f logs/NAF_TEST_1510296.log 
+cat results/run_11112020_105614/all_results.txt 
+tail -f logs/NAF_TEST_1510296.log 
+git add results/run_11112020_105614/
+git commit -m "results including filter 2, mjj-translation only 10k is good"
+git push
+ll
+cd rotemov/Projects/NAF/
+cd ..
+cd ~
+ln -s NAF ~/rotemov/Projects/NAF
+ll
+ln -s NAF ~/rotemov/Projects/NAF
+ll
+ll -a
+ךך
+ll
+ln -s ~/rotemov/Projects/NAF NAF
+ll
+cd NAF
+ll
+rm NAF
+ll
+cd results
+ll
+mkdir older_runs/
+mv run_* older_runs/*
+mv run_* older_runs/.
+ll
+mv affine_results older_runs/.
+mv all_results older_runs/.
+ll
+mv all_results_23092020_212127.txt older_runs/.
+mv ddsf_0.1_23092020_212127 older_runs/.
+git pull
+cd ..
+sbatch test_runner.sh 
+squeue --user=rotemov
+cd results
+ll
+git add run_11112020_131357/
+git add -u
+git push
+git commit -m "new bins"
+git push
+cd ...
+cd ..
+ll logs/
+cat logs/NAF_TEST_1516305.log 
+git pull
+sbatch test_runner.sh 
+cd results
+ll
+rm -r run_11112020_131357/
+ll
+squeue --user=rotemov
+cd ..
+vim README.md 
+squeue --user=rotemov
+cat logs/NAF_TEST_1518387.log 
+cd results/losses/
+ll
+cat ../../logs/NAF_TEST_1518387.log 
+python
+cd ../..
+cd external_maf/datasets/data/lhc/
+ll
+python
+cd ../..
+cd results
+cd losses/
+ll
+rm -f *filter_2*
+ll
+cd ..
+git add -u
+git commit -m "Added tasks"
+git push
+git pull
+sbatch test_runner.sh 
+tail -f logs/NAF_TEST_1518387.log 
+tail -f logs/NAF_TEST_1519209.log 
+python
+cd external_maf/datasets/data/lhc/
+python
+cd ../../..
+cd ..
+cd results/losses/
+ll
+python
+git pull
+ךך
+ll
+cd ..
+ll
+cat logs/NAF_TEST_1519209.log 
+cat logs/NAF_TEST_1519209.log
+squeue --user=rotemov
+cat logs/NAF_TEST_1519209.log
+git add results/run_11112020_142953/
+mv results/run_11112020_140226 results/older_runs/.
+git commit -m "new bins"
+git push
+git pull
+sbatch filter_runner.sh 
+cat yonitq_cluster_runner.sh 
+squeue --user=rotemov
+sbatch yonitq_cluster_runner.sh 11 R0.4_all_filter_3 0.1 affine
+squeue --user=rotemov
+cd logs/
+tail -f NAF_1526536.out 
+cd ..
+ll external_maf/datasets/data/lhc/
+tail -f logs/NAF_1526536.out 
+squeue --user=rotemov
+cat logs/NAF_1526536.out 
+cd logs/
+mv NAF_FILTER_15* bkp.
+mv NAF_FILTER_15* bkp/.
+mv NAF_TEST_151* bkp/.
+ll
+mv NAF_TEST_151* bkp/.
+squeue --user=rotemov
+tail -f logs/NAF_1526536.out 
+cd ..
+tail -f logs/NAF_1526536.out 
+cd NAF
+ll
+cat logs/NAF_1526536.out 
+ca models/lhc_enR0.4_all_filter_3_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best_checkpoint.txt 
+cat models/lhc_enR0.4_all_filter_3_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best_checkpoint.txt 
+cat logs/NAF_1526536.out 
+cd NAF
+ll
+cat logs/NAF_1526536.out 
+clear
+squeue --user=rotemov
+cd NAF
+ll
+cd results
+ll
+git pull
+cd losses/
+rm -f *mjj-translation*
+ll
+cd ..
+cd tsne
+cd tsne_data/
+ll
+rm -f *mjj-translation*
+ll
+cd ..
+cd .
+cd ..
+sbatch test_runner.sh 
+squeue --user=rtoemov
+squeue --user=rotemov
+cd results
+ll
+mv run_11112020_1* older_runs/.
+mv run_12112020_032129 older_runs/.
+ll
+git add run_12112020_101404/
+git add -u
+git commit -m "filter 3 run"
+git push
+cd NAF/
+ll
+git pull
+vim yonitq_cluster_runner.sh 
+cp yonitq_cluster_runner.sh 
+cp yonitq_cluster_runner.sh yonitq_ae_runner.sh
+git add yonitq_*
+git commit -m "added runners for yonitq"
+git push
+git pull
+ll
+sbatch yonitq_ae_runner.sh 
+cd logs/
+ll
+cd ..
+mkdir ae_models
+ll
+cd logs/
+ll
+mv NAF_* bkp/.
+ll
+cd ..
+squeue --user=rotemov
+ll
+ll 1
+cat 1
+rm -f 1
+ll
+cat yonitq_ae_runner.sh 
+cat yonitq_
+cat yonitq_cluster_runner.sh 
+cat yonitq_ae_runner.sh 
+git pull
+sbatch yonitq_ae_runner.sh 
+cat logs/
+ll
+squeue --user=rotemov
+git pull
+squeue --user=rotemov
+cat logs/AE_1551886.out 
+git pull
+conda env create -f ae.yml 
+conda create -n ae python=3.8.3 numpy matplotlib torch torchvision pandas tqdm
+conda create -n ae python=3.8.3 numpy matplotlib pytorch torchvision pandas tqdm
+conda list
+conda --env
+conda --envs
+conda list --envs
+conda list --env
+conda env
+conda env list
+conda create -n ae python=3.8
+conda activate ae
+pip install numpy pandas matplotlib tqdm torch torchvision
+conda deactivate
+ll
+sbatch yonitq_ae_runner.sh 
+cd logs/
+ll
+mv AE_1551886.out bkp/.
+ll
+squeue --user=rotemov
+ll
+cat AE_1551919.out 
+ll
+cd ..
+ll external_maf/datasets/data/lhc/
+ll
+ll external_maf/datasets/data/lhc/
+cd ../..
+cd rotemov
+ll
+cd rotemov
+ll
+cd Projects/ML4Jets-HUJI/
+ll
+cd Data/
+ll
+pwd
+git pull
+cd ~
+cd NAF
+git pull
+sbatch yonitq_ae_runner.sh 
+squeue --user=rotemov
+cat logs/AE_1551922.out 
+conda activate ae
+pip install tables
+sbatch yonitq_ae_runner.sh 
+squeue --user=rotemov
+tail -f logs/AE_1551923.out 
+cd NAF/
+ll
+cat logs/AE_1551923.out 
+cd NAF
+cat logs/AE_1552625.out 
+tail -f logs/AE_1552625.out 
+cd NAF
+ll
+git pull
+cd logs/
+mv AE* bkp/.
+ll
+cd ..
+sbatch yonitq_ae_runner.sh 
+squeue --user=rotemov
+tail -f logs/AE_1552625.out 
+cat logs/AE_1552625.out 
+tail -f logs/AE_1552625.out 
+ll
+cd NAF
+ll
+ll logs/AE_1552625.out 
+cat logs/AE_1552625.out 
+git add ae_models
+git commit -m "added ae training results"
+git add ae_models/*
+git add ae_models*
+git commit -m "ae training results
+git commit -m "ae training results"
+git push
+cd
+cd NAF
+ll
+mv ae_models\* ae_models/.
+ll
+mv ae_models\test_loss.png ae_models/test_loss.png
+mv ae_models\\test_loss.png ae_models/test_loss.png
+ll
+mv ae_models\\training_loss.png ae_models/training_loss.png
+mv ae_models\\last_basic_ae_checkpoint.pt ae_models/last_basic_ae_checkpoint.pt
+ll
+cd ae_models/
+ll
+git add *.png
+git add -u
+cd ..
+ll
+vim auto_encoder.py 
+git add -u
+git commit -m "added training results for ae
+git commit -m "added training results for ae"
+git push
+ll
+cd NAF/
+ll
+pwd
+ll ae_models/
+cd NAF
+git pull
+sbatch yonitq_ae_runner.sh 
+squeue --user=rotemov
+tail -f logs/AE_1583405.out 
+cat logs/AE_1583405.out 
+tail -f logs/AE_1583405.out 
+cd NAF/
+ll
+squeue --user=rotemov
+cat logs/AE_1583405.out 
+tail -f logs/AE_1583405.out 
+ll ae_models/
+git add ae_models/*.png
+git commit -m "training curves of some parameter sets"
+git push
+squeue --user=rotemov
+ll
+cd NAF/
+ll
+squeue --user=rotemov
+tail -f logs/AE_1583405.out 
+ll
+git add ae_models/*.png
+ll ae_models/
+git add -u
+git commit -m "AE parameters models"
+git push
+git pull 
+sbatch yonitq_ae_runner.sh 
+squeue --user=rotemov
+ll
+cd NAF/
+ll
+git pullk
+git pull
+squeue --user=rotemov
+git add -u ae
+git add -u ae_models/*.png
+git commit -m "2nd parameter iteration ae results"
+git push
+git commit -m "2nd parameter iteration ae results"
+git add ae_models/*.png
+git commit -m "2nd parameter iteration ae results"
+git push
+git add -u
+git pull
+cd ae_models/
+ll
+mv *.pt paramter_search/.
+ll
+cd ..
+git pull
+sbatch yonitq_ae_runner.sh 
+squeue --user=rotemov
+scancel 1583432
+git pull
+ll
+sbatch yonitq_ae_runner.sh 
+squeue --user=rotemov
+tail -f logs/AE_1583434.out 
+git pull
+ll
+squeue --user=rotemov
+cat logs/AE_1583434.out 
+cd logs/
+ll
+mv AE_15* bkp/.
+cd ..
+git pull
+sbatch test_runner.sh 
+sbatch yonitq_ae_runner.sh 
+tail -f logs/NAF_TEST_1583435.log 
+tail -f logs/AE_1583436.out 
+git pull
+rm -f logs/AE_1583436.out 
+ll logs
+tail -f logs/NAF_TEST_1583435.log 
+git pull
+sbatch yonitq_ae_runner.sh 
+git add results/run_29112020_144339
+git add results/run_29112020_144339/*
+git commit -m "filter 3 extended results"
+git push
+tail -f logs/AE_1583437.out 
+git pull
+rm -f logs/NAF_TEST_1583435.log 
+sbatch test_runner.sh 
+squeue --user=rotemov
+tail -f logs/AE_1583437.out 
+tail -f logs/NAF_TEST_1583438.log 
+git add results/run_29112020_145322
+git commit -m "added filter 3 extensive results"
+git push
+git pull
+mv logs/NAF_TEST_1583438.log logs/bkp/.
+sbatch test_runner.sh 
+tail -f logs/AE_1583437.out 
+cat logs/NAF_TEST_1583439.log 
+git add results/run_29112020_150840/
+git commit -m "filter 3 results"
+git push
+git pull
+rm -f logs/NAF_TEST_1583439.log 
+sbatch test_runner.sh 
+tail -f logs/AE_1583437.out 
+tail -f logs/NAF_TEST_1583446.log 
+git add results/run_29112020_160225/
+ll
+ll results
+git add results/run_29112020_160225/
+git commit -m "bin results"
+git push
+cd NAF
+cd models/
+cp lhc_enR0.4_all_filter_3_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best_model.pt lhc_enR0.4_all_filter_4_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best_model.pt
+cp lhc_enR0.4_all_filter_3_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best_optim.pt lhc_enR0.4_all_filter_4_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best_model.pt
+cp lhc_enR0.4_all_filter_3_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best_optim.pt lhc_enR0.4_all_filter_4_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best_optim.pt
+cp lhc_enR0.4_all_filter_3_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best_model.pt lhc_enR0.4_all_filter_4_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best_model.pt
+ll
+ll lhc_enR0.4_all_filter_*
+cd ..
+git pull
+sbatch filter_runner.sh 
+cat filter_runner.sh 
+squeue
+squeue --user=rotemov
+cat logs/NAF_FILTER_1583483.log 
+git pull
+ll logs/
+mv logs/NAF_* logs/bkp/.
+ll logs/
+sbatch filter_runner.sh 
+squeue --user=rotemov
+cat logs/NAF_FILTER_1583484.log 
+squeue --user=rotemov
+cat logs/AE_1583437.out 
+squeue --user=rotemov
+cat logs/NAF_FILTER_1583484.log 
+git pull
+sbatch filter_runner.sh 
+squeue --user=rotemov
+cat logs/NAF_FILTER_1583485.log 
+git pull
+mv logs/NAF_FILTER_158348* bkp/.
+mv logs/NAF_FILTER_158348* logs/bkp/.
+ll logs
+sbatch filter_runner.sh 
+tailtia
+tail -f logs/NAF_FILTER_1583486.log 
+ll external_maf/datasets/data/lhc/*filter*
+cat test_runner.sh 
+sbatch test_runner.sh 
+squeue --user=rotmeov
+squeue --user=rotemov
+tail -f logs/NAF_TEST_1583487.log 
+git pull
+mv logs/NAF_TEST_1583487.log logs/bkp/.
+sbatch test_runner.sh 
+tail -f logs/NAF_TEST_1583535.log 
+cd external_maf/datasets/data/lhc/
+cd ../../..
+cd ..
+cd models/translation_bkp/
+cd ../
+ll
+ll lhc_enR0.4_all_filter_*
+cp lhc_enR0.4_all_filter_3_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best_args.txt lhc_enR0.4_all_filter_4_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best_args.txt
+ll
+ll lhc_enR0.4_all_filter_*
+cp lhc_enR0.4_all_filter_3_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best_checkpoint.txt lhc_enR0.4_all_filter_4_sp0.1_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best_checkpoint.txt
+ll
+ll lhc_enR0.4_all_filter_*
+ll
+cd ../
+ll
+rm -f logs/NAF_TEST_1583535.log 
+rm -rf results/run_29112020_17*
+ll results/
+sbatch test_runner.sh 
+tail -f logs/NAF_TEST_1583536.log 
+squeue --user=rotemov
+tail -f logs/NAF_TEST_1583536.log 
+git add results/run_29112020_174722
+git add -u
+git commit -m "new extensive results"
+git push
+cd NAF
+tail -f logs/AE_1583437.out 
+cd NAF
+git pull
+sbatch yonitq_ae_runner.sh 
+ll
+squeue --user=rotemov
+cd NAF
+cat logs/AE_1583551.out 
+git pull
+sbatch yonitq_ae_runner.sh 
+tail -f logs/AE_1583552.out 
+ll ae_models/
+git add ae_models/*.pt
+git commit -m "added trained models for ae"
+git push
+git pull
+mv logs/NAF_* bkp/.
+mv logs/NAF_* logs/bkp/.
+mv logs/AE_* logs/bkp/.
+ll logs/
+sbatch yonitq_ae_runner.sh 
+tail -f logs/AE_1583553.out 
+squeue --user=rotemov
+scancel 1583553
+squeue --user=rotemov
+scancel 1583553
+squeue --user=rotemov
+rm -f logs/AE_1583553.out 
+git pull
+sbatch yonitq_ae_runner.sh 
+squeue --user=rotemov
+tail -f logs/AE_1583554.out 
+squeue --user=rotemov
+tail -f logs/AE_1583554.out 
+git pull
+sbatch yonitq_ae_runner.sh 
+tail -f logs/AE_1583797.out 
+cat ae_models/
+ll ae_models/
+squeue --user=rotemov
+scancel 1583797
+squeue --user=rotemov
+git pull
+sbatch yonitq_ae_runner.sh 
+squeue --user=rotemov
+tail -f logs/AE_1583798.out 
+cd NAF
+git pull
+sbatch yonitq_ae_runner.sh 
+tail -f logs/AE_1583807.out 
+ll ae_models/
+ll logs/AE_1583807.out
+cat logs/AE_1583807.out 
+squeue --user=rotemov
+ll ae_models/
+squeue --user=rotemov
+scancel 1583807
+git pull
+mv logs/AE* bkp/.
+mv logs/AE* logs/bkp/.
+ll logs/
+sbatch yonitq_ae_runner.sh 
+tail -f logs/AE_1583808.out 
+git pull
+ll
+tail -f logs/AE_1583808.out 
+scancel 1583808
+rm -f logs/AE_*
+ll logs/
+ll
+sbatch yonitq_ae_runner.sh 
+squeue --user=rotemov
+tail -f logs/AE_1583809.out 
+squeeu
+squeue --user=rotemov
+git pull
+squeue --user=rotemov
+scancel 
+scancel 1583809
+sbatch yonitq_ae_runner.sh 
+squeue --user=rotemov
+cat logs/AE_1583809.out 
+rm -f logs/AE_1583809.out 
+ll
+squeue --user=rotemov
+squeue --user=rotemovq
+squeue --user=rotemov
+cat logs/AE_1583810.out 
+git pull
+rm -f logs/AE_1583810.out 
+sbatch yonitq_ae_runner.sh 
+squeue --user=rotemov
+tail -f logs/AE_1583811.out 
+git pull
+rm -f logs/AE_1583811.out 
+sbatch yonitq_ae_runner.sh 
+tail -f logs/AE_1583812.out 
+ll ae_models/
+cat logs/AE_1583812.out 
+ךך
+ll
+ll ae_models/
+git add ae_models/*.png
+git add ae_models/*.pt
+ll
+git commit -m "added results of 128 and added checkpoints for further debugging of training"
+git push
+cd NAF
+git pull
+ll
+git pull
+cd NAF
+ll
+git pull
+sbatch yonitq_ae_runner.sh 
+squeue --user=rotemov
+tail -f logs/AE_1583831.out 
+cd NAF
+git pull
+mv logs/AE_* logs/bkp/.
+sbatch yonitq_ae_runner.sh 
+tail -f logs/AE_1583832.out 
+cd NAF
+squeue --user=rotemov
+sbatch yonitq_ae_runner.sh 
+squeue --user=rotemov
+cat auto_encoder.py
+squeue --user=rotemov
+scancel 1590221
+git p[ull
+git pull
+sbatch yonitq_ae_runner.sh 
+vim auto_encoder.py 
+squeue --user=rotemov
+cat logs/AE_1590222
+cat logs/AE_1590222.out 
+git pull
+squeue --user=rotemov
+vim yonitq_ae_runner.sh 
+sbatch yonitq_ae_runner.sh 
+squeue --user=rotemov
+tail -f logs/AE_1590227.out 
+scancel 1590227
+squeue --user=rotemov
+git add -u
+git commit
+git commit -m "updated ae_runner"
+git push
+git pull
+sbatch yonitq_ae_runner.sh 
+tail -f logs/AE_1590228.out 
+pwd
+history -a
+ll
+history -w
+ll
+history -w "example of running on cluster"
+ll
+rm -f 'example of running on cluster' 
+rm -f 'example_of_running_on_cluster' 
+history -w "example_of_running_on_cluster"
