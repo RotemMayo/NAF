@@ -86,7 +86,7 @@ for en in SECOND_EXPERIMENTS.keys():
 NUMBERS_TO_CHECK = [10 ** j for j in range(7)] + [j * 10 ** 4 for j in range(1, 10)] + [j * 10 ** 5 for j in
                                                                                         range(1, 10)]
 TRIM_PERCENT = 0.02
-NBINS = 100
+NBINS = 3000
 TIME_STAMP = datetime.now().strftime("%d%m%Y_%H%M%S")
 RUN_OUTPUT_DIR = "results/run_{}/".format(TIME_STAMP)
 OUTPUT_FILE = "{}all_results.txt".format(RUN_OUTPUT_DIR)

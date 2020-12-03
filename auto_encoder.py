@@ -9,6 +9,7 @@ from tqdm import tqdm
 import os
 from matplotlib import pyplot as plt
 import gc
+
 """
 Parameter search results:
 input layer = 128 or 64
