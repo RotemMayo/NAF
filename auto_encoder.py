@@ -9,6 +9,7 @@ from tqdm import tqdm
 import os
 from matplotlib import pyplot as plt
 import gc
+from copy import deepcopy
 
 """
 Parameter search results:
@@ -19,12 +20,14 @@ dropout = 0.001
 Running for 400 epochs to see if we can get good results
 """
 
-RUN = "cluster"
+RUN = "cluster_obs"
 PARAM_DICT = {
-    "rotemov": ("C:\\Users\\rotem\\PycharmProjects\\ML4Jets\\ML4Jets-HUJI\\Data\\events_anomalydetection.h5", 10 ** 3,
-                10 ** 4, 3),
-    "cluster": ("/usr/people/snirgaz/rotemov/rotemov/Projects/ML4Jets-HUJI/Data/events_anomalydetection.h5", 10 ** 5,
-                int(1.1 * 10 ** 6), 400)  # TODO: needs to be updated to reflect exact size
+    "rotemov_raw": ("C:\\Users\\rotem\\PycharmProjects\\ML4Jets\\ML4Jets-HUJI\\Data\\events_anomalydetection.h5", 10 ** 3,
+                   10 ** 4, 3),
+    "rotemov_obs": ("external_maf/datasets/data/lhc/lhc.npy", 10 ** 3, 2*10 ** 3, 2),
+    "cluster_raw": ("/usr/people/snirgaz/rotemov/rotemov/Projects/ML4Jets-HUJI/Data/events_anomalydetection.h5", 10 ** 5,
+                   int(1.1 * 10 ** 6), 400),
+    "cluster_obs": ("external_maf/datasets/data/lhc/lhc_R0.4_all.npy", 10 ** 5, int(1.1 * 10 ** 6), 30),# TODO: needs to be updated to reflect exact size
 }
 DATA_SET_PATH, MINI_EPOCH_SIZE, EPOCH_SIZE, EPOCHS = PARAM_DICT[RUN]
 BATCH_SIZE = int(1.25 * 10 ** 2)
@@ -100,6 +103,10 @@ class DataLoaderGenerator:
     """
 
     def __init__(self, filename, chunk_size, total_size, input_dim, batch_size, shuffle):
+        """
+        @param chunk_size: The amount of events we want the network to load simultaneously to the memory. For obs list
+                           simply choose chunk_size = total_size
+        """
         self.filename = filename
         self.chunk_size = chunk_size
         self.total_size = total_size
@@ -115,9 +122,18 @@ class DataLoaderGenerator:
         if (self.idx + 1) * self.chunk_size > self.total_size:
             raise StopIteration
         else:
-            x = pd.read_hdf(self.filename, start=self.idx * self.chunk_size, stop=(self.idx + 1) * self.chunk_size)
-            labels = x.rename_axis('ID').values[:, -1]
-            x = x.rename_axis('ID').values[:, :self.input_dim]
+            start = self.idx * self.chunk_size
+            stop = (self.idx + 1) * self.chunk_size
+            if self.filename.endswith(".h5"):
+                x = pd.read_hdf(self.filename, start=start, stop=stop)
+                labels = x.rename_axis('ID').values[:, -1]
+                x = x.rename_axis('ID').values[:, :self.input_dim]
+            elif self.filename.endswith(".npy"):
+                x = np.load(self.filename)
+                labels = x[start:stop, -1]
+                x = x[start:stop, :self.input_dim]  # might not be relevant at the end
+            else:
+                raise FileNotFoundError
             loader = data.DataLoader(x, batch_size=self.batch_size, shuffle=self.shuffle)
             self.idx += 1
             return loader, labels.tolist()
@@ -285,21 +301,26 @@ def run_net(encoder_layer_sizes, decoder_layer_sizes, learning_rate=LEARNING_RAT
 
 def parameter_search():
     # TODO: Apply to new network config
+    encoder_layer_sizes = [11, 9, 6, 4]
+    decoder_layer_sizes = [6, 9, 11]
     n = np.random.random((10, 3))
     latent_dim = 2 ** 2
     for params in n:
-        learning_rate = round(10 ** (-2.5 * params[0] - 2.5), ndigits=5)
-        dropout = round(10 ** (-2 * params[1] - 2), ndigits=5)
-        input_dim = 2 ** (int(2 * params[2]) + 6)  # 64 or 128
-        print("lr={}, do={}, input={}".format(learning_rate, dropout, input_dim))
-        run_net(input_dim, latent_dim, learning_rate, dropout)
+        learning_rate = round(10 ** (-2.5 * params[0] - 2.5), ndigits=5)  # between 10^-2.5 to 10^-5
+        dropout = round(10 ** (-3 * params[1] - 2), ndigits=5)  # between 10^-2 to 10^-5
+        latent_dim = (int(4 * params[2]) + 2)  # between 2 to 6
+        enc = deepcopy(encoder_layer_sizes)
+        enc[-1] = latent_dim
+        print("lr={}, do={}, input={}".format(learning_rate, dropout, latent_dim))
+        print(enc)
+        run_net(enc, decoder_layer_sizes, learning_rate, dropout, do_test=False)
 
 
 def main():
-    # parameter_search()
+    parameter_search()
     # run_net(do_train=False)
     # run_net(input_dim=2**6)
-    run_net(encoder_layer_sizes=[11, 9, 6, 4], decoder_layer_sizes=[6, 9, 11], do_train=False)
+    # run_net(encoder_layer_sizes=[6, 4, 2], decoder_layer_sizes=[4, 6], do_test=False)
 
 
 if __name__ == "__main__":
