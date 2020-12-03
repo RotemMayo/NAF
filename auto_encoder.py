@@ -27,13 +27,13 @@ PARAM_DICT = {
     "rotemov_obs": ("external_maf/datasets/data/lhc/lhc.npy", 10 ** 3, 2*10 ** 3, 2),
     "cluster_raw": ("/usr/people/snirgaz/rotemov/rotemov/Projects/ML4Jets-HUJI/Data/events_anomalydetection.h5", 10 ** 5,
                    int(1.1 * 10 ** 6), 400),
-    "cluster_obs": ("external_maf/datasets/data/lhc/lhc_R0.4_all.npy", 10 ** 5, int(1.1 * 10 ** 6), 30),# TODO: needs to be updated to reflect exact size
+    "cluster_obs": ("external_maf/datasets/data/lhc/lhc_R0.4_all.npy", int(1.1 * 10 ** 6), int(1.1 * 10 ** 6), 30), # TODO: needs to be updated to reflect exact size
 }
 DATA_SET_PATH, MINI_EPOCH_SIZE, EPOCH_SIZE, EPOCHS = PARAM_DICT[RUN]
-BATCH_SIZE = int(1.25 * 10 ** 2)
+BATCH_SIZE = int(2.5 * 10 ** 2)
 
 CRITERION = nn.MSELoss()  # the loss function
-SHUFFLE = False
+SHUFFLE = True
 LEARNING_RATE = 0.002
 DROPOUT = 0.001
 INPUT_DIM = 128
@@ -159,7 +159,7 @@ def train(net, optimizer, data_loader_gen, criterion, epochs, last_cp_path, best
         epoch_losses = []
         for data_loader, _ in data_loader_gen:
             mini_epoch_loss = 0
-            for x in data_loader:
+            for x in tqdm(data_loader):
                 optimizer.zero_grad()  # zero the gradient buffers
                 output = net(x.float())
                 loss = criterion(output, x.float())
@@ -304,7 +304,6 @@ def parameter_search():
     encoder_layer_sizes = [11, 9, 6, 4]
     decoder_layer_sizes = [6, 9, 11]
     n = np.random.random((10, 3))
-    latent_dim = 2 ** 2
     for params in n:
         learning_rate = round(10 ** (-2.5 * params[0] - 2.5), ndigits=5)  # between 10^-2.5 to 10^-5
         dropout = round(10 ** (-3 * params[1] - 2), ndigits=5)  # between 10^-2 to 10^-5
