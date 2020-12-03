@@ -19,11 +19,11 @@ dropout = 0.001
 Running for 400 epochs to see if we can get good results
 """
 
-RUN = "cluster"
-PARAM_DICT ={
-    "rotemov": ("C:\\Users\\rotem\\PycharmProjects\\ML4Jets\\ML4Jets-HUJI\\Data\\events_anomalydetection.h5", 10**3,
-                10**4, 3),
-    "cluster": ("/usr/people/snirgaz/rotemov/rotemov/Projects/ML4Jets-HUJI/Data/events_anomalydetection.h5", 10**5,
+RUN = "rotemov"
+PARAM_DICT = {
+    "rotemov": ("C:\\Users\\rotem\\PycharmProjects\\ML4Jets\\ML4Jets-HUJI\\Data\\events_anomalydetection.h5", 10 ** 3,
+                10 ** 4, 3),
+    "cluster": ("/usr/people/snirgaz/rotemov/rotemov/Projects/ML4Jets-HUJI/Data/events_anomalydetection.h5", 10 ** 5,
                 int(1.1 * 10 ** 6), 400)  # TODO: needs to be updated to reflect exact size
 }
 DATA_SET_PATH, MINI_EPOCH_SIZE, EPOCH_SIZE, EPOCHS = PARAM_DICT[RUN]
@@ -53,27 +53,28 @@ SINGLE_EVENT_LOSS_FILE_TEMPLATE = os.path.join(OUTPUT_FOLDER, "losses_{}.npy")
 
 class BasicAutoEncoder(nn.Module):
 
-    def __init__(self, input_dim=INPUT_DIM, latent_dim=LATENT_DIM, dropout=DROPOUT):
+    def __init__(self, encoder_layer_sizes, decoder_layer_sizes, dropout=DROPOUT):
         """
         @param input_dim: the amount of data points to take per event
         @param latent_dim: the dimension of the latent space, this is the effective dimension of the input after
                            training
         """
         self.dropout = dropout
-        self.input_dim = input_dim
-        self.latent_dim = latent_dim
+        self.input_dim = encoder_layer_sizes[0]
+        self.latent_dim = encoder_layer_sizes[-1]
+        self.encoder_layer_sizes = encoder_layer_sizes
+        self.decoder_layer_sizes = decoder_layer_sizes
+        self.layer_sizes = encoder_layer_sizes + decoder_layer_sizes
         super(BasicAutoEncoder, self).__init__()
         self.encoder = []
-        dim = input_dim
-        while dim / 2 >= latent_dim:
-            self.encoder.append(nn.Linear(dim, int(dim / 2)))
-            dim = int(dim / 2)
+        for i in range(len(encoder_layer_sizes) - 1):
+            self.encoder.append(nn.Linear(encoder_layer_sizes[i], encoder_layer_sizes[i + 1]))
         self.encoder = nn.ModuleList(self.encoder)
 
         self.decoder = []
-        while dim * 2 <= input_dim:
-            self.decoder.append(nn.Linear(dim, int(dim * 2)))
-            dim = int(dim * 2)
+        self.decoder.append(nn.Linear(self.latent_dim, decoder_layer_sizes[0]))
+        for i in range(len(decoder_layer_sizes) - 1):
+            self.decoder.append(nn.Linear(decoder_layer_sizes[i], decoder_layer_sizes[i + 1]))
         self.decoder = nn.ModuleList(self.decoder)
 
     def encode(self, x):
@@ -172,7 +173,7 @@ def save(net, optimizer, loss, epoch, path, best_path=None, lr=None):
         print("Best checkpoint not found.\nInitializing best checkpoint.")
         torch.save(cp_dict, best_path)
     elif best_path and lr:
-        _, _, _, best_loss = load(best_path, lr, net.input_dim, net.latent_dim, net.dropout)
+        _, _, _, best_loss = load(best_path, lr, net.encoder_layer_sizes, net.decoder_layer_sizes, net.dropout)
         if (loss / best_loss) < LOSS_IMPROVEMENT_THRESHOLD:
             print("Epoch {} is less than {} smaller than the previous best."
                   "\nUpdating best checkpoint.".format(epoch, LOSS_IMPROVEMENT_THRESHOLD))
@@ -181,9 +182,9 @@ def save(net, optimizer, loss, epoch, path, best_path=None, lr=None):
     return False
 
 
-def load(path, lr, input_dim, latent_dim, dropout):
+def load(path, lr, encoder_layer_sizes, decoder_layer_sizes, dropout):
     checkpoint = torch.load(path)
-    net = BasicAutoEncoder(input_dim=input_dim, latent_dim=latent_dim, dropout=dropout)
+    net = BasicAutoEncoder(encoder_layer_sizes, decoder_layer_sizes, dropout=dropout)
     optimizer = optim.AdamW(net.parameters(), lr)
     net.load_state_dict(checkpoint['model_state_dict'])
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
@@ -206,13 +207,13 @@ def test(net, data_loader_gen, criterion, name):
             data_loader_gen.reset()
             data_loader_gen.batch_size = 1
             data_loader_gen.shuffle = False
-            data_loader_gen.chunk_size = 10**3
+            data_loader_gen.chunk_size = 10 ** 3
             for data_loader, labels in tqdm(data_loader_gen):
                 losses[1] += labels
-                for x in data_loader:
+                for x in tqdm(data_loader):
                     output = net(x.float())
                     loss = criterion(output, x.float())
-                    losses[0] += loss.detach().item()
+                    losses[0].append(loss.detach().item())
                     gc.collect()
         print("Losses calculated")
         losses = np.array(losses)
@@ -223,8 +224,8 @@ def test(net, data_loader_gen, criterion, name):
     bg_losses = np.array([losses[0, i] for i in tqdm(range(len(losses[0]))) if not losses[1, i]])
     gc.collect()
     plot_histogram(losses[0, :], "all data loss", name, TEST_LOSS_PNG_FORMAT.format(name))
-    plot_histogram(sig_losses, "sig loss", name, TEST_LOSS_PNG_FORMAT.format(name+"_sig"))
-    plot_histogram(bg_losses, "bg loss", name, TEST_LOSS_PNG_FORMAT.format(name+"_bg"))
+    plot_histogram(sig_losses, "sig loss", name, TEST_LOSS_PNG_FORMAT.format(name + "_sig"))
+    plot_histogram(bg_losses, "bg loss", name, TEST_LOSS_PNG_FORMAT.format(name + "_bg"))
 
 
 def plot_losses(losses, path, plot_function=plt.plot):
@@ -241,12 +242,12 @@ def trim_outliers(data, trim_percent):
     @param trim_percent: The percentage to cut off the edges
     """
     data_size = data.shape[0]
-    start = int(data_size*trim_percent)
-    end = data_size-start
+    start = int(data_size * trim_percent)
+    end = data_size - start
     return np.sort(data)[start:end]
 
 
-def plot_histogram(data_set, x_axis_label,  name, path, nbins=NBINS, trim_percent=TRIM_PERCENT):
+def plot_histogram(data_set, x_axis_label, name, path, nbins=NBINS, trim_percent=TRIM_PERCENT):
     plt.figure()
     trimmed = trim_outliers(data_set, trim_percent)
     bins = np.histogram(trimmed, bins=nbins)[1]
@@ -260,15 +261,17 @@ def plot_histogram(data_set, x_axis_label,  name, path, nbins=NBINS, trim_percen
     print("Plotted {} histogram and saved to:\n{}".format(x_axis_label, path))
 
 
-def run_net(input_dim=INPUT_DIM, latent_dim=LATENT_DIM, learning_rate=LEARNING_RATE, dropout=DROPOUT, do_train=True,
+def run_net(encoder_layer_sizes, decoder_layer_sizes, learning_rate=LEARNING_RATE, dropout=DROPOUT, do_train=True,
             do_test=True):
+    input_dim = encoder_layer_sizes[0]
+    latent_dim = encoder_layer_sizes[-1]
     name = NAME_TEMPLATE.format(input_dim, latent_dim, learning_rate, dropout)
     last_cp_name = LAST_CHECKPOINT_PATH_TEMPLATE.format(name)
     best_cp_name = BEST_CHECKPOINT_PATH_TEMPLATE.format(name)
     if os.path.exists(last_cp_name):
-        net, optimizer, epoch, _ = load(last_cp_name, learning_rate, input_dim, latent_dim, dropout)
+        net, optimizer, epoch, _ = load(last_cp_name, learning_rate, encoder_layer_sizes, decoder_layer_sizes, dropout)
     else:
-        net = BasicAutoEncoder(input_dim, latent_dim, dropout)
+        net = BasicAutoEncoder(encoder_layer_sizes, decoder_layer_sizes, dropout)
         optimizer = optim.AdamW(net.parameters(), lr=learning_rate)
         epoch = 0
     data_gen = DataLoaderGenerator(DATA_SET_PATH, MINI_EPOCH_SIZE, EPOCH_SIZE, input_dim, BATCH_SIZE, SHUFFLE)
@@ -281,6 +284,7 @@ def run_net(input_dim=INPUT_DIM, latent_dim=LATENT_DIM, learning_rate=LEARNING_R
 
 
 def parameter_search():
+    # TODO: Apply to new network config
     n = np.random.random((10, 3))
     latent_dim = 2 ** 2
     for params in n:
@@ -294,7 +298,8 @@ def parameter_search():
 def main():
     # parameter_search()
     # run_net(do_train=False)
-    run_net(input_dim=2**6)
+    # run_net(input_dim=2**6)
+    run_net(encoder_layer_sizes=[11, 9, 6, 4], decoder_layer_sizes=[6, 9, 11], do_train=False)
 
 
 if __name__ == "__main__":
