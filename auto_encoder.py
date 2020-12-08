@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import os
+import sys
 from matplotlib import pyplot as plt
 import gc
 from copy import deepcopy
@@ -38,8 +39,8 @@ LEARNING_RATE = 0.002
 DROPOUT = 0.001
 INPUT_DIM = 128
 LATENT_DIM = 4
-LOSS_IMPROVEMENT_THRESHOLD = 0.99
-PATIENCE = 30
+LOSS_IMPROVEMENT_THRESHOLD = 0.90
+PATIENCE = 3
 TRIM_PERCENT = 0.02
 NBINS = 100
 
@@ -244,9 +245,10 @@ def test(net, data_loader_gen, criterion, name):
     plot_histogram(bg_losses, "bg loss", name, TEST_LOSS_PNG_FORMAT.format(name + "_bg"))
 
 
-def plot_losses(losses, path, plot_function=plt.plot):
+def plot_losses(losses, path):
     plt.figure()
-    plot_function(losses)
+    plt.plot(losses)
+    plt.yscale("log")
     plt.savefig(path, dpi=PNG_DPI)
     plt.close()
     print("Plotted: {}".format(path))
@@ -299,10 +301,10 @@ def run_net(encoder_layer_sizes, decoder_layer_sizes, learning_rate=LEARNING_RAT
         test(net, data_gen, CRITERION, name)
 
 
-def parameter_search():
+def parameter_search(encoder_layer_sizes, decoder_layer_sizes, experiment_name):
     # TODO: Apply to new network config
-    encoder_layer_sizes = [11, 9, 6, 4]
-    decoder_layer_sizes = [6, 9, 11]
+    encoder_layer_sizes = encoder_layer_sizes
+    decoder_layer_sizes = decoder_layer_sizes
     n = np.random.random((10, 3))
     for params in n:
         learning_rate = round(10 ** (-2.5 * params[0] - 2.5), ndigits=5)  # between 10^-2.5 to 10^-5
@@ -314,9 +316,19 @@ def parameter_search():
         print(enc)
         run_net(enc, decoder_layer_sizes, learning_rate, dropout, do_test=False)
 
+    # moving png to folder
+    layer_string = "_".join([str(x) for x in encoder_layer_sizes])
+    full_name = "{}_{}".format(experiment_name, layer_string)
+    experiment_folder = os.path.join(OUTPUT_FOLDER,  full_name)
+    print(os.system("mkdir {}".format(experiment_folder)))
+    print(os.system("mv {}/*.png {}/.".format(OUTPUT_FOLDER, experiment_folder)))
+
 
 def main():
-    parameter_search()
+    parameter_search([11, 128, 64, 32, 16, 8, 4], [8, 16, 32, 64, 128, 11], "deep_wide")
+    parameter_search([11, 128, 4], [128, 11], "shallow_wide")
+    parameter_search([11, 32, 64, 128, 64, 32, 16, 8, 4], [8, 16, 32, 64, 128, 64, 32, 11], "deep_wide")
+    parameter_search([11, 7, 4], [7, 11], "shallow_narrow")
     # run_net(do_train=False)
     # run_net(input_dim=2**6)
     # run_net(encoder_layer_sizes=[6, 4, 2], decoder_layer_sizes=[4, 6], do_test=False)

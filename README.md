@@ -68,18 +68,44 @@ Connect to landau cluster using (if not on a HUJI netowrk use SambaVPN: https://
 
        ssh <username>@landau.fh.huji.ac.il
 
-Simply run the commands:
+Project dir on cluster:
+
+        /usr/people/snirgaz/rotemov/NAF
+
+To run with my settings simply use the commands:
 
         cd <project_directory>
-        sbatch --export=dataset='lhc' cluster_runner.sh
+        sbatch <sh script> <input args for some of the scripts>
 
-cluster_runner.sh might need to adjusted to your own user. Simply switch the line:
+Read the scripts before you use them to understand if they require input args. If they do it is recommended to wrap 
+each arg with quotation marks.
+
+You might need to change the user variable for scripts which are not yonitq.
+
+Simply switch the line:
 
         #SBATCH -A rotemov-account
         
 To:
 
         #SBATCH -A <user-name>-account
+
+Alternatively you can duplicate and modify mine to create running scripts of your own.
+
+In order to check jobs you ran simply use the command:
+
+        squeue --user=<user name>
+
+In order to check jobs running on yonitq use the command:
+
+        squeue --partition=yonitq
+
+Logs are stored in logs folder with the format:
+
+        <job name>_<job id>.<log/out>
+
+Simply look for the one with your job id as it is the only unique feature.
+
 
 ## Troubleshooting
 
