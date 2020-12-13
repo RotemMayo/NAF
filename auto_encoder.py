@@ -11,6 +11,7 @@ import sys
 from matplotlib import pyplot as plt
 import gc
 from copy import deepcopy
+from sklearn.cluster import k_means
 
 """
 Parameter search results:
@@ -21,14 +22,14 @@ dropout = 0.001
 Running for 400 epochs to see if we can get good results
 """
 
-RUN = "cluster_obs"
+RUN = "cluster_raw"
 PARAM_DICT = {
     "rotemov_raw": ("C:\\Users\\rotem\\PycharmProjects\\ML4Jets\\ML4Jets-HUJI\\Data\\events_anomalydetection.h5", 10 ** 3,
                    10 ** 4, 3),
     "rotemov_obs": ("external_maf/datasets/data/lhc/lhc.npy", 10 ** 3, 2*10 ** 3, 2),
     "cluster_raw": ("/usr/people/snirgaz/rotemov/rotemov/Projects/ML4Jets-HUJI/Data/events_anomalydetection.h5", 10 ** 5,
                    int(1.1 * 10 ** 6), 400),
-    "cluster_obs": ("external_maf/datasets/data/lhc/lhc_R0.4_all.npy", int(1.1 * 10 ** 6), int(1.1 * 10 ** 6), 30), # TODO: needs to be updated to reflect exact size
+    "cluster_obs": ("external_maf/datasets/data/lhc/lhc_R0.4_all.npy", int(1.1 * 10 ** 6), int(1.1 * 10 ** 6), 30),
 }
 DATA_SET_PATH, MINI_EPOCH_SIZE, EPOCH_SIZE, EPOCHS = PARAM_DICT[RUN]
 BATCH_SIZE = int(2.5 * 10 ** 2)
@@ -39,13 +40,13 @@ LEARNING_RATE = 0.002
 DROPOUT = 0.001
 INPUT_DIM = 128
 LATENT_DIM = 4
-LOSS_IMPROVEMENT_THRESHOLD = 0.90
-PATIENCE = 3
+LOSS_IMPROVEMENT_THRESHOLD = 0.999
+PATIENCE = 30
 TRIM_PERCENT = 0.02
 NBINS = 100
 
 OUTPUT_FOLDER = "ae_models"
-NAME_TEMPLATE = "in{}_lat{}_lr{}_do{}"
+NAME_TEMPLATE = "in{}_lat{}_lr{}_do{}_loss{}"
 CHECKPOINT_TEMPLATE = "basic_ae_checkpoint_{}.pt"  # input size, latent size, learning rate, dropout
 LAST_CHECKPOINT_PATH_TEMPLATE = os.path.join(OUTPUT_FOLDER, "last_{}".format(CHECKPOINT_TEMPLATE))
 BEST_CHECKPOINT_PATH_TEMPLATE = os.path.join(OUTPUT_FOLDER, "best_{}".format(CHECKPOINT_TEMPLATE))
@@ -144,6 +145,13 @@ class DataLoaderGenerator:
 
     def __len__(self):
         return int(np.floor(self.total_size / self.chunk_size))
+
+
+def MSE_and_k_means(input, output, latent, centroids, alpha=0.1):
+    # TODO: This doesn't work yet!
+    centroids = k_means(X=latent)   # shouldnt actually be here
+    MSE_loss = (torch.mean((input - output)**2))
+    k_means_loss = torch.sum(torch.tensor([torch.min(torch.tensor([(l - c)**2 for c in centroids])) for l in latent]))  # min_j(x_i-mu_j), l is not actually the correct term (probably)
 
 
 def train(net, optimizer, data_loader_gen, criterion, epochs, last_cp_path, best_cp_path, lr):
