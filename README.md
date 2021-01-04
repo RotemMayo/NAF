@@ -109,7 +109,7 @@ Simply look for the one with your job id as it is the only unique feature.
 
 ## Troubleshooting
 
-The datasets might contain nan values causing losses not to work. In order to solve this use np.nan_to_num on the data when loadingg.sg   lakfg.g.g.g
+The datasets might contain nan values causing losses not to work. In order to solve this use np.nan_to_num on the data when loadingg.
 
 ## TODO
 1. Smaller bin sizes
