@@ -119,3 +119,4 @@ The datasets might contain nan values causing losses not to work. In order to so
 5. 2 of papers sent by Tau (review on ML and embedding clustering)
 6. AE filtering
 7. Anomally score slide (need to ask tau to send)
+8. https://pypi.org/project/kmeans-pytorch/
