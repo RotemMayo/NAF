@@ -1,17 +1,14 @@
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
 import torch.optim as optim
-import torch.utils.data as data
-import pandas as pd
 import numpy as np
 from tqdm import tqdm
 import os
-import sys
 from matplotlib import pyplot as plt
 import gc
 from copy import deepcopy
-from sklearn.cluster import k_means
+from auto_encoder_dataloader import DataLoaderGenerator
+from auto_encoder_model import BasicAutoEncoder
+from auto_encoder_losses import Losses
 
 """
 Parameter search results:
@@ -24,17 +21,20 @@ Running for 400 epochs to see if we can get good results
 
 RUN = "cluster_raw"
 PARAM_DICT = {
-    "rotemov_raw": ("C:\\Users\\rotem\\PycharmProjects\\ML4Jets\\ML4Jets-HUJI\\Data\\events_anomalydetection.h5", 10 ** 3,
-                   10 ** 4, 3),
-    "rotemov_obs": ("external_maf/datasets/data/lhc/lhc.npy", 10 ** 3, 2*10 ** 3, 2),
-    "cluster_raw": ("/usr/people/snirgaz/rotemov/rotemov/Projects/ML4Jets-HUJI/Data/events_anomalydetection.h5", 10 ** 5,
-                   int(1.1 * 10 ** 6), 400),
+    "rotemov_raw": (
+    "C:\\Users\\rotem\\PycharmProjects\\ML4Jets\\ML4Jets-HUJI\\Data\\events_anomalydetection.h5", 10 ** 3,
+    10 ** 4, 3),
+    "rotemov_obs": ("external_maf/datasets/data/lhc/lhc.npy", 10 ** 3, 2 * 10 ** 3, 2),
+    "cluster_raw": (
+    "/usr/people/snirgaz/rotemov/rotemov/Projects/ML4Jets-HUJI/Data/events_anomalydetection.h5", 10 ** 5,
+    int(1.1 * 10 ** 6), 400),
     "cluster_obs": ("external_maf/datasets/data/lhc/lhc_R0.4_all.npy", int(1.1 * 10 ** 6), int(1.1 * 10 ** 6), 30),
 }
+
 DATA_SET_PATH, MINI_EPOCH_SIZE, EPOCH_SIZE, EPOCHS = PARAM_DICT[RUN]
 BATCH_SIZE = int(2.5 * 10 ** 2)
 
-CRITERION = nn.MSELoss()  # the loss function
+CRITERION = Losses.mse_k_means  # the loss function
 SHUFFLE = True
 LEARNING_RATE = 0.002
 DROPOUT = 0.001
@@ -56,104 +56,6 @@ TEST_LOSS_PNG_FORMAT = os.path.join(OUTPUT_FOLDER, "loss_histogram_{}.png")
 SINGLE_EVENT_LOSS_FILE_TEMPLATE = os.path.join(OUTPUT_FOLDER, "losses_{}.npy")
 
 
-class BasicAutoEncoder(nn.Module):
-
-    def __init__(self, encoder_layer_sizes, decoder_layer_sizes, dropout=DROPOUT):
-        """
-        @param input_dim: the amount of data points to take per event
-        @param latent_dim: the dimension of the latent space, this is the effective dimension of the input after
-                           training
-        """
-        self.dropout = dropout
-        self.input_dim = encoder_layer_sizes[0]
-        self.latent_dim = encoder_layer_sizes[-1]
-        self.encoder_layer_sizes = encoder_layer_sizes
-        self.decoder_layer_sizes = decoder_layer_sizes
-        self.layer_sizes = encoder_layer_sizes + decoder_layer_sizes
-        super(BasicAutoEncoder, self).__init__()
-        self.encoder = []
-        for i in range(len(encoder_layer_sizes) - 1):
-            self.encoder.append(nn.Linear(encoder_layer_sizes[i], encoder_layer_sizes[i + 1]))
-        self.encoder = nn.ModuleList(self.encoder)
-
-        self.decoder = []
-        self.decoder.append(nn.Linear(self.latent_dim, decoder_layer_sizes[0]))
-        for i in range(len(decoder_layer_sizes) - 1):
-            self.decoder.append(nn.Linear(decoder_layer_sizes[i], decoder_layer_sizes[i + 1]))
-        self.decoder = nn.ModuleList(self.decoder)
-
-    def encode(self, x):
-        for i in range(len(self.encoder)):
-            x = F.dropout(F.relu(self.encoder[i](x)), p=self.dropout)
-        return x
-
-    def decode(self, x):
-        for i in range(len(self.decoder)):
-            x = F.dropout(F.relu(self.decoder[i](x)), p=self.dropout)
-        return x
-
-    def forward(self, x):
-        x = self.encode(x)
-        x = self.decode(x)
-        return x
-
-
-class DataLoaderGenerator:
-    """
-    A class for creating data loaders for the network. This allows us to control the amount of memory used by the NN
-    at each time, as the dataset is fairly large.
-    """
-
-    def __init__(self, filename, chunk_size, total_size, input_dim, batch_size, shuffle):
-        """
-        @param chunk_size: The amount of events we want the network to load simultaneously to the memory. For obs list
-                           simply choose chunk_size = total_size
-        """
-        self.filename = filename
-        self.chunk_size = chunk_size
-        self.total_size = total_size
-        self.input_dim = input_dim
-        self.batch_size = batch_size
-        self.shuffle = shuffle
-        self.idx = 0
-
-    def reset(self):
-        self.idx = 0
-
-    def __next__(self):
-        if (self.idx + 1) * self.chunk_size > self.total_size:
-            raise StopIteration
-        else:
-            start = self.idx * self.chunk_size
-            stop = (self.idx + 1) * self.chunk_size
-            if self.filename.endswith(".h5"):
-                x = pd.read_hdf(self.filename, start=start, stop=stop)
-                labels = x.rename_axis('ID').values[:, -1]
-                x = x.rename_axis('ID').values[:, :self.input_dim]
-            elif self.filename.endswith(".npy"):
-                x = np.load(self.filename)
-                labels = x[start:stop, -1]
-                x = x[start:stop, :self.input_dim]  # might not be relevant at the end
-            else:
-                raise FileNotFoundError
-            loader = data.DataLoader(x, batch_size=self.batch_size, shuffle=self.shuffle)
-            self.idx += 1
-            return loader, labels.tolist()
-
-    def __iter__(self):
-        return self
-
-    def __len__(self):
-        return int(np.floor(self.total_size / self.chunk_size))
-
-
-def MSE_and_k_means(input, output, latent, centroids, alpha=0.1):
-    # TODO: This doesn't work yet!
-    centroids = k_means(X=latent)   # shouldnt actually be here
-    MSE_loss = (torch.mean((input - output)**2))
-    k_means_loss = torch.sum(torch.tensor([torch.min(torch.tensor([(l - c)**2 for c in centroids])) for l in latent]))  # min_j(x_i-mu_j), l is not actually the correct term (probably)
-
-
 def train(net, optimizer, data_loader_gen, criterion, epochs, last_cp_path, best_cp_path, lr):
     print("Training for {} epochs".format(epochs))
     net.train()
@@ -170,8 +72,8 @@ def train(net, optimizer, data_loader_gen, criterion, epochs, last_cp_path, best
             mini_epoch_loss = 0
             for x in tqdm(data_loader):
                 optimizer.zero_grad()  # zero the gradient buffers
-                output = net(x.float())
-                loss = criterion(output, x.float())
+                output, latent = net(x.float())
+                loss = criterion(output, x.float(), latent, epoch_num)
                 loss.backward()
                 optimizer.step()  # Does the update
                 mini_epoch_loss += loss.detach().item()
@@ -192,6 +94,7 @@ def save(net, optimizer, loss, epoch, path, best_path=None, lr=None):
         'model_state_dict': net.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
         'loss': loss,
+        'centroids': Losses.CENTROIDS
     }
     torch.save(cp_dict, path)
     if not os.path.exists(best_path):
@@ -215,6 +118,7 @@ def load(path, lr, encoder_layer_sizes, decoder_layer_sizes, dropout):
     optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
     epoch = checkpoint['epoch']
     loss = checkpoint['loss']
+    Losses.CENTROIDS = checkpoint['centroids']
     return net, optimizer, epoch, loss
 
 
@@ -236,8 +140,8 @@ def test(net, data_loader_gen, criterion, name):
             for data_loader, labels in tqdm(data_loader_gen):
                 losses[1] += labels
                 for x in tqdm(data_loader):
-                    output = net(x.float())
-                    loss = criterion(output, x.float())
+                    output, latent = net(x.float())
+                    loss = criterion(output, x.float(), latent, iteration=0)
                     losses[0].append(loss.detach().item())
                     gc.collect()
         print("Losses calculated")
@@ -327,16 +231,16 @@ def parameter_search(encoder_layer_sizes, decoder_layer_sizes, experiment_name):
     # moving png to folder
     layer_string = "_".join([str(x) for x in encoder_layer_sizes])
     full_name = "{}_{}".format(experiment_name, layer_string)
-    experiment_folder = os.path.join(OUTPUT_FOLDER,  full_name)
+    experiment_folder = os.path.join(OUTPUT_FOLDER, full_name)
     print(os.system("mkdir {}".format(experiment_folder)))
     print(os.system("mv {}/*.png {}/.".format(OUTPUT_FOLDER, experiment_folder)))
 
 
 def main():
     parameter_search([11, 128, 64, 32, 16, 8, 4], [8, 16, 32, 64, 128, 11], "deep_wide")
-    parameter_search([11, 128, 4], [128, 11], "shallow_wide")
-    parameter_search([11, 32, 64, 128, 64, 32, 16, 8, 4], [8, 16, 32, 64, 128, 64, 32, 11], "deep_wide")
-    parameter_search([11, 7, 4], [7, 11], "shallow_narrow")
+    # parameter_search([11, 128, 4], [128, 11], "shallow_wide")
+    # parameter_search([11, 32, 64, 128, 64, 32, 16, 8, 4], [8, 16, 32, 64, 128, 64, 32, 11], "deep_wide")
+    # parameter_search([11, 7, 4], [7, 11], "shallow_narrow")
     # run_net(do_train=False)
     # run_net(input_dim=2**6)
     # run_net(encoder_layer_sizes=[6, 4, 2], decoder_layer_sizes=[4, 6], do_test=False)
