@@ -46,7 +46,7 @@ TRIM_PERCENT = 0.02
 NBINS = 100
 
 OUTPUT_FOLDER = "ae_models"
-NAME_TEMPLATE = "in{}_lat{}_lr{}_do{}_loss{}"
+NAME_TEMPLATE = "in{}_lat{}_lr{}_do{}"
 CHECKPOINT_TEMPLATE = "basic_ae_checkpoint_{}.pt"  # input size, latent size, learning rate, dropout
 LAST_CHECKPOINT_PATH_TEMPLATE = os.path.join(OUTPUT_FOLDER, "last_{}".format(CHECKPOINT_TEMPLATE))
 BEST_CHECKPOINT_PATH_TEMPLATE = os.path.join(OUTPUT_FOLDER, "best_{}".format(CHECKPOINT_TEMPLATE))
