@@ -13,6 +13,7 @@ INPUT_DIM=${1:-"7"}
 EXPERIMENT_NAME=${2:-""}
 SP=${3:-"0.1"}
 FLOW=${4:-"affine"}
+DATASET=${5:-"lhc"}
 set --
 
 echo "Parameters"

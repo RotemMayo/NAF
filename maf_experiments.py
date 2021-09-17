@@ -122,6 +122,9 @@ class model(object):
         elif args.dataset == 'lhc':
             p = args.input_dim  # size of row
             D = load_maf_data('lhc', args.signal_percent, args.experiment_name)
+        elif args.dataset == 'lhc_binned':
+            p = args.input_dim  # size of row
+            D = load_maf_data('lhc_binned', args.signal_percent, args.experiment_name)
 
         tr, va, te = D.trn.x, D.val.x, D.tst.x
 

@@ -6,3 +6,4 @@ from lhc import LHC
 from bsds300 import BSDS300
 from mnist import MNIST
 from cifar10 import CIFAR10
+from lhc_binned import LHC_BINNED
