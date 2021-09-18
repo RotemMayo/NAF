@@ -265,7 +265,8 @@ def parse_args():
                                  'hepmass',
                                  'miniboone',
                                  'bsds300',
-                                 'lhc'])
+                                 'lhc',
+                                 'lhc_binned'])
     parser.add_argument('--epoch', type=int, default=400,
                         help='The number of epochs to run')
     parser.add_argument('--batch_size', type=int, default=100,
