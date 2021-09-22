@@ -12,7 +12,7 @@ from torch.autograd import Variable
 from tqdm import tqdm
 from datetime import datetime
 import os
-from fpdf import FPDF
+#from fpdf import FPDF
 import sys
 from sklearn.manifold import TSNE as tsne
 import pandas as pd
@@ -100,6 +100,9 @@ PLOT_TITLE_FORMAT = "{}: {} vs {}"
 BG_LOSS_DATA_FILE_NAME = "results/losses/bg_{}_loss.npy"
 SIG_LOSS_DATA_FILE_NAME = "results/losses/sig_{}_loss.npy"
 TSNE_DATA_FILE_NAME = "results/tsne_data/{}_tsne_{}.csv".format("{}", NUM_EVENTS_TSNE)
+
+DATA_FRAME_PATH = "external_maf/datasets/data/lhc/lhc_features_and_bins.csv"
+DATA_FRAME_DENSITY_PATH = "external_maf/datasets/data/lhc/lhc_affine_density.csv"
 
 
 def load_model(fn, save_dir="models"):
@@ -323,6 +326,29 @@ def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPE
         all_plots(sig, bg, name, obs_list)
 
 
+def get_dataloader(df):
+    x = np.nan_to_num(df.to_numpy()[:,:-3]).astype(np.float32)
+    return data.DataLoader(x, batch_size=df.shape[0], shuffle=False)
+
+
+def save_densities(file_names):
+    df = pd.read_csv(DATA_FRAME_PATH)
+    models = [load_model(fn) for fn in file_names]
+    loader = get_dataloader(df)
+    density = pd.DataFrame()
+    for x in loader:
+        print("Loaded data")
+        for mdl, fn in zip(models, file_names):
+            print("Getting density for: {}".format(fn))
+            x = Variable(x)
+            densities = -mdl.maf.loss(x).data.cpu().numpy()
+            density[fn] = densities
+            #density[fn] = np.exp(densities)
+            print("Got densities for: {}".format(fn))
+    density.to_csv(DATA_FRAME_DENSITY_PATH, index=False)
+    print("Densities saved to: {}".format(DATA_FRAME_DENSITY_PATH))
+
+
 def main():
     if not os.path.isdir(RUN_OUTPUT_DIR):
         os.mkdir(RUN_OUTPUT_DIR)
@@ -331,5 +357,12 @@ def main():
         test_model(*file_data)
 
 
+def binned_main():
+    file_name_template = "lhc_binned_en{}of10_sp0_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best"
+    file_names = [file_name_template.format(i) for i in range(5, 11)]
+    save_densities(file_names)
+
+
 if __name__ == "__main__":
-    main()
+    binned_main()
+    #main()

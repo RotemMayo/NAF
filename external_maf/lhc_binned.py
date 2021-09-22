@@ -12,9 +12,9 @@ class LHC_BINNED:
             self.x = data.astype(np.float32)
             self.N = self.x.shape[0]
 
-    def __init__(self, val_percent=0.1, test_percent=0.1, experiment_name="forgot_experiment_name"):
+    def __init__(self, val_percent=0.1, test_percent=0.1, experiment_name="forgot_experiment_name", shuffle=True):
         data_path = '{}lhc/lhc_mjj_bin_{}.npy'.format(datasets.ROOT, experiment_name)
-        trn, val, tst = load_data(data_path, val_percent, test_percent)
+        trn, val, tst = load_data(data_path, val_percent, test_percent, shuffle)
         self.trn = self.Data(trn)
         self.val = self.Data(val)
         self.tst = self.Data(tst)
@@ -29,14 +29,15 @@ class LHC_BINNED:
         plt.show()
 
 
-def load_data(data_path, val_percent, test_percent):
+def load_data(data_path, val_percent, test_percent, shuffle=True):
     """
     signal percent must be less than 10%
     """
     np.random.seed(42)
     data = np.nan_to_num(np.load(data_path, allow_pickle=True))
 
-    np.random.shuffle(data)
+    if shuffle:
+        np.random.shuffle(data)
 
     N_test = int(test_percent*data.shape[0])
     data_test = data[-N_test:]
