@@ -2,7 +2,7 @@
 #SBATCH -J NAF
 #SBATCH -o logs/VAE_%j.out
 #SBATCH -N 1
-#SBATCH -c 16
+#SBATCH -c 32
 #SBATCH --mem=10G
 #SBATCH --mail-type=END
 #SBATCH --mail-user=rotem.ovadia@mail.huji.ac.il
