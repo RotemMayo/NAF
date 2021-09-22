@@ -22,7 +22,8 @@ echo "Bins: $MIN_BIN to $MAX_BIN"
 echo "FLOW: $FLOW"
 echo "=================================="
 
-source /Users/rotem/opt/anaconda3/bin/activate NAF
+#source /Users/rotem/opt/anaconda3/bin/activate NAF
+source /opt/anaconda3/bin/activate NAF
 echo "env activated"
 for i in 3 4 5 2
 do
