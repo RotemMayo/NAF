@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH -J NAF
-#SBATCH -o logs/NAF_%j.out
+#SBATCH -o logs/VAE_%j.out
 #SBATCH -N 1
-#SBATCH -c 8
+#SBATCH -c 16
 #SBATCH --mem=10G
 #SBATCH --mail-type=END
 #SBATCH --mail-user=rotem.ovadia@mail.huji.ac.il
@@ -16,7 +16,7 @@ echo "Parameters"
 echo "NSIG: $NSIG"
 echo "=================================="
 
-source /Users/rotem/opt/anaconda3/bin/activate NAF
+source /opt/anaconda3/bin/activate NAF
 echo "env activated"
 python beta1_vae_model.py "$NSIG"
 echo "model trained"
