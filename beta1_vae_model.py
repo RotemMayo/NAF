@@ -129,21 +129,32 @@ def train_and_save_model(ds, cp_path, dropout=0., batch_size=128, epochs=100):
     torch.save(cp_dict, cp_path)
 
 
+def load(cp_path):
+    """
+    returns model, optimizer, losses, epochs
+    """
+    cp = torch.load(cp_path)
+    model = VAE(cp['layer_dims'], dropout=cp['dropout'])
+    model.load_state_dict(cp['model_state_dict'])
+    optimizer = torch.optim.Adam(model.parameters(), lr=cp['lr'])
+    optimizer.load_state_dict(cp['optimizer_state_dict'])
+    return model, optimizer, cp['losses'], cp['epochs']
+
+
 def get_n_signal_dataset(n_sig, df):
     np.random.seed(42)
     signal = df['label'] == 1
-    print(df.index[signal])
     indices = np.random.choice(df.index[signal], n_sig, replace=False)
     mask = np.full(df.shape[0], False)
     mask[df.index[~signal]] = True
     mask[indices] = True
-    return df[mask].iloc[:, :-3].to_numpy(dtype=np.float32)
+    return df[mask].iloc[:, :-3].to_numpy(dtype=np.float32), mask
 
 
 def main():
     df = pd.read_csv('external_maf/datasets/data/lhc/lhc_features_and_bins.csv')
     n_sig = int(sys.argv[1])
-    ds = get_n_signal_dataset(n_sig, df)
+    ds, _ = get_n_signal_dataset(n_sig, df)
     cp_path = 'models/vae_lhc_141263_nsig{}.pt'.format(n_sig)
     train_and_save_model(ds, cp_path, dropout=0.05)
 
