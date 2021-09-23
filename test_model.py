@@ -345,6 +345,9 @@ def save_densities(file_names):
             density[fn] = densities
             #density[fn] = np.exp(densities)
             print("Got densities for: {}".format(fn))
+    if os.path.exists(DATA_FRAME_DENSITY_PATH):
+        tmp = pd.read_csv(DATA_FRAME_DENSITY_PATH)
+        density = pd.concat([tmp, density], axis=1)
     density.to_csv(DATA_FRAME_DENSITY_PATH, index=False)
     print("Densities saved to: {}".format(DATA_FRAME_DENSITY_PATH))
 
@@ -358,8 +361,8 @@ def main():
 
 
 def binned_main():
-    file_name_template = "lhc_binned_en{}of10_sp0_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best"
-    file_names = [file_name_template.format(i) for i in range(5, 11)]
+    file_name_template = "lhc_binned_en{}of5_sp0_e400_s1993_p0.0_h100_faffine_fl5_l1_dsdim16_dsl1_cudaFalse_best"
+    file_names = [file_name_template.format(i) for i in range(2, 6)]
     save_densities(file_names)
 
 

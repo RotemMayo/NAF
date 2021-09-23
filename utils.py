@@ -13,11 +13,11 @@ def get_mjj(df):
     return mjjsq ** 0.5
 
 
-def plot_mj(df, cut, bins):
+def plot_mj(df, cut1, cut2, bins):
     plt.figure()
     mj = pd.concat([df['mj1'], df['mj2']], axis=1)
-    plt.hist2d(x=mj.max(axis=1), y=mj.min(axis=1), bins=bins, norm=mpl.colors.LogNorm())
+    plt.hist2d(x=mj.max(axis=1)[cut1], y=mj.min(axis=1)[cut1], bins=bins, norm=mpl.colors.LogNorm())
     plt.colorbar()
     plt.figure()
-    plt.hist2d(x=mj.max(axis=1)[cut], y=mj.min(axis=1)[cut], bins=bins, norm=mpl.colors.LogNorm())
+    plt.hist2d(x=mj.max(axis=1)[cut2], y=mj.min(axis=1)[cut2], bins=bins, norm=mpl.colors.LogNorm())
     plt.colorbar()
