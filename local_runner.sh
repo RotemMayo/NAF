@@ -11,10 +11,11 @@
 
 INPUT_DIM=${1:-"14"}
 FLOW=${2:-"affine"}
+EPOCH=${3:-"40"}
 DATASET="lhc_binned"
 MIN_BIN="2"
 MAX_BIN="5"
-shift 2
+shift 3
 
 echo "Parameters"
 echo "Input dimension: $INPUT_DIM"
@@ -29,5 +30,5 @@ for i in 3 4 5 2
 do
     EXPERIMENT_NAME="$i"of"$MAX_BIN"
     echo "Running bin $EXPERIMENT_NAME"
-    python maf_experiments.py --dataset "$DATASET" --flowtype "$FLOW" --input_dim "$INPUT_DIM" --experiment_name "$EXPERIMENT_NAME"
+    python maf_experiments.py --dataset "$DATASET" --epoch "$EPOCH" --flowtype "$FLOW" --input_dim "$INPUT_DIM" --experiment_name "$EXPERIMENT_NAME"
 done
