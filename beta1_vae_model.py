@@ -15,9 +15,9 @@ def loss(output):
         output: (mean, logvar) should be the latent space output
         """
         mu, logvar = output
-        KLD_element = 1 - logvar.exp() + logvar - mu**2
+        KLD_element = (1 - logvar.exp()) + (logvar - mu**2)
         KLD = - 0.5 * torch.sum(KLD_element, 1)
-        return KLD
+        return - KLD
 
 
 class VAE(nn.Module):
