@@ -155,7 +155,7 @@ def main():
     df = pd.read_csv('external_maf/datasets/data/lhc/lhc_features_and_bins.csv')
     n_sig = int(sys.argv[1])
     ds, _ = get_n_signal_dataset(n_sig, df)
-    cp_path = 'models/vae_lhc_141263_nsig{}.pt'.format(n_sig)
+    cp_path = 'models/vae_lhc_141263_negKLD_nsig{}.pt'.format(n_sig)
     train_and_save_model(ds, cp_path, dropout=0.05)
 
 

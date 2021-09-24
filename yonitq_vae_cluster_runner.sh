@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J NAF
+#SBATCH -J VAE
 #SBATCH -o logs/VAE_%j.out
 #SBATCH -N 1
 #SBATCH -c 32
