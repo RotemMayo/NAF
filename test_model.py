@@ -102,7 +102,7 @@ SIG_LOSS_DATA_FILE_NAME = "results/losses/sig_{}_loss.npy"
 TSNE_DATA_FILE_NAME = "results/tsne_data/{}_tsne_{}.csv".format("{}", NUM_EVENTS_TSNE)
 
 DATA_FRAME_PATH = "external_maf/datasets/data/lhc/lhc_features_and_bins.csv"
-DATA_FRAME_DENSITY_PATH = "external_maf/datasets/data/lhc/lhc_ddsf_density.csv"
+DATA_FRAME_DENSITY_PATH = "external_maf/datasets/data/lhc/lhc_affine_density.csv"
 
 
 def load_model(fn, save_dir="models"):
@@ -361,12 +361,12 @@ def main():
         test_model(*file_data)
 
 
-def binned_main():
-    file_name_template = "lhc_binned_en{}of5_sp0_e40_s1993_p0.0_h100_fddsf_fl5_l1_dsdim16_dsl1_cudaFalse_best"
-    file_names = [file_name_template.format(i) for i in range(2, 6)]
+def binned_main(q, flow, epochs):
+    file_name_template = "lhc_binned_en{}of{}_sp0_e{}_s1993_p0.0_h100_f{}_fl5_l1_dsdim16_dsl1_cudaFalse_best".format("{}", q, epochs, flow)
+    file_names = [file_name_template.format(i) for i in range(int(q/2), q+1)]
     save_densities(file_names)
 
 
 if __name__ == "__main__":
-    binned_main()
+    binned_main(8, "affine", 40)
     #main()
