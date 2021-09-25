@@ -328,23 +328,24 @@ def test_model(file_name, sp, flow_type, experiment_name="", obs_list=FIRST_EXPE
 
 def get_dataloader(df):
     x = np.nan_to_num(df.to_numpy()[:,:-3]).astype(np.float32)
-    return data.DataLoader(x, batch_size=df.shape[0], shuffle=False)
+    return data.DataLoader(x, batch_size=100, shuffle=False)
 
 
 def save_densities(file_names):
     df = pd.read_csv(DATA_FRAME_PATH)
     models = [load_model(fn) for fn in file_names]
+    print("Loaded models")
     loader = get_dataloader(df)
     density = pd.DataFrame()
-    for x in loader:
-        print("Loaded data")
-        for mdl, fn in zip(models, file_names):
+    for mdl, fn in zip(models, file_names):
+        densities = []
+        for x in loader:
             print("Getting density for: {}".format(fn))
             x = Variable(x)
-            densities = -mdl.maf.loss(x).data.cpu().numpy()
-            density[fn] = densities
-            #density[fn] = np.exp(densities)
-            print("Got densities for: {}".format(fn))
+            densities.append(-mdl.maf.loss(x).data.cpu().numpy())
+        density[fn] = np.reshape(densities, df.shape[0])
+        #density[fn] = np.exp(densities)
+        print("Got densities for: {}".format(fn))
     if os.path.exists(DATA_FRAME_DENSITY_PATH):
         tmp = pd.read_csv(DATA_FRAME_DENSITY_PATH)
         density = pd.concat([tmp, density], axis=1)

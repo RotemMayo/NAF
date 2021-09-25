@@ -3,7 +3,7 @@
 #SBATCH -o logs/NAF_TEST_%j.log
 #SBATCH -N 4
 #SBATCH -c 32
-#SBATCH --mem=256G
+#SBATCH --mem=128G
 #SBATCH --mail-type=END
 #SBATCH --mail-user=rotem.ovadia@mail.huji.ac.il
 #SBATCH -A yonit-account
