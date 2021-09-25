@@ -339,8 +339,8 @@ def save_densities(file_names):
     density = pd.DataFrame()
     for mdl, fn in zip(models, file_names):
         densities = []
-        for x in loader:
-            print("Getting density for: {}".format(fn))
+        print("Getting density for: {}".format(fn))
+        for x in tqdm(loader):
             x = Variable(x)
             densities.append(-mdl.maf.loss(x).data.cpu().numpy())
         density[fn] = np.reshape(densities, df.shape[0])

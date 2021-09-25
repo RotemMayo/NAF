@@ -7,6 +7,7 @@ import torch.utils.data as data_utils
 import gc as gc
 from tqdm import tqdm
 import sys
+from utils import *
 
 
 def loss(output):
@@ -83,32 +84,6 @@ class VAE(nn.Module):
         return losses
 
 
-class NumpyDataset(torch.utils.data.Dataset):
-    """
-    Characterizes a dataset for PyTorch
-    """
-
-    def __init__(self, data, normalize=True):
-        """
-        param data: a numpy array
-        """
-        self.length = data.shape[0]
-        self.original_data = np.nan_to_num(data).astype(np.float32)
-        if normalize:
-            n_features = self.original_data.shape[1]
-            self.mean = self.original_data.mean(axis=0).reshape(1, n_features)
-            self.std = self.original_data.std(axis=0).reshape(1, n_features)
-            self.data = torch.Tensor((self.original_data - self.mean) / self.std)
-        else:
-            self.data = torch.Tensor(self.original_data)
-
-    def __len__(self):
-        return self.length
-
-    def __getitem__(self, index):
-        return self.data[index]
-
-
 def train_and_save_model(ds, cp_path, dropout=0., batch_size=128, epochs=100):
     layer_dims = [14, 12, 6, 3]
     lr = 1.e-5
@@ -139,16 +114,6 @@ def load(cp_path):
     optimizer = torch.optim.Adam(model.parameters(), lr=cp['lr'])
     optimizer.load_state_dict(cp['optimizer_state_dict'])
     return model, optimizer, cp['losses'], cp['epochs']
-
-
-def get_n_signal_dataset(n_sig, df):
-    np.random.seed(42)
-    signal = df['label'] == 1
-    indices = np.random.choice(df.index[signal], n_sig, replace=False)
-    mask = np.full(df.shape[0], False)
-    mask[df.index[~signal]] = True
-    mask[indices] = True
-    return df[mask].iloc[:, :-3].to_numpy(dtype=np.float32), mask
 
 
 def main():

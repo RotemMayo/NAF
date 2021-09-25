@@ -12,23 +12,20 @@
 INPUT_DIM=${1:-"14"}
 FLOW=${2:-"affine"}
 EPOCH=${3:-"40"}
-DATASET="lhc_binned"
-MIN_BIN="2"
-MAX_BIN="5"
-shift 3
+BIN=${4:-"2"}
+MAX_BIN=${5:-"5"}
+DATASET=${6:-"lhc_binned"}
+shift 6
 
 echo "Parameters"
 echo "Input dimension: $INPUT_DIM"
-echo "Bins: $MIN_BIN to $MAX_BIN"
+echo "Bin: $BIN of $MAX_BIN"
 echo "FLOW: $FLOW"
 echo "=================================="
 
 #source /Users/rotem/opt/anaconda3/bin/activate NAF
 source /opt/anaconda3/bin/activate NAF
 echo "env activated"
-for i in 3 4 5 2
-do
-    EXPERIMENT_NAME="$i"of"$MAX_BIN"
-    echo "Running bin $EXPERIMENT_NAME"
-    python maf_experiments.py --dataset "$DATASET" --epoch "$EPOCH" --flowtype "$FLOW" --input_dim "$INPUT_DIM" --experiment_name "$EXPERIMENT_NAME"
-done
+EXPERIMENT_NAME="$BIN"of"$MAX_BIN"
+echo "Running training $EXPERIMENT_NAME"
+python maf_experiments.py --dataset "$DATASET" --epoch "$EPOCH" --flowtype "$FLOW" --input_dim "$INPUT_DIM" --experiment_name "$EXPERIMENT_NAME"
