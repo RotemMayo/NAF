@@ -102,7 +102,7 @@ SIG_LOSS_DATA_FILE_NAME = "results/losses/sig_{}_loss.npy"
 TSNE_DATA_FILE_NAME = "results/tsne_data/{}_tsne_{}.csv".format("{}", NUM_EVENTS_TSNE)
 
 DATA_FRAME_PATH = "external_maf/datasets/data/lhc/lhc_features_and_bins.csv"
-DATA_FRAME_DENSITY_PATH = "external_maf/datasets/data/lhc/lhc_affine_density.csv"
+DATA_FRAME_DENSITY_PATH = "external_maf/datasets/data/lhc/lhc_{}_density.csv"
 
 
 def load_model(fn, save_dir="models"):
@@ -331,7 +331,7 @@ def get_dataloader(df):
     return data.DataLoader(x, batch_size=100, shuffle=False)
 
 
-def save_densities(file_names):
+def save_densities(file_names, density_file_path):
     df = pd.read_csv(DATA_FRAME_PATH)
     models = [load_model(fn) for fn in file_names]
     print("Loaded models")
@@ -346,11 +346,11 @@ def save_densities(file_names):
         density[fn] = np.reshape(densities, df.shape[0])
         #density[fn] = np.exp(densities)
         print("Got densities for: {}".format(fn))
-    if os.path.exists(DATA_FRAME_DENSITY_PATH):
-        tmp = pd.read_csv(DATA_FRAME_DENSITY_PATH)
+    if os.path.exists(density_file_path):
+        tmp = pd.read_csv(density_file_path)
         density = pd.concat([tmp, density], axis=1)
-    density.to_csv(DATA_FRAME_DENSITY_PATH, index=False)
-    print("Densities saved to: {}".format(DATA_FRAME_DENSITY_PATH))
+    density.to_csv(density_file_path, index=False)
+    print("Densities saved to: {}".format(density_file_path))
 
 
 def main():
@@ -363,10 +363,11 @@ def main():
 
 def binned_main(q, flow, epochs):
     file_name_template = "lhc_binned_en{}of{}_sp0_e{}_s1993_p0.0_h100_f{}_fl5_l1_dsdim16_dsl1_cudaFalse_best".format("{}", q, epochs, flow)
+    save_path = DATA_FRAME_DENSITY_PATH.format(flow)
     file_names = [file_name_template.format(i) for i in range(int(q/2), q+1)]
-    save_densities(file_names)
+    save_densities(file_names, save_path)
 
 
 if __name__ == "__main__":
-    binned_main(8, "affine", 40)
+    binned_main(8, "ddsf", 40)
     #main()

@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import torch
 from tqdm import tqdm
+from sklearn.decomposition import FastICA
 
 
 class NumpyDataset(torch.utils.data.Dataset):
@@ -41,14 +42,20 @@ def get_mjj(df):
     return mjjsq ** 0.5
 
 
+def plot_params(param1, param2, cut1, cut2, bins):
+    plt.figure()
+    plt.hist2d(x=param1[cut1], y=param2[cut1], bins=bins, norm=mpl.colors.LogNorm())
+    plt.colorbar()
+    plt.figure()
+    plt.hist2d(x=param1[cut2], y=param2[cut2], bins=bins, norm=mpl.colors.LogNorm())
+    plt.colorbar()
+
+
 def plot_mj(df, cut1, cut2, bins):
-    plt.figure()
     mj = pd.concat([df['mj1'], df['mj2']], axis=1)
-    plt.hist2d(x=mj.max(axis=1)[cut1], y=mj.min(axis=1)[cut1], bins=bins, norm=mpl.colors.LogNorm())
-    plt.colorbar()
-    plt.figure()
-    plt.hist2d(x=mj.max(axis=1)[cut2], y=mj.min(axis=1)[cut2], bins=bins, norm=mpl.colors.LogNorm())
-    plt.colorbar()
+    m1 = mj.max(axis=1)
+    m2 = mj.min(axis=1)
+    plot_params(m1, m2, cut1, cut2, bins)
 
 
 def get_n_signal_dataset(n_sig, df):
@@ -58,7 +65,25 @@ def get_n_signal_dataset(n_sig, df):
     mask = np.full(df.shape[0], False)
     mask[df.index[~signal]] = True
     mask[indices] = True
-    return df[mask].iloc[:, :-3].to_numpy(dtype=np.float32), mask
+    return df[mask].to_numpy(dtype=np.float32), mask
+
+
+def svd_whiten(X):
+    U, s, Vt = np.linalg.svd(X, full_matrices=False)
+    X_white = np.dot(U, Vt)
+    return X_white
+
+
+def preprocess_dataframe(df):
+    X_norm = df.to_numpy()
+    X_norm = (X_norm - X_norm.mean(axis=0))/X_norm.std(axis=0)
+    X_norm = svd_whiten(X_norm)
+    ica = FastICA(random_state=42)
+    ica.fit(X_norm)
+    X_norm = ica.transform(X_norm)
+    print(ica.components_)
+    X_norm = (X_norm - X_norm.mean(axis=0))/X_norm.std(axis=0)
+    return X_norm
 
 
 def plot_cuts(anomally_score, bin_mask, relevant_signal, steps=100):

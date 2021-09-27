@@ -18,7 +18,7 @@ def loss(output):
         mu, logvar = output
         KLD_element = (1 - logvar.exp()) + (logvar - mu**2)
         KLD = - 0.5 * torch.sum(KLD_element, 1)
-        return - KLD
+        return KLD
 
 
 class VAE(nn.Module):
@@ -84,9 +84,7 @@ class VAE(nn.Module):
         return losses
 
 
-def train_and_save_model(ds, cp_path, dropout=0., batch_size=128, epochs=100):
-    layer_dims = [14, 12, 6, 3]
-    lr = 1.e-5
+def train_and_save_model(ds, layer_dims, lr, cp_path, dropout=0., batch_size=128, epochs=10):
     model = VAE(layer_dims, dropout=dropout)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     dataset = NumpyDataset(ds)
@@ -118,10 +116,14 @@ def load(cp_path):
 
 def main():
     df = pd.read_csv('external_maf/datasets/data/lhc/lhc_features_and_bins.csv')
+    df.drop(columns='mjj_bins', inplace=True)
     n_sig = int(sys.argv[1])
-    ds, _ = get_n_signal_dataset(n_sig, df)
-    cp_path = 'models/vae_lhc_141263_negKLD_nsig{}.pt'.format(n_sig)
-    train_and_save_model(ds, cp_path, dropout=0.05)
+    _, mask = get_n_signal_dataset(n_sig, df)
+    ds = preprocess_dataframe(df[['m1', 'm2', 'tau^1_21', 'tau^2_21']])[mask]
+    cp_path = 'models/vae_lhc_410103_preprocess_nsig{}.pt'.format(n_sig)
+    layer_dims = [4, 10, 10, 3]
+    lr = 1.e-5
+    train_and_save_model(ds, layer_dims, lr, cp_path, dropout=0.05)
 
 
 if __name__ == "__main__":
