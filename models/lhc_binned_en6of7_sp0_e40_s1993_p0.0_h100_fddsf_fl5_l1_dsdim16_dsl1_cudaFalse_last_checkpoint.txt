@@ -1,5 +1,5 @@
 {
-    "best_val_epoch": 4, 
-    "e": 5, 
-    "best_val": 5.099302263310061
+    "best_val_epoch": 40, 
+    "e": 40, 
+    "best_val": 5.056237604009241
 }
